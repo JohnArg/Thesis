@@ -1,0 +1,125 @@
+body,h1,h2,h3,h4,h5,h6,p{
+	margin: 0;
+	padding:0;
+}
+
+body{
+	font-family: 'Open Sans', sans-serif;
+}
+
+h3, h4{
+	margin: 0px 0px 10px 0px;
+	padding-bottom: 10px;
+}
+
+p{
+	margin: 10px 0px 10px 0px;
+}
+
+ul{
+
+	padding-bottom: 10px;
+}
+
+.page-header{
+	margin:0px;
+	padding:20px;
+	/*background-color:#008888;*/
+	background-color: #444444;
+	color:white;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#0a8455+0,05875e+51,05685c+100 */
+	background: #0a8455; /* Old browsers */
+	background: -moz-linear-gradient(top, #0a8455 0%, #05875e 51%, #05685c 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #0a8455 0%,#05875e 51%,#05685c 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #0a8455 0%,#05875e 51%,#05685c 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0a8455', endColorstr='#05685c',GradientType=0 ); /* IE6-9 */
+}
+
+#graph_panel{
+	width:800px !important;
+	height:700px !important;
+	background-color: #ddeedd;
+	border-style:solid;
+	border-color: #aaaaaa;
+	padding: 0px;
+}
+
+.floater{
+	float: left;
+	margin-top: 20px;
+}
+
+
+#right_panel{
+	width:480px;
+	height: 1000px;
+	margin-left: 20px;
+	box-shadow: -2px 0px 0px #dddddd;
+	padding-left: 20px;
+}
+
+.btn{
+	margin-bottom: 20px;
+}
+
+.btn-primary{
+	background-color: #00bb99 !important;
+}
+
+.btn-primary:hover{
+	background-color: #00ddbb !important;
+}
+
+.btn_clicked{
+	background-color: #00ddbb !important;
+}
+
+footer{
+	background-color: #444444;
+	color: white;
+	padding-top:30px;
+	padding-bottom: 30px;
+}
+
+a{
+	color: #00ddbb;
+}
+
+a:hover{
+	color: #00ffee;
+}
+
+a:active{
+	color: #00ffee;
+}
+
+.underlined{
+	box-shadow: 0px 1px #dddddd;
+	width:250px;
+}
+
+.colored-heading{
+	color: #008877 !important;
+}
+
+input{
+	width:50px;
+	height:30px;
+	margin-bottom: 20px;
+	background-color: #eeeeee;
+	border: 1px solid #aaaaaa;
+	border-radius: 5px;
+	margin-right:10px;
+}
+
+#final_results{
+	overflow-y: scroll;
+	height: 750px;
+}
+/* joint js disable link tools ====================== */
+.link-tools .tool-remove { display: none; }
+.link-tools .tool-options { display: none; }
+.link .mark-errors { display: none; }
+.link .marker-arrowheads{ display: none; }
+.link .marker-vertex-group{display: none;}
+.link .connection-wrap{display: none;}

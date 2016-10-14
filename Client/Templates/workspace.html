@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="eng">
+	<head>
+		<title>Workspace</title>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans">
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="Css/External/joint.css" />
+        <link rel="stylesheet" href ="Css/workspace.css">
+	</head>
+	<body>
+		<div class="page-header text-left">
+			<h2>Workspace</h2>
+		</div>
+		<div class="container-fluid" id="panel_container">
+			<div class="floater" id="left_panel">
+				<section>
+					<article>
+	  					<h3 class ="underlined colored-heading">Graph Viewer</h3>
+						<h4>Use the tools below to construct a connected network graph :</h4>
+						<ul>
+							<li>Press <b class="text-info">Add Node</b> and click on an area inside the graph view</li>
+							<li>Press <b class="text-info">Remove Node</b> and select the nodes to be removed</li>
+							<li>Press <b class="text-info">Link Nodes</b> and select two nodes to link</li>
+							<li>To remove a link, press <b class="text-info">ESC</b> to deselect tools, and then hover the mouse over a link</li>
+							<li>Press <b class="text-info">ESC</b> to stop the tools</li>
+							<li>Press <b class="text-info">Clear Graph</b> to delete current network and clear the graph</li>
+							<li>Moving a node automatically deselects the tools</li>
+						</ul>
+					</article>
+				</section>
+				<div class="btn-group" role="group">
+					<div class="btn btn-default btn-primary" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
+					<div class="btn btn-default btn-primary" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
+					<div class="btn btn-default btn-primary" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
+					<div class="btn btn-default btn-primary" id="clear_btn">Clear Graph</div>
+				</div>
+				<div class="well" id="graph_panel"></div>
+			</div>
+			<div class="floater" id="right_panel">
+				<section>
+					<article>
+		  				<h3 class="underlined colored-heading">Algorithm Analysis</h3>
+					</article>
+				</section>
+				<div class="btn-group" role="group">
+					<div class="btn btn-default btn-primary" id="results_btn" >Calculate</div>
+				</div>
+				<div class="well" id="final_results"></div>
+			</div>
+		</div>
+		<div id="k_m_alert" title="K or M input invalid">
+		  <p id="dialogText"></p>
+		</div>
+		<footer class="container-fluid text-center"><h5>Graphs made with jointjs <a href="http://jointjs.com/">http://jointjs.com/</a></h5></footer>
+	</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="../Model/External/lodash.min.js"></script>
+	<script src="../Model/External/backbone-min.js"></script>
+	<script src="../Model/External/joint.js"></script>
+	<script src="../Model/networkManager.js"></script>
+	<script src="../Model/viewManager.js"></script>
+</html>
