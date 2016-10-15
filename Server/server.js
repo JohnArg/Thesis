@@ -1,10 +1,14 @@
+/*
+Server module. It returns a new server instance. 
+Used to open a Web Server and pass any HTTP request
+to a router object for appropriate handling.
+*/
 var http = require("http");
 var url = require("url");
-var router = require("router");
+var router = require("./router").router;	//this will route the requests to appropriate handler
 //returns a server object
 function serverFactory(portNum){
-	var WebServer = function(port){
-		this.port = port;
+	var WebServer = function(){
 		this.onRequest = function(request, response){
 			console.log("Request received");
 			switch(request.method){
@@ -19,11 +23,10 @@ function serverFactory(portNum){
 			}
 		}
 		this.startServer = function(port){
-			http.createServer(onRequest).listen(port);
-			console.log("Server started .."),
+			http.createServer(this.onRequest).listen(port);
+			console.log("Server started ..");
 		}
 	}
-	return new WebServer(portNum);
+	return new WebServer();
 }
-//export a new server object each
 module.exports.createServer = serverFactory;
