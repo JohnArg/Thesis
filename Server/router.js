@@ -5,6 +5,7 @@ appropriate request handler, depening on the type of the response. The Handler w
 create the final response. 
 */
 var handlerMod = require("./requestHandler");
+
 //route requests to repsective handlers
 var Router = function(){
 	this.routeGETRequest = function (pathname, response){
@@ -24,4 +25,5 @@ var Router = function(){
 		}
 	}
 }
+
 module.exports.router = new Router();

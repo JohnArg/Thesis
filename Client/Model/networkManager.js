@@ -16,7 +16,6 @@ var Node = function (id_in, neighbors, graphic, xCoord, yCoord){
 	this.id = id_in;
 	this.neighbors = neighbors;
 	this.graphic = graphic;
-	this.dominator = false;
 	this.x = xCoord;	//Coordinates in pixels relative to the Graph Panel
 	this.y = yCoord;
 }

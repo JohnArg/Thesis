@@ -2,7 +2,6 @@
 This file will be used to alter the view of the page 
 */
 $(document).ready(function() {	
-
 	//Reset everything ###################
 	function _reset(options){
 		if(options == "all"){
@@ -25,11 +24,20 @@ $(document).ready(function() {
 		}
 	}
 
+	//checks if a node is dominator
+	function _isDominator(node, dominatorList){
+		for(var i=0; i<dominatorList.length; i++){
+			if(node.id == dominatorList[i]){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//Paint dominators ========================================
-	function _paintDominators(){
-		var tempNode;	
+	function _paintDominators(dominatorList){	
 		for(var j=0; j<network.nodes.length; j++){
-			if(!network.node[j].dominator){
+			if(!_isDominator(network.nodes[j].id, dominatorList)){
 				network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL}});
 			}
 			else{

@@ -4,6 +4,7 @@ of the expected response. It will then pass that file as a stream to
 the response and send it.
 */
 var fs = require("fs");
+
 var GETHandler = function(){
 	this.handle = {
 		"workspace" : function(response){
@@ -25,4 +26,5 @@ var GETHandler = function(){
 		}
 	}
 }	
+
 module.exports.GETHandler = new GETHandler();

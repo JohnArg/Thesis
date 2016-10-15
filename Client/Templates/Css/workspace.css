@@ -83,14 +83,37 @@ footer{
 
 a{
 	color: #00ddbb;
+	text-decoration: none;
 }
 
-a:hover{
+a:hover, a:active{
 	color: #00ffee;
+	text-decoration: none;
 }
 
-a:active{
-	color: #00ffee;
+.dropdown-heading{
+	font-size: 12pt;
+	color:#888888;
+}
+
+.a-algorithm{
+	color: #226622;
+	text-decoration: none;
+	display: block;
+	border-style: solid;
+	border-color: #aaccaa;
+	border-radius:10px;
+	padding:5px;
+}
+
+.a-algorithm:hover, .a-algorithm:active{
+	color: #66aa66;
+	text-decoration: none;
+	display: block;
+	border-style: solid;
+	border-color: #aaccaa;
+	border-radius:10px;
+	padding:5px;
 }
 
 .underlined{
@@ -100,6 +123,14 @@ a:active{
 
 .colored-heading{
 	color: #008877 !important;
+}
+
+.padded{
+	padding:14px;
+}
+
+.top-margin-negative{
+	margin-top:-15px;
 }
 
 input{

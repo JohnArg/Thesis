@@ -6,6 +6,7 @@ to a router object for appropriate handling.
 var http = require("http");
 var url = require("url");
 var router = require("./router").router;	//this will route the requests to appropriate handler
+
 //returns a server object
 function serverFactory(portNum){
 	var WebServer = function(){
@@ -15,6 +16,9 @@ function serverFactory(portNum){
 				case "GET" :
 					var pathname = url.parse(request.url).pathname;
 					router.routeGETRequest(pathname, response);
+					break;
+				case "POST" :
+					console.log("Got a POST request");
 					break;
 				default :
 					response.writeHead(400,{"Content-Type" : "text/plain" });
@@ -29,4 +33,5 @@ function serverFactory(portNum){
 	}
 	return new WebServer();
 }
+
 module.exports.createServer = serverFactory;
