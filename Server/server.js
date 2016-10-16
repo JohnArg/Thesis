@@ -6,9 +6,10 @@ to a router object for appropriate handling.
 var http = require("http");
 var url = require("url");
 var router = require("./router").router;	//this will route the requests to appropriate handler
+var ajax = require("./ajaxHandler");
 
 //returns a server object
-function serverFactory(portNum){
+function serverFactory(){
 	var WebServer = function(){
 		this.onRequest = function(request, response){
 			console.log("Request received");
@@ -19,6 +20,15 @@ function serverFactory(portNum){
 					break;
 				case "POST" :
 					console.log("Got a POST request");
+					var body = '';
+					var ajaxObject;
+				    request.on('data', function(chunk){
+				        body += chunk;
+				    });
+					request.on('end', function(){
+						ajaxObject = JSON.parse(body); 
+						ajax.ajaxRoute(ajaxObject.code, ajaxObject.net, response);
+					});
 					break;
 				default :
 					response.writeHead(400,{"Content-Type" : "text/plain" });

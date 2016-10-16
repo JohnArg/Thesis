@@ -5,8 +5,8 @@ joint.js elements, to be used in our algorithm file.
 */
 
 //Some color globals used in our graph
-var DEFAULTFILL = "#ddcc00";
-var DOMINATOR_FILL = "#00dd00";
+var DEFAULTFILL = "#19a3d1";
+var DOMINATOR_FILL = "#00dd44";
 
 //Network Structure 
 //Node class
@@ -258,7 +258,7 @@ $(document).ready(function(){
 				linkSelect2 = false;
 		    	removingLink = false;
 				$(".tool-remove").show();
-		    	$(".btn").removeClass("btn_clicked");
+		    	$(".workspace_btn").removeClass("workspace_btn_clicked");
 		    	break;
 		    default: break;
 		}

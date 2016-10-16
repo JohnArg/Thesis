@@ -2,6 +2,12 @@
 This file will be used to alter the view of the page 
 */
 $(document).ready(function() {	
+	var algorithm_code;
+	var algorithm_name;
+	var ajaxObject = {
+		"code" : -1,
+		"net" : {}
+	};
 	//Reset everything ###################
 	function _reset(options){
 		if(options == "all"){
@@ -46,18 +52,44 @@ $(document).ready(function() {
 		}
 	}
 
+	function _handleResponse(data, status, XMLHttpRequest){
+		console.log(data);
+	}
 	//Buttons ==================================================================================
-	$("#final_results").hide();
+	$("#final_results").show();
 
 	$("#results_btn").click(function() {
-		$(".btn").removeClass("btn_clicked");
-		$("#results_btn").addClass("btn_clicked");
-		_reset();
-		$("#final_results").show(200);	
+		if(network.nodes.length > 2){
+			ajaxObject.code = algorithm_code;
+			ajaxObject.net = network;
+			$.ajax({
+			    url: "http://localhost:3000",
+			    contentType: "application/json",
+			    dataType: "json",
+			    type: "POST",
+			    data: JSON.stringify(ajaxObject),
+			    success : _handleResponse
+			});
+		}
+		else{
+			alert("Network too small");
+		}	
+	});
+
+	$(".workspace_btn").click(function(){
+		$(".workspace_btn").removeClass("workspace_btn_clicked");
+		$(this).addClass("workspace_btn_clicked");
 	});
 
 	$("#clear_btn").click(function() {
 		//Reinitialize the main global variables
 		_reset("all");
 	});
+
+	$(".a-algorithm").click(function(){
+		algorithm_name = $(this).text();
+		algorithm_code = $(this).attr("id");
+		$("#selection_text").text("You selected the " + algorithm_name + " algorithm");
+	});
+
 });
