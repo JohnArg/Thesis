@@ -4,9 +4,13 @@ read the algorithm code and run the appropriate algorithm
 on the network object passed in the request.
 The response will be an object that contains the 
 fields:
-data-type : the type of data the algorithm returns sto that 
-			the client knows how to handle it
-data-content : the data to be sent to the client 
+code : the type of data the algorithm returns so that 
+	   the client knows how to handle the representation
+	   1: dominators list
+	   2: clusters list
+	   3: max-min special view
+	   4: topology data
+solution : the data to be sent to the client 
 */
 var WuLi = require("./Algorithms/wu_li_cds").WuLi;
 
@@ -26,11 +30,8 @@ var ajaxRoute = function(code, net, response){
 
 var handler = {
 	"wu_li" : function(net,response){
-		var dominatorList = WuLi.calculateWuLi(net);
-		var responseData = {
-			"data-type" : "dominator-list",
-			"data-content" : dominatorList
-		};
+		var wu_li_solution = WuLi.calculateWuLi(net);
+		responseData = {"code" : "1", "solution" : wu_li_solution}; 
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);

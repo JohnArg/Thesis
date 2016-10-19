@@ -4,22 +4,24 @@ implementation.
 */
 var _ = require('underscore');
 var netOperator = require("./networkOperations").netOperator;
+var solutionFactory = require("./steps");
+var step1Solution = solutionFactory.solution();
+var rule1Solution = solutionFactory.solution();
+var rule2Solution = solutionFactory.solution();
+var solution = {	//This object will contain a solution object for each of the 3 parts of the algorithm
+	"step1" : step1Solution,
+	"rule1" : rule1Solution,
+	"rule2" : rule2Solution
+};
+
 //main object to be returned
 var Wu_Li_CDS = function(){
-	/* 
-	This function will use the Wu & Li algorithm to find a minimum ================================
-	CDS
-	*/
+	//This function will use the Wu & Li algorithm to find a minimum CDS
 	this.calculateWuLi = function(network){
-		var dominatorList = [];	
-		console.log("Calculcating Wu_LI Step 1");
-		dominatorList = _implementWLStep1(network);
-		console.log("Calculcating Wu_LI Rule 1");
-		dominatorList = _implementWLRule1(network, dominatorList);
-		console.log("Calculcating Wu_LI Rule 2");
-		dominatorList = _implementWLRule2(network, dominatorList);
-		console.log(dominatorList);
-		return dominatorList;
+		solution["step1"].result["dominators"] = _implementWLStep1(network);
+		solution["rule1"].result["dominators"] = _implementWLRule1(network, solution["step1"].result["dominators"]);
+		solution["rule2"].result["dominators"] = _implementWLRule2(network, solution["rule1"].result["dominators"]);
+		return solution;
 	};
 }
 
@@ -66,10 +68,16 @@ var _implementWLStep1 = function(network){
 	var neighborsConnected = true;
 	var tempNode;
 	dominatorList = [];
+	solution["step1"].text = "Constructing minimum Connected Dominating Set with Jie Wu and Hailan Li's algorithm.\
+	We use a marking process. Initially all nodes are marked as F (dominatees).\
+	All nodes exchange their open neighbor sets with their neighbors. In this step, if a node has 2 unconnected neighbors,\
+	it marks itself as T (dominator). <br/>";
 	//Initial decision without Rule1 && Rule 2 ========
 	//for every node
 	for(var i=0; i<network.nodes.length; i++){
 		//for every neighbor of that node
+		solution["step1"].createStep(solution["step1"].steps);
+		solution["step1"].steps[i].text = "Checking Node " + network.nodes[i].id + " .";
 		for(var j=0; j<network.nodes[i].neighbors.length; j++){
 			//get a list of all the other neighbors than the current one
 			neighborCheckList = network.nodes[i].neighbors.filter(function(el){
@@ -77,18 +85,23 @@ var _implementWLStep1 = function(network){
 			});
 			if(neighborCheckList.length > 0){
 				//Is j connected to all the other neighbor nodes?
-				tempNode = network.nodes[ netOperator.returnNodeIndexById(network.nodes[i].neighbors[j], network)];
+				tempNode = network.nodes[netOperator.returnNodeIndexById(network.nodes[i].neighbors[j], network)];
 				for(var k=0; k<neighborCheckList.length; k++){
-					if( !_hasNeighbor(tempNode, neighborCheckList[k]) ){
+					if(!_hasNeighbor(tempNode, neighborCheckList[k])){
 						neighborsConnected = false;
+						solution["step1"].steps[i].text += "Neighbors "+tempNode.id+" and "+neighborCheckList[k]+" are unconnected. </br>";
 						break;
 					}
 				}
 			}
 			if(!neighborsConnected){
 				dominatorList.push(network.nodes[i].id);
+				solution["step1"].steps[i].text += "Node "+network.nodes[i].id+" is marked as T (dominator).";
+				solution["step1"].steps[i].data += { "dominators" : dominatorList};
 				neighborsConnected = true;
 				break; //no need to check the other neighbors
+			}else{
+				solution["step1"].steps[i].text += "Node "+network.nodes[i].id+" remains marked as F (dominatee).";
 			}
 		}
 	}

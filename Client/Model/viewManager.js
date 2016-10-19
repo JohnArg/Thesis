@@ -40,7 +40,7 @@ $(document).ready(function() {
 		return false;
 	}
 
-	//Paint dominators ========================================
+	//Paint dominators
 	function _paintDominators(dominatorList){	
 		for(var j=0; j<network.nodes.length; j++){
 			if(!_isDominator(network.nodes[j].id, dominatorList)){
@@ -52,11 +52,49 @@ $(document).ready(function() {
 		}
 	}
 
+	/*Check response type and use appropriate handler
+	The response will be an object that contains the 
+	fields:
+	code : the type of data the algorithm returns so that 
+		   the client knows how to handle the representation
+		   1: dominators list
+		   2: clusters list
+		   3: max-min special view
+		   4: topology data
+	solution : the data to be sent to the client */
 	function _handleResponse(data, status, XMLHttpRequest){
-		console.log(data);
+		switch(data["code"]){
+			case "1" : _dominatorsAnalysis(data); break;
+			case "2" :
+			case "3" : break;
+			case "4" : break;
+			default:break;
+		}
+	}
+
+	//show the steps from a CDS algorithm
+	function _dominatorsAnalysis(response){
+		var text = "";
+		//for each part of the solution
+		for(var property in response["solution"]){
+			if(response["solution"].hasOwnProperty(property)){
+				//for each step of that part
+				text = "<p class=\"solution-heading\">"+ property.text;
+				text += "<br/> Final result : " + property["result"]["dominators"] + "</p>"; 
+				for(var j=0; j<property.steps.length; j++){
+					text += "<div class=\"well step\">";
+					text += property.steps[j].text;
+					text += "<br/>dominator list" + property.steps[j].data["dominators"];
+					text += "</div>";
+				}
+			}
+		}
+		console.log(text);
+		$("#final_results").html(text);
+		$("#final_results").show();
 	}
 	//Buttons ==================================================================================
-	$("#final_results").show();
+	$("#final_results").hide();
 
 	$("#results_btn").click(function() {
 		if(network.nodes.length > 2){
