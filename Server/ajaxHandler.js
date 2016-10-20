@@ -24,7 +24,7 @@ var ajaxRoute = function(code, net, response){
 		case 'alg_6': handler["lmst"](net,response);break;
 		case 'alg_7': handler["rng"](net,response);break;
 		case 'alg_8': handler["gg"](net,response);break;
-		default: handler["error"](net,response);break;
+		default: console.log("bad request");break;
 	}
 }
 

@@ -74,25 +74,26 @@ $(document).ready(function() {
 
 	//show the steps from a CDS algorithm
 	function _dominatorsAnalysis(response){
-		var text = "";
+		var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
+					+" ]<br> Execution Analysis :</p>";
 		//for each part of the solution
 		for(var property in response["solution"]){
-			if(response["solution"].hasOwnProperty(property)){
+			if(response["solution"].hasOwnProperty(property) && property != "final_result"){
 				//for each step of that part
-				text = "<p class=\"solution-heading\">"+ property.text;
-				text += "<br/> Final result : " + property["result"]["dominators"] + "</p>"; 
-				for(var j=0; j<property.steps.length; j++){
+				text += "<p class=\"solution-heading\">"+ response["solution"][property].text + "</p>"; 
+				for(var j=0; j<response["solution"][property].steps.length; j++){
 					text += "<div class=\"well step\">";
-					text += property.steps[j].text;
-					text += "<br/>dominator list" + property.steps[j].data["dominators"];
+					text += response["solution"][property].steps[j].text;
+					text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
 					text += "</div>";
 				}
+				text += "<p class=\"colored-text\">Temporary result : [ " + response["solution"][property].result["dominators"]+" ]</p>";
 			}
 		}
-		console.log(text);
 		$("#final_results").html(text);
 		$("#final_results").show();
 	}
+
 	//Buttons ==================================================================================
 	$("#final_results").hide();
 

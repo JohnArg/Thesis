@@ -119,8 +119,18 @@ a:hover, a:active{
 	width:250px;
 }
 
-.colored-heading{
-	color: #228fad !important;
+.colored-text{
+	color: #228fad;
+}
+
+.solution-result{
+	font-size: 12pt;
+}
+
+.step{
+	margin-bottom: 5px;
+	background-color:#dddddd;
+	padding: 5px;
 }
 
 .padded{

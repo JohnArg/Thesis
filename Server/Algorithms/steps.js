@@ -15,8 +15,9 @@ var Step = function(){
 var Solution = function(){
 	this.text = "";	//optional general description
 	this.steps = [];
+	var stepList = this.steps;
 	this.result = {};
-	this.createStep = function(stepList){
+	this.createStep = function(){
 		var step = new Step();
 		stepList.push(step);
 	}
