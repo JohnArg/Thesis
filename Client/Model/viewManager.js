@@ -8,6 +8,8 @@ $(document).ready(function() {
 		"code" : -1,
 		"net" : {}
 	};
+	var stepDataArray = [];
+
 	//Reset everything ###################
 	function _reset(options){
 		if(options == "all"){
@@ -31,9 +33,9 @@ $(document).ready(function() {
 	}
 
 	//checks if a node is dominator
-	function _isDominator(node, dominatorList){
+	function _isDominator(id, dominatorList){
 		for(var i=0; i<dominatorList.length; i++){
-			if(node.id == dominatorList[i]){
+			if(id == dominatorList[i]){
 				return true;
 			}
 		}
@@ -42,6 +44,7 @@ $(document).ready(function() {
 
 	//Paint dominators
 	function _paintDominators(dominatorList){	
+		console.log("Painting", dominatorList);
 		for(var j=0; j<network.nodes.length; j++){
 			if(!_isDominator(network.nodes[j].id, dominatorList)){
 				network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL}});
@@ -74,6 +77,8 @@ $(document).ready(function() {
 
 	//show the steps from a CDS algorithm
 	function _dominatorsAnalysis(response){
+		stepDataArray = []; //clear the steps data from previous executions
+		var stepId = 0; //will be used for indexing a global array of step data
 		var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
 					+" ]<br> Execution Analysis :</p>";
 		//for each part of the solution
@@ -82,16 +87,19 @@ $(document).ready(function() {
 				//for each step of that part
 				text += "<p class=\"solution-heading\">"+ response["solution"][property].text + "</p>"; 
 				for(var j=0; j<response["solution"][property].steps.length; j++){
-					text += "<div class=\"well step\">";
+					text += "<div class=\"well dom-step\" id=\""+stepId+"\">";
 					text += response["solution"][property].steps[j].text;
 					text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
 					text += "</div>";
+					stepDataArray.push(response["solution"][property].steps[j].data["dominators"]);
+					stepId ++;
 				}
 				text += "<p class=\"colored-text\">Results so far : [ " + response["solution"][property].result["dominators"]+" ]</p>";
 			}
 		}
 		$("#final_results").html(text);
 		$("#final_results").show();
+		_paintDominators(response["solution"].final_result);
 	}
 
 	//Buttons ==================================================================================
@@ -129,6 +137,10 @@ $(document).ready(function() {
 		algorithm_name = $(this).text();
 		algorithm_code = $(this).attr("id");
 		$("#selection_text").text("You selected the " + algorithm_name + " algorithm");
+	});
+
+	$(document).on("click",".dom-step",function(){
+		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 
 });

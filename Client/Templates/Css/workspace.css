@@ -127,10 +127,18 @@ a:hover, a:active{
 	font-size: 12pt;
 }
 
-.step{
+.dom-step{
 	margin-bottom: 5px;
 	background-color:#dddddd;
 	padding: 5px;
+}
+
+.dom-step:hover, .dom-step:active{
+	margin-bottom: 5px;
+	background-color:#dddddd;
+	padding: 5px;
+	color:white;
+	background-color: #228fad;
 }
 
 .padded{
