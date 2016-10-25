@@ -87,7 +87,7 @@ $(document).ready(function() {
 					text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
 					text += "</div>";
 				}
-				text += "<p class=\"colored-text\">Temporary result : [ " + response["solution"][property].result["dominators"]+" ]</p>";
+				text += "<p class=\"colored-text\">Results so far : [ " + response["solution"][property].result["dominators"]+" ]</p>";
 			}
 		}
 		$("#final_results").html(text);
