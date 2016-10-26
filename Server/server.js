@@ -12,14 +12,12 @@ var ajax = require("./ajaxHandler");
 function serverFactory(){
 	var WebServer = function(){
 		this.onRequest = function(request, response){
-			console.log("Request received");
 			switch(request.method){
 				case "GET" :
 					var pathname = url.parse(request.url).pathname;
 					router.routeGETRequest(pathname, response);
 					break;
 				case "POST" :
-					console.log("Got a POST request");
 					var body = '';
 					var ajaxObject;
 				    request.on('data', function(chunk){

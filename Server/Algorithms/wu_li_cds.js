@@ -5,29 +5,27 @@ implementation.
 var _ = require('underscore');
 var netOperator = require("./networkOperations").netOperator;
 var solutionFactory = require("./steps");
-var step1Solution;
-var rule1Solution;
-var rule2Solution;
-var solution;
 
-//main object to be returned
+//Main object to be returned
 var Wu_Li_CDS = function(){
+	var that = this;
+	that.step1Solution = solutionFactory.solution();
+	that.rule1Solution = solutionFactory.solution();
+	that.rule2Solution = solutionFactory.solution();
+	that.solution = { //This object will contain a solution object for each of the 3 parts of the algorithm
+		"final_result" : [], //--> Although "rule2" has the final result, the viewManager.js response handler in the Client  
+		"step1" : that.step1Solution, // is written to work with many algorithms and it doesn't know where else and how the final
+		"rule1" : that.rule1Solution, // result is stored
+		"rule2" : that.rule2Solution
+	};
+
 	//This function will use the Wu & Li algorithm to find a minimum CDS
-	this.calculateWuLi = function(network){
-		step1Solution = solutionFactory.solution();
-		rule1Solution = solutionFactory.solution();
-		rule2Solution = solutionFactory.solution();
-		solution = {	//This object will contain a solution object for each of the 3 parts of the algorithm
-			"final_result" : [], //--> Although "rule2" has the final result, the viewManager.js response handler in the Client  
-			"step1" : step1Solution, // is written to work with many algorithms and it doesn't know where else and how the final
-			"rule1" : rule1Solution, // result is stored
-			"rule2" : rule2Solution
-		};
-		solution["step1"].result["dominators"] = _implementWLStep1(network);
-		solution["rule1"].result["dominators"] = _implementWLRule1(network, solution["step1"].result["dominators"]);
-		solution["rule2"].result["dominators"] = _implementWLRule2(network, solution["rule1"].result["dominators"]);
-		solution["final_result"] = solution["rule2"].result["dominators"];
-		return solution;
+	that.calculateWuLi = function(network){
+		that.solution["step1"].result["dominators"] = _implementWLStep1(network, that.solution);
+		that.solution["rule1"].result["dominators"] = _implementWLRule1(network, that.solution["step1"].result["dominators"], that.solution);
+		that.solution["rule2"].result["dominators"] = _implementWLRule2(network, that.solution["rule1"].result["dominators"], that.solution);
+		that.solution["final_result"] = that.solution["rule2"].result["dominators"];
+		return that.solution;
 	};
 }
 
@@ -70,7 +68,7 @@ var _isDominator = function(node, dominatorList){
 }
 
 //Implements first step of the Wu&Li algorithm
-var _implementWLStep1 = function(network){
+var _implementWLStep1 = function(network, solution){
 	var neighborsConnected;
 	var tempNode;
 	dominatorList = [];
@@ -117,7 +115,7 @@ var _implementWLStep1 = function(network){
 }
 
 //Implements the Rule 1 of the algorithm
-var _implementWLRule1 = function(network, dominatorList){
+var _implementWLRule1 = function(network, dominatorList, solution){
 	var curNode;
 	var checkNodeList;
 	var otherDom;
@@ -180,7 +178,7 @@ var _implementWLRule1 = function(network, dominatorList){
 }
 
 //Implements Rule 2
-var _implementWLRule2 = function(network, dominatorList){
+var _implementWLRule2 = function(network, dominatorList, solution){
 	var curDom;
 	var domNeighbors = [];
 	var unionSet;
