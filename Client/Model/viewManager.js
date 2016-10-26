@@ -2,7 +2,7 @@
 This file will be used to alter the view of the page 
 */
 $(document).ready(function() {	
-	var algorithm_code;
+	var algorithm_code = "empty";
 	var algorithm_name;
 	var ajaxObject = {
 		"code" : -1,
@@ -106,20 +106,22 @@ $(document).ready(function() {
 	$("#final_results").hide();
 
 	$("#results_btn").click(function() {
-		if(network.nodes.length > 2){
-			ajaxObject.code = algorithm_code;
-			ajaxObject.net = network;
-			$.ajax({
-			    url: "http://localhost:3000",
-			    contentType: "application/json",
-			    dataType: "json",
-			    type: "POST",
-			    data: JSON.stringify(ajaxObject),
-			    success : _handleResponse
-			});
-		}
-		else{
-			alert("Network too small");
+		if(algorithm_code != "empty"){
+			if(network.nodes.length > 2){
+				ajaxObject.code = algorithm_code;
+				ajaxObject.net = network;
+				$.ajax({
+				    url: "http://localhost:3000",
+				    contentType: "application/json",
+				    dataType: "json",
+				    type: "POST",
+				    data: JSON.stringify(ajaxObject),
+				    success : _handleResponse
+				});
+			}
+			else{
+				alert("Network too small");
+			}
 		}	
 	});
 

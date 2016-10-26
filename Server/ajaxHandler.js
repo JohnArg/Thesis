@@ -13,6 +13,7 @@ code : the type of data the algorithm returns so that
 solution : the data to be sent to the client 
 */
 var WuLi = require("./Algorithms/wu_li_cds").WuLi;
+var MPR_cds = require("./Algorithms/mpr_set").MPR_cds;
 
 var ajaxRoute = function(code, net, response){
 	switch(code){
@@ -24,7 +25,7 @@ var ajaxRoute = function(code, net, response){
 		case 'alg_6': handler["lmst"](net,response);break;
 		case 'alg_7': handler["rng"](net,response);break;
 		case 'alg_8': handler["gg"](net,response);break;
-		default: console.log("bad request");break;
+		default: handler["default"](response);break;
 	}
 }
 
@@ -38,8 +39,11 @@ var handler = {
 		response.end();
 	},
 	"mpr" : function(net, response){
+		var mpr_solution = MPR_cds.calculateWuLi(net);
+		responseData = {"code" : "1", "solution" : mpr_solution}; 
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write(responseData);
 		response.end();
 	},
 	"dca" : function(net, response){
@@ -70,6 +74,11 @@ var handler = {
 	"gg" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write({});
+		response.end();
+	},
+	"default" : function(response){
+		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
+		response.write({"code" : "0"});
 		response.end();
 	}
 }
