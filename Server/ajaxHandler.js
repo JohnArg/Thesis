@@ -6,10 +6,8 @@ The response will be an object that contains the
 fields:
 code : the type of data the algorithm returns so that 
 	   the client knows how to handle the representation
-	   1: dominators list
-	   2: clusters list
-	   3: max-min special view
-	   4: topology data
+	   1: wu li dominators list, 2: multipoint relays cds 
+	   3: dca, 4: max_min, 5: mis, 6: lmst, 7: rng, 8: gg
 solution : the data to be sent to the client 
 */
 var WuLi = require("./Algorithms/wu_li_cds").WuLi;
@@ -39,8 +37,8 @@ var handler = {
 		response.end();
 	},
 	"mpr" : function(net, response){
-		var mpr_solution = MPR_cds.calculateWuLi(net);
-		responseData = {"code" : "1", "solution" : mpr_solution}; 
+		var mpr_solution = MPR_cds.calculate_MPR_CDS(net);
+		responseData = {"code" : "2", "solution" : mpr_solution}; 
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);

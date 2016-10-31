@@ -21,6 +21,7 @@ var Router = function(){
 			case "/joint.js": GETHandler.handle["Js"](response, "./Client/Model/External/joint.js"); break;
 			case "/networkManager.js": GETHandler.handle["Js"](response, "./Client/Model/networkManager.js"); break;
 			case "/viewManager.js": GETHandler.handle["Js"](response, "./Client/Model/viewManager.js"); break;
+			case "/resultView.js": GETHandler.handle["Js"](response, "./Client/Model/resultView.js"); break;
 			default: GETHandler.handle["404"](response); break;
 		}
 	}
