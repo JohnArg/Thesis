@@ -6,6 +6,10 @@ var _ = require('underscore');
 var netOperator = require("./networkOperations").netOperator;
 var solutionFactory = require("./steps");
 
+var WuLiFactory = function(){
+	return new Wu_Li_CDS();
+}
+
 //Main object to be returned
 var Wu_Li_CDS = function(){
 	var that = this;
@@ -234,4 +238,4 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 	return newDominatorList;
 }
 
-module.exports.WuLi = new Wu_Li_CDS();
+module.exports.WuLiFactory = WuLiFactory;

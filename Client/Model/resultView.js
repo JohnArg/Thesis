@@ -35,8 +35,8 @@ the client knows how to handle the representation
 solution : the data to be sent to the client */
 function handleResponse(data, status, XMLHttpRequest){
 	switch(data["code"]){
-		case "1" : _dominatorsAnalysis(data); break;
-		case "2" : break;
+		case "1" : _wuLiDominatorsAnalysis(data); break;
+		case "2" : _mprCdsAnalysis(data); break;
 		case "3" : break;
 		case "4" : break;
 		case "5" : break;
@@ -48,9 +48,9 @@ function handleResponse(data, status, XMLHttpRequest){
 }
 
 
-//Show the steps from a CDS algorithm
-function _dominatorsAnalysis(response){
-	stepDataArray = []; //clear the steps data from previous executions
+//Show the steps from th Wu Li CDS algorithm
+function _wuLiDominatorsAnalysis(response){
+	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
 				+" ]<br> Execution Analysis :</p>";
@@ -60,7 +60,7 @@ function _dominatorsAnalysis(response){
 			//for each step of that part
 			text += "<p class=\"solution-heading\">"+ response["solution"][property].text + "</p>"; 
 			for(var j=0; j<response["solution"][property].steps.length; j++){
-				text += "<div class=\"well dom-step\" id=\""+stepId+"\">";
+				text += "<div class=\"well dom-step step\" id=\""+stepId+"\">";
 				text += response["solution"][property].steps[j].text;
 				text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
 				text += "</div>";
@@ -75,9 +75,43 @@ function _dominatorsAnalysis(response){
 	_paintDominators(response["solution"].final_result);
 }
 
+//Show the steps of the Multipoint Relay CDS algorithm
+function _mprCdsAnalysis(response){
+	stepDataArray = []; //clear the global steps data from previous executions
+	var stepId = 0; //will be used for indexing a global array of step data
+	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
+				+" ]<br> Execution Analysis :</p>";
+	if(response["solution"].hasOwnProperty("MPR_set")){
+		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_set"].text + "</p>";
+		for(var j=0; j<response["solution"]["MPR_set"].steps.length; j++){
+			text += "<div class=\"well mpr-step step\" id=\""+stepId+"\">";
+			text += response["solution"]["MPR_set"].steps[j].text;
+			text += "<br/>MPR set [ " + response["solution"]["MPR_set"].steps[j].data["mpr_set"] +" ]";
+			text += "</div>";
+			stepDataArray.push(response["solution"]["MPR_set"].steps[j].data["mpr_set"]);
+			stepId ++;
+		}
+		text += "<p class=\"colored-text\">MPR sets per node : [ ";
+		for(var k=0; k<response["solution"]["MPR_set"].result["All_MPR_sets"].length; k++){
+			text += "{ Node " + network.nodes[k].id + " : " +response["solution"]["MPR_set"].result["All_MPR_sets"][k] + " } ";
+		}
+		text += " ]</p>";
+	}
+	if(response["solution"].hasOwnProperty("MPR_cds")){
+
+	}
+	$("#final_results").html(text);
+	$("#final_results").show();
+	_paintDominators(response["solution"].final_result);
+}
+
 //Handle clicks on objects related to algorithm results
 $(document).ready(function(){
 	$(document).on("click",".dom-step",function(){
+		_paintDominators(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click",".mpr-step",function(){
 		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 });

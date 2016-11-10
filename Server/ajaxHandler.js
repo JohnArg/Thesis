@@ -10,8 +10,8 @@ code : the type of data the algorithm returns so that
 	   3: dca, 4: max_min, 5: mis, 6: lmst, 7: rng, 8: gg
 solution : the data to be sent to the client 
 */
-var WuLi = require("./Algorithms/wu_li_cds").WuLi;
-var MPR_cds = require("./Algorithms/mpr_set").MPR_cds;
+var WuLiModule = require("./Algorithms/wu_li_cds");
+var MPR_Module = require("./Algorithms/mpr_set");
 
 var ajaxRoute = function(code, net, response){
 	switch(code){
@@ -29,6 +29,7 @@ var ajaxRoute = function(code, net, response){
 
 var handler = {
 	"wu_li" : function(net,response){
+		var WuLi = WuLiModule.WuLiFactory();
 		var wu_li_solution = WuLi.calculateWuLi(net);
 		responseData = {"code" : "1", "solution" : wu_li_solution}; 
 		responseData = JSON.stringify(responseData);
@@ -37,6 +38,7 @@ var handler = {
 		response.end();
 	},
 	"mpr" : function(net, response){
+		var MPR_cds = MPR_Module.MPR_Factory();
 		var mpr_solution = MPR_cds.calculate_MPR_CDS(net);
 		responseData = {"code" : "2", "solution" : mpr_solution}; 
 		responseData = JSON.stringify(responseData);
