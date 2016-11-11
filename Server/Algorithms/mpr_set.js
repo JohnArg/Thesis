@@ -23,10 +23,9 @@ var MPR_cds = function(){
 	};
 	that.calculate_MPR_CDS = function(network){
 		that.solution["MPR_set"].result["All_MPR_sets"] = _constructMPR(network, that.solution);
-		//testing code
-		that.solution["MPR_cds"].result = { "dominators" : []};
-		that.solution["MPR_cds"].steps = [];
-		that.solution["MPR_cds"].text = "Work in progress";
+		var allMPRs = that.solution["MPR_set"].result["All_MPR_sets"];
+		that.solution["MPR_cds"].result["MPR_cds"] = _mprCdsOptimized(that.solution, network, allMPRs);
+		that.solution["final_result"] = that.solution["MPR_cds"].result["MPR_cds"];
 		return that.solution;
 	}
 }
@@ -155,6 +154,55 @@ var _constructMPR = function(network, solution){
 		allMPRs = _calculate2HopStep2(i, network, solution, twoHopNeighbors, oneHopNeighbors, mpr_set, allMPRs);
 	}
 	return allMPRs;
+}
+
+var _mprCdsOptimized = function(solution, network, allMPRs){
+	var mprCds = [];
+	var smallest;
+	solution["MPR_cds"].text = "In this part of the execution, we will define the Connected Dominating Set constructed by the\
+	 Multipoint Relays of each node. We use 2 rules to add nodes to the CDS. The node is in the CDS if :</br>\
+	  Rule 1: the node has the smallest ID of its neighbors</br>\
+	   Rule 2: or it is multipoint relay of its neighbor with the smallest ID</br>";
+	for(var i=0; i<network.nodes.length; i++){
+		solution["MPR_cds"].createStep();
+		solution["MPR_cds"].steps[i].text = "Checking node "+network.nodes[i].id+" .</br>";
+		smallest = true;
+		//Rule 1
+		for(var j=0; j<network.nodes[i].neighbors.length; j++){
+			if(network.nodes[i].id > network.nodes[i].neighbors[j]){
+				smallest = false;
+				break;
+			}
+		}
+		if(smallest){
+			mprCds.push(network.nodes[i].id);
+			solution["MPR_cds"].steps[i].text += "Node "+network.nodes[i].id+" has the smallest ID of its neighborhood.\
+			We add him to the CDS.</br>";
+			solution["MPR_cds"].steps[i].data["dominators"] = [network.nodes[i].id]; 
+		}
+		else{
+			//Rule 2
+			//get the neighbor with the smallest id
+			var minId = network.nodes[i].neighbors[0];
+			for(var k=1; k<network.nodes[i].neighbors.length; k++){
+				if(network.nodes[i].neighbors[k] < minId){
+					minId = network.nodes[i].neighbors[k];
+				}
+			}	
+			//see if the current node is a multipoint relay for the node with id = minId
+			if(_.indexOf(allMPRs[minId], network.nodes[i].id) != -1 ){
+				mprCds.push(network.nodes[i].id);
+				solution["MPR_cds"].steps[i].text += "Node "+network.nodes[i].id+" is a multipoint relay of node " + 
+				minId+". We add him to the CDS.</br>";
+				solution["MPR_cds"].steps[i].data["dominators"] = [network.nodes[i].id];
+			}
+			else{
+				solution["MPR_cds"].steps[i].text += "The node won't be added to the CDS.</br>";
+				solution["MPR_cds"].steps[i].data["dominators"] = []; 		
+			}
+		}
+	}
+	return mprCds;
 }
 
 module.exports.MPR_Factory = mprFactory;

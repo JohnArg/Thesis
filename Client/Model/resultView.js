@@ -98,7 +98,16 @@ function _mprCdsAnalysis(response){
 		text += " ]</p>";
 	}
 	if(response["solution"].hasOwnProperty("MPR_cds")){
-
+		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_cds"].text + "</p>";
+		for(var j=0; j<response["solution"]["MPR_cds"].steps.length; j++){
+			text += "<div class=\"well mpr-step step\" id=\""+stepId+"\">";
+			text += response["solution"]["MPR_cds"].steps[j].text;
+			text += "<br/>Dominators [ " + response["solution"]["MPR_cds"].steps[j].data["dominators"] +" ]";
+			text += "</div>";
+			stepDataArray.push(response["solution"]["MPR_cds"].steps[j].data["dominators"]);
+			stepId ++;
+		}
+		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["dominators"]+" ]</p>";
 	}
 	$("#final_results").html(text);
 	$("#final_results").show();
