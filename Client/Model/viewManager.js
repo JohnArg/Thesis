@@ -7,7 +7,8 @@ $(document).ready(function() {
 	var algorithm_name;
 	var ajaxObject = {
 		"code" : -1,
-		"net" : {}
+		"net" : {},
+		"extras" : {}	//extra data assosiated with the network that an algorithm needs
 	};
 	var stepDataArray = [];
 
@@ -33,6 +34,24 @@ $(document).ready(function() {
 		}
 	}
 
+	function _dcaDialogCreateInputs(){
+		var text = "";
+		for(var i=0; i<network.nodes.length; i++){
+			text +="<li><p>Node "+network.nodes[i].id+"<p/></li>";
+		}
+		return text;
+	}
+
+	function _sendAjaxRequest(){
+		$.ajax({
+			url: "http://localhost:3000",
+			contentType: "application/json",
+			dataType: "json",
+			type: "POST",
+			data: JSON.stringify(ajaxObject),
+			success : handleResponse
+		});
+	}
 	//Buttons Reactions ===========================================================
 	$("#final_results").hide();
 
@@ -41,14 +60,13 @@ $(document).ready(function() {
 			if(network.nodes.length > 2){
 				ajaxObject.code = algorithm_code;
 				ajaxObject.net = network;
-				$.ajax({
-				    url: "http://localhost:3000",
-				    contentType: "application/json",
-				    dataType: "json",
-				    type: "POST",
-				    data: JSON.stringify(ajaxObject),
-				    success : handleResponse
-				});
+				if(algorithm_code == "alg_3"){
+					$("#dca_dialog_list").html(_dcaDialogCreateInputs());
+					$("#dca_dialog").dialog("open");
+				}
+				else{
+					_sendAjaxRequest();
+				}	
 			}
 			else{
 				alert("Network too small");
@@ -70,6 +88,20 @@ $(document).ready(function() {
 		algorithm_name = $(this).text();
 		algorithm_code = $(this).attr("id");
 		$("#selection_text").text("You selected the " + algorithm_name + " algorithm");
+	});
+
+	$("#dca_dialog").dialog({
+		resizable: false,
+      	height:500,
+      	modal: true,
+      	minWidth: 400,
+      	autoOpen:false,
+      	buttons: {
+        	"OK": function() {
+         	 $( this ).dialog( "close" );
+        	}
+      	},
+      	dialogClass: "dialogTheme"
 	});
 
 });

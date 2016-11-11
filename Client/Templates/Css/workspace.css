@@ -157,9 +157,13 @@ input{
 }
 
 #final_results{
-	overflow-y: scroll;
 	height: 750px;
 }
+
+.scrollView{
+	overflow-y: scroll;
+}
+
 /* joint js disable link tools ====================== */
 .link-tools .tool-remove { display: none; }
 .link-tools .tool-options { display: none; }

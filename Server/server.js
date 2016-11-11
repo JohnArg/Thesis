@@ -25,7 +25,7 @@ function serverFactory(){
 				    });
 					request.on('end', function(){
 						ajaxObject = JSON.parse(body); 
-						ajax.ajaxRoute(ajaxObject.code, ajaxObject.net, response);
+						ajax.ajaxRoute(ajaxObject.code, ajaxObject.net, ajaxObject.extras, response);
 					});
 					break;
 				default :

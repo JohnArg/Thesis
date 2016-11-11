@@ -12,12 +12,13 @@ solution : the data to be sent to the client
 */
 var WuLiModule = require("./Algorithms/wu_li_cds");
 var MPR_Module = require("./Algorithms/mpr_set");
+var DCA_Module = require("./Algorithms/dca_clusters");
 
-var ajaxRoute = function(code, net, response){
+var ajaxRoute = function(code, net, extras, response){
 	switch(code){
 		case 'alg_1': handler["wu_li"](net,response);break;
 		case 'alg_2': handler["mpr"](net,response);break;
-		case 'alg_3': handler["dca"](net,response);break;
+		case 'alg_3': handler["dca"](net,extras,response);break;
 		case 'alg_4': handler["max_min"](net,response);break;
 		case 'alg_5': handler["mis"](net,response);break;
 		case 'alg_6': handler["lmst"](net,response);break;
@@ -46,9 +47,13 @@ var handler = {
 		response.write(responseData);
 		response.end();
 	},
-	"dca" : function(net, response){
+	"dca" : function(net, extras, response){
+		var dcaClusters = DCA_Module.dcaFactory();
+		var dca_solution = dcaClusters.calculate_DCA_Clusters(net, extras);
+		responseData = {"code" : "3", "solution" : dca_solution}; 
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write(responseData);
 		response.end();
 	},
 	"max_min" : function(net, response){
