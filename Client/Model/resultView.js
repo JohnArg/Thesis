@@ -107,7 +107,7 @@ function _mprCdsAnalysis(response){
 			stepDataArray.push(response["solution"]["MPR_cds"].steps[j].data["dominators"]);
 			stepId ++;
 		}
-		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["dominators"]+" ]</p>";
+		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["MPR_cds"]+" ]</p>";
 	}
 	$("#final_results").html(text);
 	$("#final_results").show();

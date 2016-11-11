@@ -178,7 +178,7 @@ var _mprCdsOptimized = function(solution, network, allMPRs){
 			mprCds.push(network.nodes[i].id);
 			solution["MPR_cds"].steps[i].text += "Node "+network.nodes[i].id+" has the smallest ID of its neighborhood.\
 			We add him to the CDS.</br>";
-			solution["MPR_cds"].steps[i].data["dominators"] = [network.nodes[i].id]; 
+			solution["MPR_cds"].steps[i].data["dominators"] = mprCds.slice(); 
 		}
 		else{
 			//Rule 2
@@ -190,15 +190,16 @@ var _mprCdsOptimized = function(solution, network, allMPRs){
 				}
 			}	
 			//see if the current node is a multipoint relay for the node with id = minId
-			if(_.indexOf(allMPRs[minId], network.nodes[i].id) != -1 ){
+			var nodeIndex = netOperator.returnNodeIndexById(minId, network);
+			if(_.indexOf(allMPRs[nodeIndex], network.nodes[i].id) != -1 ){
 				mprCds.push(network.nodes[i].id);
 				solution["MPR_cds"].steps[i].text += "Node "+network.nodes[i].id+" is a multipoint relay of node " + 
 				minId+". We add him to the CDS.</br>";
-				solution["MPR_cds"].steps[i].data["dominators"] = [network.nodes[i].id];
+				solution["MPR_cds"].steps[i].data["dominators"] = mprCds.slice();
 			}
 			else{
 				solution["MPR_cds"].steps[i].text += "The node won't be added to the CDS.</br>";
-				solution["MPR_cds"].steps[i].data["dominators"] = []; 		
+				solution["MPR_cds"].steps[i].data["dominators"] = mprCds.slice(); 		
 			}
 		}
 	}
