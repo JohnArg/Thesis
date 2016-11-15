@@ -14,6 +14,7 @@ var Router = function(){
 		switch(pathname){
 			case "":
 			case "/": GETHandler.handle["workspace"](response); break;
+			case "/jquery-ui.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/External/jquery-ui.css"); break;
 			case "/workspace.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/workspace.css"); break;
 			case "/joint.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/External/joint.css"); break;
 			case "/lodash.min.js" : GETHandler.handle["Js"](response, "./Client/Model/External/lodash.min.js"); break;

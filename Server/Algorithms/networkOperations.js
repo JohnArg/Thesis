@@ -3,6 +3,7 @@ This module will contain functions to perform
 network operations
 */
 var netOperator = function(){
+	var that = this;
 	this.returnNodeById = function(search_id, network){
 	 	if(network.nodes.length == 0){
 	 		console.log("Can't retrieve node from empty network");
@@ -26,6 +27,13 @@ var netOperator = function(){
 	 			}
 	 		}
 		}
+	};
+	this.returnNeighborObjects = function(node, network){
+		var neighbors = [];
+		for(var j=0; j<node.neighbors.length; j++){
+			neighbors.push( that.returnNodeById(node.neighbors[j], network) );
+		}
+		return neighbors;
 	};
 }
 

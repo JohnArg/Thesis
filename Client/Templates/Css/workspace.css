@@ -17,8 +17,16 @@ p{
 }
 
 ul{
-
 	padding-bottom: 10px;
+}
+
+.ul_no_numbering{
+	list-style: none;
+}
+
+.ul_child{
+	margin-left: 10px;
+	margin-top: 10px;
 }
 
 .page-header{
@@ -60,7 +68,6 @@ ul{
 }
 
 .workspace_btn:hover, .workspace_btn:active{
-	margin-bottom: 20px;
 	background-color: #888888;
 	color:white;
 	border-style:solid;
@@ -160,8 +167,60 @@ input{
 	height: 750px;
 }
 
+/* Dialog Css =========================== */
 .scrollView{
 	overflow-y: scroll;
+	height:150px;
+}
+
+.ui-dialog-titlebar-close{
+	visibility: hidden;
+}
+
+.ui-dialog,
+.ui-dialog-content {
+    background: #ffffff;
+    border: 0 none;
+    overflow: none;
+    padding: 0.5em 1em;
+    position: relative;
+}
+
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+    border-radius: 0px;
+}
+
+.ui-widget-header {
+    background: #4facd1;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    position: relative;
+}
+
+.ui-dialog {
+    left: 0;
+    outline: 0 none;
+    overflow: hidden;
+    padding: 0px;
+    position: absolute;
+    top: 0;
+}
+
+.ui-dialog-titlebar{
+	padding: 10px;
+}
+
+input[type="radio"] {
+    line-height: normal;
+    margin: 10px 0 0;
+    position: relative;
+}
+
+#dca_dialog_btn_container{
+	margin-top:20px;
 }
 
 /* joint js disable link tools ====================== */

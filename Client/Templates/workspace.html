@@ -4,9 +4,8 @@
 		<title>Workspace</title>
 		<meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans">
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="jquery-ui.css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="joint.css" />
         <link rel="stylesheet" href ="workspace.css">
 	</head>
@@ -69,19 +68,27 @@
 			</div>
 		</div>
 		<div id="dca_dialog" title="Node Weights">
-		  <p id="dca_dialog_heading">Specify the weights of the nodes before execution.</p>
-		  <div id="dca_dialog_scroll" class="scrollView">
-		  	<ul id="dca_dialog_list">
-		  	</ul>
-		  </div>
+			<p id="dca_dialog_heading">Specify the weights of the nodes before execution. Each node must have a different weight.</p>
+			<form>
+				<input type="radio" name="random" checked id="weights_randomBtn"> Random Weights <br/>
+				<input type="radio" name="random" id="weights_customBtn"> Insert weights manually <br/>
+			</form>
+			<div id="dca_dialog_scroll" class="scrollView">
+		  		<ul id="dca_dialog_list" class="ul_no_numbering ul_child">
+		  		</ul>
+		  	</div>
+		  	<div id="dca_dialog_btn_container">
+				<button class="workspace_btn" id="dca_dialog_cancel">Cancel</button>
+				<button class="workspace_btn" id="dca_dialog_continue">Continue</button>
+			</div>
 		</div>
 		<footer class="container-fluid text-center"><h5>Created by John Argyroulis</h5><br/><h6>Thesis for University of Thessaly 
 		(Electrical And Computer Engineering)<h6>
 		</footer>
 	</body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="lodash.min.js"></script>
 	<script src="backbone-min.js"></script>
 	<script src="joint.js"></script>

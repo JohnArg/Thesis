@@ -58,32 +58,32 @@ var handler = {
 	},
 	"max_min" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write("");
 		response.end();
 	},
 	"mis" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write("");
 		response.end();
 	},
 	"lmst" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write("");
 		response.end();
 	},
 	"rng" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write("");
 		response.end();
 	},
 	"gg" : function(net, response){
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({});
+		response.write("");
 		response.end();
 	},
 	"default" : function(response){
-		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write({"code" : "0"});
+		response.writeHead(200, "OK", {"Content-Type" : "text/plain"});
+		response.write("");
 		response.end();
 	}
 }
