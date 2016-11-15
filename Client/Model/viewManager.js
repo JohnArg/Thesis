@@ -180,7 +180,6 @@ $(document).ready(function() {
 
 	$("#dca_dialog_continue").click(function(){
 		_dcaDialogWeightsHandler();
-		_sendAjaxRequest();
 	});	
 
 });
