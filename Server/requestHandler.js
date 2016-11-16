@@ -9,7 +9,7 @@ var GETHandler = function(){
 	this.handle = {
 		"workspace" : function(response){
 			response.writeHead(200, "OK", { "Content-Type" : "text/html"});
-			fs.createReadStream("./Client/Templates/workspace.html").pipe(response);
+			fs.createReadStream("./Client/Templates/workspaceV2.html").pipe(response);
 		},
 		"404" : function(response){
 			response.writeHead(404, "Not Found", { "Content-Type" : "text/plain"});

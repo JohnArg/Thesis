@@ -4,20 +4,14 @@ We will also create a global network object from the
 joint.js elements, to be used in our algorithm file.
 */
 
-//Some color globals used in our graph
-var DEFAULTFILL = "#19a3d1";
-var DOMINATOR_FILL = "#00dd44";
-
 //Network Structure 
 //Node class
 //the graphic is used for rendering a node graphics shape
-var Node = function (id_in, neighbors, graphic, xCoord, yCoord){
+var Node = function (id_in, neighbors, graphic){
 
 	this.id = id_in;
 	this.neighbors = neighbors;
 	this.graphic = graphic;
-	this.x = xCoord;	//Coordinates in pixels relative to the Graph Panel
-	this.y = yCoord;
 }
 //The network class => an array of nodes
 var Network = function (){
@@ -31,10 +25,10 @@ var paper = new joint.dia.Paper({	//the main view panel
     width: 800,
     height: 700,
     model: graph,
-    gridSize: 1
+    gridSize: 1,
+    restrictTranslate: true
 });
 var usedIds = []; 									//A list of the used node ids so far
-var panelOffset = $("#graph_panel").offset();		//The offset of the panel from the document, for mouse events
 var addingNode = false; 							//If the add node button is active
 var removingNode = false;							//If the remoce node button is active
 var linkSelect1 = false;							//I'm in 'select first node' functionality while drawing a link (edge)
@@ -73,15 +67,15 @@ var returnNodeIndexById = function(search_id){
 $(document).ready(function(){
 	//Graphics Management (with Joint Js) ================================================
     //Click on blank space of view callback (used for adding nodes to the point clicked)
-    paper.on('blank:pointerclick',function(event){
+    paper.on('blank:pointerclick',function(event, x, y){
     	//if adding a node is enabled
     	if (addingNode){
     		var nodeID = calculateNewId();
 	  		//create the graphics shape at the position clicked
 	    	var circleShape = new joint.shapes.basic.Circle({
-	    		position: { x: event.pageX - panelOffset.left - 20, y: event.pageY - panelOffset.top - 20},
+	    		position: { x: x - 20, y: y - 20},
 	    		size:{ width:35, height:35},
-	    		attrs:{ circle: {fill: DEFAULTFILL}, text: { text : nodeID, fill : 'white'}},
+	    		attrs:{ circle: {fill: DEFAULTFILL, stroke: DEFAULTSTROKE, "stroke-width" : "2"}, text: { text : nodeID, fill : 'white'}},
 	    		prop:{ node_id : nodeID}
 	    	});
 	    	//stop adding/removing nodes if you moved one
@@ -91,7 +85,7 @@ $(document).ready(function(){
 	    	//add the new shape to the graph
 	    	graph.addCell(circleShape);
 	    	//create the node in the network
-	    	var node = new Node( nodeID, [], circleShape, event.pageX - panelOffset.left, event.pageY - panelOffset.top);
+	    	var node = new Node( nodeID, [], circleShape);
 	    	network.nodes.push(node);
 	    	console.log(network);
 	    }
@@ -125,21 +119,26 @@ $(document).ready(function(){
 			*/
 			linkEnd = cellView.model;
 			linkSelect2 = false;
-			//update neighborhood for nodes
-			var shape1_node = returnNodeById(linkStart.attributes.prop["node_id"]);
-			var shape2_node = returnNodeById(linkEnd.attributes.prop["node_id"]);
-			shape1_node.neighbors.push(shape2_node.id);
-			shape2_node.neighbors.push(shape1_node.id);
-			var link = new joint.dia.Link({
-		        source: { id: linkStart.id }, // graph model ids
-		        target: { id: linkEnd.id },
-		        prop:{ node1: shape1_node.id, node2: shape2_node.id } //network ids
-		    });
-			//add the edge to the graph
-			graph.addCell(link);
-			//return funcitonality to selecting the source of a link
-			linkSelect1 = true;
-			console.log(network);
+			if(linkStart != linkEnd){
+				//update neighborhood for nodes
+				var shape1_node = returnNodeById(linkStart.attributes.prop["node_id"]);
+				var shape2_node = returnNodeById(linkEnd.attributes.prop["node_id"]);
+				shape1_node.neighbors.push(shape2_node.id);
+				shape2_node.neighbors.push(shape1_node.id);
+				var link = new joint.dia.Link({
+			        source: { id: linkStart.id }, // graph model ids
+			        target: { id: linkEnd.id },
+			        prop:{ node1: shape1_node.id, node2: shape2_node.id } //network ids
+			    });
+				//add the edge to the graph
+				graph.addCell(link);
+				//return funcitonality to selecting the source of a link
+				linkSelect1 = true;
+				console.log(network);
+			}
+			else{
+				linkSelect1 = true;
+			}
 		}    
 	});
  

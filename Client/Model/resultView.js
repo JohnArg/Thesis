@@ -17,10 +17,10 @@ function _isDominator(id, dominatorList){
 function _paintDominators(dominatorList){	
 	for(var j=0; j<network.nodes.length; j++){
 		if(!_isDominator(network.nodes[j].id, dominatorList)){
-			network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL}});
+			network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
 		}
 		else{
-			network.nodes[j].graphic.attr({ circle: {fill: DOMINATOR_FILL}});
+			network.nodes[j].graphic.attr({ circle: {fill: DOMINATOR_FILL, stroke : DOMINATOR_STROKE}});
 		}
 	}
 }

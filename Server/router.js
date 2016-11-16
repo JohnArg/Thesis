@@ -15,10 +15,10 @@ var Router = function(){
 			case "":
 			case "/": GETHandler.handle["workspace"](response); break;
 			case "/jquery-ui.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/External/jquery-ui.css"); break;
-			case "/workspace.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/workspace.css"); break;
+			case "/workspace.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/workspaceV2.css"); break;
 			case "/joint.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/External/joint.css"); break;
-			case "/lodash.min.js" : GETHandler.handle["Js"](response, "./Client/Model/External/lodash.min.js"); break;
-			case "/backbone-min.js": GETHandler.handle["Js"](response,"./Client/Model/External/backbone-min.js"); break;
+			case "/lodash.js" : GETHandler.handle["Js"](response, "./Client/Model/External/lodash.js"); break;
+			case "/backbone.js": GETHandler.handle["Js"](response,"./Client/Model/External/backbone.js"); break;
 			case "/joint.js": GETHandler.handle["Js"](response, "./Client/Model/External/joint.js"); break;
 			case "/networkManager.js": GETHandler.handle["Js"](response, "./Client/Model/networkManager.js"); break;
 			case "/viewManager.js": GETHandler.handle["Js"](response, "./Client/Model/viewManager.js"); break;

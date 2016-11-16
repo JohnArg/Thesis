@@ -1,4 +1,4 @@
-body,h1,h2,h3,h4,h5,h6,p{
+html,body,h1,h2,h3,h4,h5,h6,p{
 	margin: 0;
 	padding:0;
 }
@@ -21,7 +21,8 @@ ul{
 }
 
 .pageHeaderWork{
-	padding:10px;
+	padding-top:10px;
+	padding-bottom:10px;
 	background-color: #1083a0;
 	color:white;
 }
@@ -36,20 +37,15 @@ ul{
 	width:300px;
 }
 
+#panel_container{
+	padding: 0;
+}
+
 #graph_panel{
-	width:800px !important;
-	height:700px !important;
-	background-color: #e6eff2;
-	border-style:solid;
-	border-color: #aaaaaa;
-	padding: 0px;
+	background-color: #dddddd;
+	width:100%;
+	padding: 0;
 }
-
-.floater{
-	float: left;
-	margin-top: 20px;
-}
-
 
 #right_panel{
 	width:480px;
@@ -127,7 +123,7 @@ a:hover, a:active{
 
 .underlined{
 	box-shadow: 0px 1px #dddddd;
-	width:100%;
+	width:400px;
 }
 
 .colored-text{

@@ -22,7 +22,7 @@
 			</div>
 		</div>
 		<div class="container-fluid" id="panel_container">
-			<div class="floater" id="left_panel">
+			<div id="left_panel">
 				<section>
 					<article>
 	  					<h3 class ="underlined colored-text">Graph Viewer</h3>
@@ -46,35 +46,6 @@
 				</div>
 				<div class="well" id="graph_panel"></div>
 			</div>
-			<div class="floater" id="right_panel">
-				<section>
-					<article>
-		  				<h3 class="underlined colored-text">Algorithm Analysis</h3>
-					</article>
-				</section>
-				<div class="dropdown closed">
-				  <button class="btn btn-default workspace_btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				    Select Algorithm
-				  </button>
-				  <div class="dropdown-menu padded top-margin-negative" aria-labelledby="dropdownMenuButton">
-				  	<p class="dropdown-heading underlined">Connected Dominatig Set</p>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_1">Wu & Li</a>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_2">Multipoint Relays</a>
-				    <p class="dropdown-heading underlined">Clusters</p>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_3">DCA</a>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_4">Max Min D-Cluster</a>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_5">Maximan Independent Set</a>
-				    <p class="dropdown-heading underlined">Topology Control</p>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_6">LMST</a>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_7">RNG</a>
-				    <a class="dropdown-item a-algorithm text-center" href="#" id="alg_8">GG</a>
-				  </div>
-				</div>
-				<p id="selection_text">You haven't selected anything yet</p>
-				<div class="btn btn-default workspace_btn" id="results_btn" >Execute</div>
-				<div class="well scrollView" id="final_results"></div>
-			</div>
-		</div>
 		<div id="dca_dialog" title="Node Weights">
 			<p id="dca_dialog_heading">Specify the weights of the nodes before execution. Each node must have a different weight.</p>
 			<form>
@@ -97,8 +68,8 @@
     <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="lodash.min.js"></script>
-	<script src="backbone-min.js"></script>
+    <script src="lodash.js"></script>
+	<script src="backbone.js"></script>
 	<script src="joint.js"></script>
 	<script src="networkManager.js"></script>
 	<script src="viewManager.js"></script>

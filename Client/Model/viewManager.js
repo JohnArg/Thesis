@@ -2,6 +2,11 @@
 This file will be used to alter the view of the page 
 and handle user interaction
 */
+//Some color globals used in our graph
+var DEFAULTFILL = "#19a3d1";
+var DOMINATOR_FILL = "#59cc16";
+var DEFAULTSTROKE = "#22629e";
+var DOMINATOR_STROKE = "#4f9e22";
 var algorithm_code = "empty";
 var algorithm_name;
 var ajaxObject = {
@@ -49,6 +54,12 @@ function _sendAjaxRequest(){
 }
 
 $(document).ready(function() {	
+	paper.setDimensions($("#graph_panel").width(), $(window).height()-200);
+	//capture resize events
+	$(window).on('resize', function(){
+    	paper.setDimensions($("#graph_panel").width(), $(window).height()-200);
+    	paper.scaleContentToFit({ "minScaleX" : 0.3, "minScaleY" : 0.3, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
+	});
 	//Create the dca dialogue's list li elements
 	function _dcaDialogCreateInputs(){
 		var text = "";
