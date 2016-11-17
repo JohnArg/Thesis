@@ -54,10 +54,15 @@ function _sendAjaxRequest(){
 }
 
 $(document).ready(function() {	
-	paper.setDimensions($("#graph_panel").width(), $(window).height()-200);
-	//capture resize events
+
+	$("#final_results").hide();
+	$("#dca_dialog_scroll").hide();
+	paper.setDimensions($("#graph_panel").width(), 1000);
+	$("#tools_panel").height($("#main_container").height());
+	//Capture resize events
 	$(window).on('resize', function(){
-    	paper.setDimensions($("#graph_panel").width(), $(window).height()-200);
+    	paper.setDimensions($("#graph_panel").width(), 1000);
+    	$("#tools_panel").height($("#main_container").height());
     	paper.scaleContentToFit({ "minScaleX" : 0.3, "minScaleY" : 0.3, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
 	//Create the dca dialogue's list li elements
@@ -70,7 +75,6 @@ $(document).ready(function() {
 		}
 		return text;
 	}
-
 	//If the dca dialog "OK" was clicked, handle the weight data to be sent to the server
 	function _dcaDialogWeightsHandler(){
 		weightMap = [];
@@ -98,7 +102,7 @@ $(document).ready(function() {
 			}
 			ajaxObject["extras"]["weights"] = weightMap;
 			_sendAjaxRequest();
-			$("#dca_dialog").dialog("close");
+			$("#dca_dialog").modal("hide");
 		}
 		else{
 			$("#dca_dialog_list").children().each(function(){
@@ -116,9 +120,9 @@ $(document).ready(function() {
 			if(!dialogError){
 				difference = weightMap.length - _.uniq(weightMap).length;
 				if(difference == 0){
-					$("#dca_dialog").dialog("close");
 					ajaxObject["extras"]["weights"] = weightMap;
 					_sendAjaxRequest();
+					$("#dca_dialog").modal("hide");
 				}else{
 					alert("Please don't insert duplicate numbers");
 				}
@@ -127,17 +131,14 @@ $(document).ready(function() {
 	}
 	
 	//Buttons Reactions ===========================================================
-	$("#final_results").hide();
-	$("#dca_dialog_scroll").hide();
-
-	$("#results_btn").click(function() {
+	$("#execute_btn").click(function() {
 		if(algorithm_code != "empty"){
 			if(network.nodes.length > 2){
 				ajaxObject.code = algorithm_code;
 				ajaxObject.net = network;
 				if(algorithm_code == "alg_3"){
 					$("#dca_dialog_list").html(_dcaDialogCreateInputs());
-					$("#dca_dialog").dialog("open");
+					$("#dca_dialog").modal("show");
 				}
 				else{
 					_sendAjaxRequest();
@@ -159,38 +160,28 @@ $(document).ready(function() {
 		_reset("all");
 	});
 
-	$(".a-algorithm").click(function(){
+	$(".algorithm_select").click(function(){
 		algorithm_name = $(this).text();
 		algorithm_code = $(this).attr("id");
 		$("#selection_text").text("You selected the " + algorithm_name + " algorithm");
 	});
 
-	$("#dca_dialog").dialog({
-		resizable: false,
-      	height:300,
-      	modal: true,
-      	minWidth: 400,
-      	autoOpen:false,
+	$("#instructions_btn").click(function(){
+		$("#instructions_modal").modal("show");
+	});
+
+	$("#dca_dialog_continue").click(function(){
+		_dcaDialogWeightsHandler();
 	});
 
 	$("#weights_randomBtn").click(function(){
 		randomWeights = true;
 		$("#dca_dialog_scroll").hide();
-		$("#dca_dialog").css("height", 220);
 	});
 
 	$("#weights_customBtn").click(function(){
 		randomWeights = false;
 		$("#dca_dialog_scroll").show();
-		$("#dca_dialog").css("height", 370);
 	});
-
-	$("#dca_dialog_cancel").click(function(){
-		$("#dca_dialog").dialog("close");
-	});
-
-	$("#dca_dialog_continue").click(function(){
-		_dcaDialogWeightsHandler();
-	});	
 
 });

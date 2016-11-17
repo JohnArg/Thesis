@@ -10,60 +10,73 @@
         <link rel="stylesheet" href ="workspace.css">
 	</head>
 	<body>
-		<div class="pageHeaderWork container-fluid">
+		<div class="pageHeader container-fluid layer2Bot">
 			<div class="row">
 				<div class="col-md-2">
 					<div class="row rowWidthFixed">
 						<div class="col-md-4"><h3>AdHocEd</h3></div>
-						<div class="col-md-8"><p class="subheading lowerHeight">Workspace</p></div>
+						<div class="col-md-8"><p class="subheading">Workspace</p></div>
 					</div>
 				</div>
 				<div class="col-md-9"></div>
 			</div>
 		</div>
-		<div class="container-fluid" id="panel_container">
-			<div id="left_panel">
-				<section>
-					<article>
-	  					<h3 class ="underlined colored-text">Graph Viewer</h3>
-						<h4>Use the tools below to construct a connected network graph :</h4>
-						<ul>
-							<li>Press <b class="text-info">Add Node</b> and click on an area inside the graph view</li>
-							<li>Press <b class="text-info">Remove Node</b> and select the nodes to be removed</li>
-							<li>Press <b class="text-info">Link Nodes</b> and select two nodes to link</li>
-							<li>To remove a link, press <b class="text-info">ESC</b> to deselect tools, and then hover the mouse over a link</li>
-							<li>Press <b class="text-info">ESC</b> to stop the tools</li>
-							<li>Press <b class="text-info">Clear Graph</b> to delete current network and clear the graph</li>
-							<li>Moving a node automatically deselects the tools</li>
-						</ul>
-					</article>
-				</section>
-				<div class="btn-group" role="group">
-					<div class="btn btn-default workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
-					<div class="btn btn-default workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
-					<div class="btn btn-default workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
-					<div class="btn btn-default workspace_btn" id="clear_btn">Clear Graph</div>
+		<div id="main_container">
+			<div id="tools_panel" class="layer1Right">
+				<div><p class="toolboxHeading text-center">Graph Tools</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn" id="instructions_btn">Instructions  <span class="glyphicon glyphicon-info-sign"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="clear_btn">Clear Graph</div>
 				</div>
-				<div class="well" id="graph_panel"></div>
+				<div><p class="toolboxHeading text-center">Select Algorithm</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_1">Wu & Li</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_2">Multipoint Relays</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_3">DCA</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_4">Max Min D-Cluster</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_5">Maximal Independent Set</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_6">LMST</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_7">RNG</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_8">GG</div>
+				</div>
+				<div><p class="toolboxHeading text-center" id="selection_text">Nothing Selected Yet</p></div>
+				<div class="btn btn-default btn-block workspace_btn" id="execute_btn">Execute</div>
 			</div>
-		<div id="dca_dialog" title="Node Weights">
-			<p id="dca_dialog_heading">Specify the weights of the nodes before execution. Each node must have a different weight.</p>
-			<form>
-				<input type="radio" name="random" checked id="weights_randomBtn"> Random Weights <br/>
-				<input type="radio" name="random" id="weights_customBtn"> Insert weights manually <br/>
-			</form>
-			<div id="dca_dialog_scroll" class="scrollView">
-		  		<ul id="dca_dialog_list" class="ul_no_numbering ul_child">
-		  		</ul>
-		  	</div>
-		  	<div id="dca_dialog_btn_container">
-				<button class="workspace_btn" id="dca_dialog_cancel">Cancel</button>
-				<button class="workspace_btn" id="dca_dialog_continue">Continue</button>
-			</div>
+			<div class="subHeader text-center"><p>Graph View</p></div>
+			<div id="graph_panel"></div>
 		</div>
-		<footer class="container-fluid text-center"><h5>Created by John Argyroulis</h5><br/><h6>Thesis for University of Thessaly 
-		(Electrical And Computer Engineering)<h6>
-		</footer>
+		<div id="dca_dialog" class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			    	<div class="modal-header dialogHeader">
+			    		<h4 class="modal-title">Instructions</h4>
+			      	</div>
+			      	<div class="modal-body">
+			        	<p id="dca_dialog_heading">Specify the weights of the nodes before execution. Each node must have a different weight.</p>
+						<form>
+							<input type="radio" name="random" checked id="weights_randomBtn"> Random Weights <br/>
+							<input type="radio" name="random" id="weights_customBtn"> Insert weights manually <br/>
+						</form>
+						<div id="dca_dialog_scroll" class="scrollView">
+					  		<ul id="dca_dialog_list" class="ul_no_numbering ul_child">
+					  		</ul>
+					  	</div>
+					</div>
+			     	<div class="modal-footer">
+			        	<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+			        	<button type="button" class="btn btn-default btn-primary" id="dca_dialog_continue">Continue</button>
+			     	</div>
+			    </div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</div>
+	<footer class="container-fluid text-center layer2Up">
+		<p>Created by John Argyroulis</p>
+		<p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
+	</footer>
 	</body>
     <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>

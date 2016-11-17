@@ -167,6 +167,7 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep){
 				receiver.cluster.push(receiver);
 				receiver.clusterhead = receiver.id;
 				receiver.toSend = {"type" : "CH", "timestep" : (timestep+1)};
+				console.log("Node "+receiver.id+" became clusterhead.");
 				//if those with smaller weight have sent JOIN exit
 				var exit = true;
 				for(var n=0; n<smallerWeightNeighbors.length; n++){
