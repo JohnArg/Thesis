@@ -22,8 +22,6 @@ var network = new Network();			//The Network object that holds all the network i
 var graph = new joint.dia.Graph;		//the main graph object
 var paper = new joint.dia.Paper({	//the main view panel 
     el: $('#graph_panel'),
-    width: 800,
-    height: 700,
     model: graph,
     gridSize: 1,
     restrictTranslate: true

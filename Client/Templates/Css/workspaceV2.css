@@ -9,7 +9,6 @@ body{
 }
 
 ul{
-	margin-top: 10px;
 	margin-left:10px;
 	padding: 10px;
 }
@@ -67,12 +66,15 @@ input{
 	z-index: 2;
 	box-shadow: 0px -2px 3px 0px #222222;
 }
+
 /* Content Styling ========================= */
+
 .pageHeader{
 	padding-top:10px;
 	padding-bottom:10px;
 	background-color: #0288d1;
 	color:white;
+	height:50px;
 }
 
 .subHeader{
@@ -80,16 +82,14 @@ input{
 	color:#b3e5fc;
 	padding:10px;
 	font-size: 13pt;
+	text-align: center;
 }
 
-.subheading{
+.rowSubheading{
 	color:#e1f5fe;
 	margin-left:15px;
 	font-size:13pt;
-}
-
-.rowWidthFixed{
-	width:300px;
+	margin-left:-40px;
 }
 
 #tools_panel{
@@ -102,6 +102,7 @@ input{
 	background-color: #e1f5fe;
 	padding: 0;
 	margin-left: 160px;
+	height:1000px;
 }
 
 .toolboxHeading{
@@ -122,15 +123,17 @@ input{
 	font-size: 11pt;
 }
 
-.accent{
-	background-color: #ff5722;
-	color:white;
-}
-
 .workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
 	background-color: #ff9800;
 	color:white;
 }
+
+.accentColor{
+	background-color: #ff5722;
+	color:white;
+	border-color: #ff5722;
+}
+
 
 footer{
 	background-color: #263238;
@@ -138,6 +141,7 @@ footer{
 	padding-top:20px;
 	padding-bottom: 20px;
 	font-size: 12pt;
+	text-align: center;
 }
 
 .solution-result{
@@ -150,7 +154,8 @@ footer{
 }
 
 .step:hover, .step:active{
-	
+	background-color: #0288d1;
+	color:white;
 }
 
 /* Dialog Css =========================== */

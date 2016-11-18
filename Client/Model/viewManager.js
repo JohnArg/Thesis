@@ -57,11 +57,11 @@ $(document).ready(function() {
 
 	$("#final_results").hide();
 	$("#dca_dialog_scroll").hide();
-	paper.setDimensions($("#graph_panel").width(), 1000);
 	$("#tools_panel").height($("#main_container").height());
+	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
 	//Capture resize events
 	$(window).on('resize', function(){
-    	paper.setDimensions($("#graph_panel").width(), 1000);
+    	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
     	$("#tools_panel").height($("#main_container").height());
     	paper.scaleContentToFit({ "minScaleX" : 0.3, "minScaleY" : 0.3, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
@@ -167,7 +167,7 @@ $(document).ready(function() {
 	});
 
 	$("#instructions_btn").click(function(){
-		$("#instructions_modal").modal("show");
+		$("#instructions_dialog").modal("show");
 	});
 
 	$("#dca_dialog_continue").click(function(){
