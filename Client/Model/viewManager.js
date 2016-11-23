@@ -76,8 +76,8 @@ function _responsiveSizes(){
 	$("#solutionBox").height($("#main_container").height());
 	$("#solutionBox").width( Math.floor( $("#main_container").width()/5) );
 	$("#solutionBoxData").height($("#solutionBox").height() - 85);
-	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
-	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
+	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
+	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
 }
 
