@@ -64,9 +64,9 @@
 				</div><!-- /.modal-dialog -->
 			</div><!-- /.modal -->
 		</div>
-		<div class="pageHeader layer2Bot">
-			<div class="logo"><h3>AdHocEd</h3></div>
-			<div id="topSubHeading"><p class="subHeading">Workspace</p></div>
+		<div id="pageHeader" class= " layer2Bot flexContainer">
+			<div id="logo"><h3>AdHocEd</h3></div>
+			<div id="logoSubText"><p class="subHeading">Workspace</p></div>
 		</div>
 		<div id="main_container">
 			<div id="tools_panel" class="layer1Right">
@@ -92,16 +92,23 @@
 				<div><p class="toolboxHeading text-center" id="selection_text">Nothing Selected Yet</p></div>
 				<div class="btn btn-default btn-block workspace_btn accentColor" id="execute_btn">Execute</div>
 			</div>
-			<div class="subHeader"><p>Graph View</p></div>
+			<div id="drawHeader"><p>Graph View</p></div>
 			<div id="graph_panel"></div>
-		</div>
+			<div id="solutionBox">
+				<div id="solutionBoxHeader">
+					<p>Algorithm Analysis Panel </p>
+				</div>
+				<div id="solutionBoxData">
+				</div>
+			</div>
+		</div>	
 		<footer class="layer2Up">
 			<p>Created by John Argyroulis</p>
 			<p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
 		</footer>
 	</body>
-    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="lodash.js"></script>
 	<script src="backbone.js"></script>

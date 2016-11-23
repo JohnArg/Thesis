@@ -1,199 +1,261 @@
+/* Globals ======================= */
+/*Color palette */
+/* Google Colors
+$header_color : #0288d1;
+$header_dark : #01579b;
+$toolbar_color : #37474f;
+$btn_color : #03a9f4;
+$btn_active : #ff9800 ;
+$btn_important: #ff5722;
+$footer_color: #263238; */
+/*Mixing */
+/*Other Globals*/
 /* Initializers ================== */
-html,body,h1,h2,h3,h4,h5,h6,p{
-	margin: 0;
-	padding:0;
-}
+html, body, h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0; }
 
-h1,h2,h3,h4,h5,h6{
-	display: inline-block;
-}
+h1, h2, h3, h4, h5, h6 {
+  display: inline-block; }
 
-body{
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-}
+body {
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+  position: relative; }
 
-ul{
-	margin-left:10px;
-	padding: 10px;
-}
+ul {
+  margin-left: 10px;
+  padding: 10px; }
 
-input{
-	width:50px;
-	height:30px;
-	margin-bottom: 20px;
-	background-color: #eeeeee;
-	border: 1px solid #aaaaaa;
-	border-radius: 5px;
-	margin-right:10px;
-}
+input {
+  width: 50px;
+  height: 30px;
+  margin-bottom: 20px;
+  background-color: #eeeeee;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  margin-right: 10px; }
 
 /* Bootstrap override ========= */
-.btn-group-vertical{
-	-webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
+.btn-group-vertical {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important; }
 
-.btn:first-child:not(:last-child){
-	-webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
+.btn:first-child:not(:last-child) {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important; }
 
-.btn:last-child:not(:first-child){
-	-webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
+.btn:last-child:not(:first-child) {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important; }
 
-.modal-content{
-	-webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
+.modal-content {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important; }
+
+.btn, .btn-primary, .btn-default {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important; }
+
+/* Flexbox ========================================= */
+.flexContainer {
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-start; }
+
+.flexContainerNW {
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start; }
+
+.flexContainerVrt {
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: flex-start; }
 
 /* Layers (biggest on top - level 0 = ground) ================================== */
-.layer1Right{
-	position: relative;
-	z-index: 1;
-	box-shadow: 1px 1px 2px 0px #222222;
-}
+.layer1Right {
+  position: relative;
+  z-index: 2;
+  box-shadow: 1px 1px 2px 0px #222222; }
 
-.layer2Bot{
-	position: relative;
-	z-index: 2;
-	box-shadow: 0px 3px 4px 0px #222222;
-}
+.layer2Bot {
+  position: relative;
+  z-index: 3;
+  box-shadow: 0px 3px 4px 0px #222222; }
 
-.layer2Up{
-	position: relative;
-	z-index: 2;
-	box-shadow: 0px -2px 3px 0px #222222;
-}
+.layer2Up {
+  position: relative;
+  z-index: 3;
+  box-shadow: 0px -2px 3px 0px #222222; }
 
-/* Content Styling ========================= */
-.logo{
-	display: inline-block;
-	position: relative;
-}
+/* Header =================================== */
+#pageHeader {
+  padding: 10px;
+  background-color: #1b8db7;
+  color: white;
+  height: 50px; }
 
-.pageHeader{
-	padding:10px;
-	background-color: #0288d1;
-	color:white;
-	height:50px;
-}
+#logo {
+  order: 1; }
 
-.subHeader{
-	background-color: #01579b;
-	color:#b3e5fc;
-	padding:10px;
-	font-size: 13pt;
-	text-align: center;
-}
+#logoSubText {
+  order: 2; }
 
-.subHeading{
-	color:#e1f5fe;
-	font-size:13pt;
-}
+.subHeading {
+  color: #e1f5fe;
+  font-size: 13pt;
+  margin-left: 10px; }
 
-#topSubHeading{
-	position: relative;
-	margin-left : 10px;
-	display: inline-block;
-}
+#main_container {
+  position: relative; }
 
-#tools_panel{
-	width: 160px;
-	position: absolute;
-	background-color: #37474f;
-}
+/* Tools panel ============================ */
+#tools_panel {
+  width: 160px;
+  min-width: 160px;
+  background-color: #2b373a;
+  position: absolute; }
 
-#graph_panel{
-	background-color: #e1f5fe;
-	padding: 0;
-	margin-left: 160px;
-	height:1000px;
-}
+.toolboxHeading {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #dddddd;
+  padding: 10px;
+  font-size: 11pt; }
 
-.toolboxHeading{
-	margin-top: 10px;
-	margin-bottom: 10px;
-	color:#dddddd;
-	padding:10px;
-	font-size:11pt;
-}
+/* Draw Area =================================== */
+#drawHeader {
+  background-color: #1b5f87;
+  color: #b3e5fc;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 13pt;
+  text-align: center;
+  margin-left: 160px;
+  position: relative; }
 
-.workspace_btn{
-	background-color: #03a9f4;
-	color:white;
-	border-style:none;
-	border-radius:0px;
-	white-space: normal;
-	padding:10px;
-	font-size: 11pt;
-}
+#graph_panel {
+  background-color: #f4fcff;
+  padding: 0;
+  height: 1000px;
+  margin-left: 160px;
+  position: relative; }
 
-.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
-	background-color: #ff9800;
-	color:white;
-}
+/*Solution Box styling =========================== */
+#solutionBox {
+  background-color: #1b5f87;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0; }
 
-.accentColor{
-	background-color: #ff5722;
-	color:white;
-	border-color: #ff5722;
-}
+#solutionBoxHeader {
+  background-color: #1ea9db;
+  color: white;
+  padding: 10px;
+  font-size: 13pt;
+  text-align: center; }
 
+#solutionBoxData {
+  padding: 10px;
+  overflow-y: scroll;
+  background-color: #d9eaf4; }
 
-footer{
-	background-color: #263238;
-	color: white;
-	padding-top:20px;
-	padding-bottom: 20px;
-	font-size: 12pt;
-	text-align: center;
-}
+.colored-text {
+  color: #1ea9db; }
 
-.solution-result{
-	font-size: 12pt;
-}
+.solution-result {
+  font-size: 12pt; }
 
 .step {
-	margin-bottom: 5px;
-	padding: 5px;
-}
+  margin-bottom: 5px;
+  padding: 5px; }
 
-.step:hover, .step:active{
-	background-color: #0288d1;
-	color:white;
-}
+.step:hover, .step:active {
+  background-color: #1b8db7;
+  color: white; }
+
+/* Buttons ============================================ */
+.workspace_btn {
+  background-color: #1ea9db;
+  color: white;
+  border-style: none;
+  border-radius: 0px;
+  white-space: normal;
+  padding: 10px;
+  font-size: 11pt; }
+
+.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked {
+  background-color: #eaaf31;
+  color: white; }
+
+.accentColor {
+  background-color: #cc5c16;
+  color: white;
+  border-color: #cc5c16; }
+
+/* Footer =========================== */
+footer {
+  background-color: #263238;
+  color: white;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-size: 12pt;
+  text-align: center;
+  height: 90px; }
 
 /* Dialog Css =========================== */
-.dialogHeader{
-	background-color: #0288d1;
-	color:white;
-	padding:10px;
-	font-size: 13pt;
-	border-radius:0px;
-}
+.dialogHeader {
+  background-color: #1b8db7;
+  color: white;
+  padding: 10px;
+  font-size: 13pt;
+  border-radius: 0px; }
 
-.scrollView{
-	overflow-y: scroll;
-	height:200px;
-}
+.scrollView {
+  overflow-y: scroll;
+  height: 200px; }
 
 input[type="radio"] {
-    line-height: normal;
-    margin: 10px 0 0;
-    position: relative;
-}
-
+  line-height: normal;
+  margin: 10px 0 0;
+  position: relative;
+  width: 20px;
+  height: 20px; }
 
 /* joint js disable link tools ====================== */
-.link-tools .tool-remove { display: none; }
-.link-tools .tool-options { display: none; }
-.link .mark-errors { display: none; }
-.link .marker-arrowheads{ display: none; }
-.link .marker-vertex-group{display: none;}
-.link .connection-wrap{display: none;}
+.link-tool .tool-remove {
+  display: none; }
+
+.link-tool .link-options {
+  display: none; }
+
+.joint-link .mark-errors {
+  display: none; }
+
+.joint-link .marker-arrowheads {
+  display: none; }
+
+.joint-link .marker-vertices {
+  display: none; }
+
+.joint-link .connection-wrap {
+  display: none; }
+
+/*# sourceMappingURL=workspaceV2.css.map */

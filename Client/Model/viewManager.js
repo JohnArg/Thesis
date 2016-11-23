@@ -3,7 +3,7 @@ This file will be used to alter the view of the page
 and handle user interaction
 */
 //Some color globals used in our graph
-var DEFAULTFILL = "#19a3d1";
+var DEFAULTFILL = "#27a7ce";
 var DOMINATOR_FILL = "#59cc16";
 var DEFAULTSTROKE = "#22629e";
 var DOMINATOR_STROKE = "#4f9e22";
@@ -18,6 +18,7 @@ var stepDataArray = [];
 var randomWeights = true;
 var weightMap = [];
 var dialogError = false;
+var footerHeight = 90;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(options){
@@ -53,17 +54,40 @@ function _sendAjaxRequest(){
 	});
 }
 
-$(document).ready(function() {	
+/*//Make the solutionBox follow scroll
+function _solutionBoxFollow(){
+	var limit = $("#page_header").height() + $("#main_container").height();
+	var winOffset = $(window).scrollTop() + $(window).height();
+	var topLine;
+	if(winOffset < limit ){
+		topLine = winOffset - $("#solutionBox").height();
+		$("#solutionBox").css({ top : topLine + "px"});
+	}
+	else{
+		topLine = limit - $("#solutionBox").height();
+		$("#solutionBox").css({ top : topLine + "px"});
+		console.log("I'm in Else");
+	}
+}*/
 
-	$("#final_results").hide();
+function _responsiveSizes(){
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
+	$("#solutionBox").height($("#main_container").height());
+	$("#solutionBox").width( Math.floor( $("#main_container").width()/5) );
+	$("#solutionBoxData").height($("#solutionBox").height() - 85);
+	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
+	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
-	//Capture resize events
+}
+
+$(document).ready(function() {	
+	//Initialize on ready
+	_responsiveSizes();
+	//Capture Window events
 	$(window).on('resize', function(){
-    	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
-    	$("#tools_panel").height($("#main_container").height());
-    	paper.scaleContentToFit({ "minScaleX" : 0.3, "minScaleY" : 0.3, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
+    	_responsiveSizes();
+    	paper.scaleContentToFit({ "minScaleX" : 0.4, "minScaleY" : 0.4, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
 	//Create the dca dialogue's list li elements
 	function _dcaDialogCreateInputs(){

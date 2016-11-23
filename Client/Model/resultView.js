@@ -47,7 +47,6 @@ function handleResponse(data, status, XMLHttpRequest){
 	}
 }
 
-
 //Show the steps from th Wu Li CDS algorithm
 function _wuLiDominatorsAnalysis(response){
 	stepDataArray = []; //clear the global steps data from previous executions
@@ -70,8 +69,7 @@ function _wuLiDominatorsAnalysis(response){
 			text += "<p class=\"colored-text\">Results so far : [ " + response["solution"][property].result["dominators"]+" ]</p>";
 		}
 	}
-	$("#final_results").html(text);
-	$("#final_results").show();
+	$("#solutionBoxData").html(text);
 	_paintDominators(response["solution"].final_result);
 }
 
@@ -109,8 +107,7 @@ function _mprCdsAnalysis(response){
 		}
 		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["MPR_cds"]+" ]</p>";
 	}
-	$("#final_results").html(text);
-	$("#final_results").show();
+	$("#solutionBoxData").html(text);
 	_paintDominators(response["solution"].final_result);
 }
 
