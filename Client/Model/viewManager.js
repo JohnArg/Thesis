@@ -2,11 +2,6 @@
 This file will be used to alter the view of the page 
 and handle user interaction
 */
-//Some color globals used in our graph
-var DEFAULTFILL = "#27a7ce";
-var DOMINATOR_FILL = "#59cc16";
-var DEFAULTSTROKE = "#22629e";
-var DOMINATOR_STROKE = "#4f9e22";
 var algorithm_code = "empty";
 var algorithm_name;
 var ajaxObject = {
@@ -14,32 +9,24 @@ var ajaxObject = {
 	"net" : {},
 	"extras" : {}	//extra data assosiated with the network that an algorithm needs
 };
-var stepDataArray = [];
 var randomWeights = true;
 var weightMap = [];
 var dialogError = false;
 var footerHeight = 90;
 
 //Reset everything (Clear graph view and data so far)
-function _reset(options){
-	if(options == "all"){
-		graph.clear();
-		network.nodes = [];
-		usedIds = []; 
-		panelOffset = $("#graph_panel").offset();
-		addingNode = false; 							
-		removingNode = false;							
-		linkSelect1 = false;							
-		linkSelect2 = false;							
-		linkStart = null;										
-		linkEnd = null; 	 
-	}
-	else{
-		for(var i=0; i<network.nodes.length; i++){
-			network.nodes[i].dominator = false;
-			network.nodes[i].preferedBy = 0;
-		}
-	}
+function _reset(){
+	graph.clear();
+	network.nodes = [];
+	usedIds = []; 
+	panelOffset = $("#graph_panel").offset();
+	addingNode = false; 							
+	removingNode = false;							
+	linkSelect1 = false;							
+	linkSelect2 = false;							
+	linkStart = null;										
+	linkEnd = null; 	 
+	ajaxObject["extras"] = {};	
 }
 
 //Send an Ajax Request to the server
@@ -53,22 +40,6 @@ function _sendAjaxRequest(){
 		success : handleResponse
 	});
 }
-
-/*//Make the solutionBox follow scroll
-function _solutionBoxFollow(){
-	var limit = $("#page_header").height() + $("#main_container").height();
-	var winOffset = $(window).scrollTop() + $(window).height();
-	var topLine;
-	if(winOffset < limit ){
-		topLine = winOffset - $("#solutionBox").height();
-		$("#solutionBox").css({ top : topLine + "px"});
-	}
-	else{
-		topLine = limit - $("#solutionBox").height();
-		$("#solutionBox").css({ top : topLine + "px"});
-		console.log("I'm in Else");
-	}
-}*/
 
 function _responsiveSizes(){
 	$("#dca_dialog_scroll").hide();
@@ -87,7 +58,7 @@ $(document).ready(function() {
 	//Capture Window events
 	$(window).on('resize', function(){
     	_responsiveSizes();
-    	paper.scaleContentToFit({ "minScaleX" : 0.4, "minScaleY" : 0.4, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
+    	paper.scaleContentToFit({ "minScaleX" : 0.5, "minScaleY" : 0.5, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
 	//Create the dca dialogue's list li elements
 	function _dcaDialogCreateInputs(){
@@ -103,27 +74,14 @@ $(document).ready(function() {
 	function _dcaDialogWeightsHandler(){
 		weightMap = [];
 		dialogError = false;
-		var noDuplicates = false;
-		var uniqList = [];
 		var difference = 0;
 		if(randomWeights){
-			while(!noDuplicates){	//the weights must be different
-				for(var i=0; i<network.nodes.length; i++){
-					weightMap.push(Math.floor( Math.random() * (40 - 10)) + 10 );
-				}
-				uniqList = _.uniq(weightMap);
-				difference = weightMap.length - uniqList.length;
-				if(difference == 0){
-					noDuplicates = true;
-					break;
-				}
-				else{
-					weightMap = uniqList;
-					for(var j=0; j<difference; j++){
-						weightMap.push(Math.floor( Math.random() * (40 - 10)) + 10 );
-					}
-				}
+			//use the ids as weights
+			for(var i=0; i<network.nodes.length; i++){
+				weightMap.push(network.nodes[i].id);
 			}
+			//then randomly suffle the weights
+			weightMap = _.shuffle(weightMap);
 			ajaxObject["extras"]["weights"] = weightMap;
 			_sendAjaxRequest();
 			$("#dca_dialog").modal("hide");
@@ -148,7 +106,7 @@ $(document).ready(function() {
 					_sendAjaxRequest();
 					$("#dca_dialog").modal("hide");
 				}else{
-					alert("Please don't insert duplicate numbers");
+					alert("Please don't insert duplicate weights.");
 				}
 			}
 		}
@@ -181,7 +139,7 @@ $(document).ready(function() {
 
 	$("#clear_btn").click(function() {
 		//Reinitialize the main global variables
-		_reset("all");
+		_reset();
 	});
 
 	$(".algorithm_select").click(function(){

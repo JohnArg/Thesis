@@ -14,15 +14,15 @@ var dcaFactory = function(){
 var DCA_clusters = function(){ 
 	var that = this;
 	that.solution = {
-		"final_result" : that.clusters,
-		"DCA_solution" : {}
+		"final_result" : [],
+		"DCA_timesteps" : []
 	};
-	that.clusters = []; //the clsuters formed
 	that.calculate_DCA_Clusters = function(network, extras){
-		console.log("Weights : ", extras["weights"]);
 		_changeToDcaNodes(network, extras["weights"]);
-		_procedureInit(network);
-		_stepSimulator(network);
+		_procedureInit(network, that.solution);
+		_stepSimulator(network, that.solution);
+		debugger;
+		that.solution["final_result"] = _returnClusters(network);
 		return that.solution;
 	};
 }
@@ -66,24 +66,35 @@ var _checkIfNodeSent = function(type, me, node){
 }
 
 //Simulates sending a CH message to the neighborhood
-var _sendCH = function(node, network){
-	console.log("Node "+node.id+" sent CH");
+var _sendCH = function(node, network, timestepSolution){
+	var stepIndex;
+	timestepSolution.createStep();
+	stepIndex = timestepSolution.steps.length - 1;
+	timestepSolution.steps[stepIndex].text = "Node "+node.id+" broadcasted CH.";
 	//send a CH message
-	node.clusterhead = node.id;
-	node.cluster.push(node.id);
+	if(node.clusterhead != node.id){
+		node.clusterhead = node.id;
+		node.cluster.push(node.id);
+	}
 }
 
 //Simulates sending a JOIN message to the neighborhood
-var _sendJOIN = function(node, clusterhead, network){
-	console.log("Node "+node.id+" sent JOIN ("+node.id+","+clusterhead.id+") and Exited");
+var _sendJOIN = function(node, clusterhead, network, timestepSolution){
+	var stepIndex;
+	timestepSolution.createStep();
+	stepIndex = timestepSolution.steps.length - 1;
+	timestepSolution.steps[stepIndex].text = "Node "+node.id+" broadcasted JOIN ("+node.id+","+clusterhead.id+") and Exited.";
 	node.EXIT = true;
 }
 
 //Called when a node receives CH
-var _receiveCH = function(node, sender, network, timestep){
-	console.log("Node "+node.id+" received CH from "+sender.id);
+var _receiveCH = function(node, sender, network, timestep, timestepSolution){
 	var biggerWeightNeighbors = [];
 	var tempNode;
+	var stepIndex;
+	timestepSolution.createStep();
+	stepIndex = timestepSolution.steps.length - 1;
+	timestepSolution.steps[stepIndex].text = "Node "+node.id+" received CH from "+sender.id+".";
 	node.CH_messagesInbox.push({"sender" : sender.id, "weight" : sender.weight});
 	//get all the neighbors with bigger weights than the sender
 	for(var i=0; i<node.neighbors.length; i++){
@@ -108,11 +119,11 @@ var _receiveCH = function(node, sender, network, timestep){
 }
 
 //How a clusterhead handles a JOIN message
-var _clusterheadHandlesJOIN = function(receiver, sender, clusterhead, smallerWeightNeighbors, network){
+var _clusterheadHandlesJOIN = function(receiver, sender, clusterhead, smallerWeightNeighbors, network, step){
 	//if  the JOIN is for me
 	if(clusterhead.id == receiver.id){
 		receiver.cluster.push(sender.id);
-		console.log("Clusterhead "+receiver.id+" put node "+sender.id+" to its cluster.");
+		step.text += "Clusterhead "+receiver.id+" put node "+sender.id+" to its cluster.</br>";
 	}
 	//if all the smaller weighted neighbors joined someone else exit
 	var allSent = true;
@@ -124,17 +135,20 @@ var _clusterheadHandlesJOIN = function(receiver, sender, clusterhead, smallerWei
 	}
 	if(allSent){
 		receiver.EXIT = true;
-		console.log("Clusterhead "+receiver.id+" Exited.");
+		step.text +="Clusterhead "+receiver.id+" Exited. All smaller weighted neighbors have sent JOIN."; 
 	}
 }
 
 //Called when a node receives JOIN
-var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep){
-	console.log("Node "+receiver.id+" received JOIN ("+sender.id+","+clusterhead.id+")");
+var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep, timestepSolution){
 	var smallerWeightNeighbors = [];
 	var tempNode;
 	var conditionOR; //boolean
 	var conditionJOIN; //boolean
+	var stepIndex;
+	timestepSolution.createStep();
+	stepIndex = timestepSolution.steps.length - 1;
+	timestepSolution.steps[stepIndex].text = "Node "+receiver.id+" received JOIN ("+sender.id+","+clusterhead.id+").</br>";
 	receiver.JOIN_messagesInbox.push({"sender": sender.id, "clusterhead" : clusterhead.id});
 	//get the neighbors with smaller weight than me, we are going to need them later
 	for(var i=0; i<receiver.neighbors.length; i++){
@@ -145,7 +159,7 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep){
 	}
 	//if i am a clusterhead
 	if(receiver.clusterhead == receiver.id){
-		_clusterheadHandlesJOIN(receiver, sender, clusterhead, smallerWeightNeighbors, network);
+		_clusterheadHandlesJOIN(receiver, sender, clusterhead, smallerWeightNeighbors, network, timestepSolution.steps[stepIndex]);
 	}
 	else{
 		//get the neighbors with bigger weight than mine and check if they have all sent CH or JOIN
@@ -164,10 +178,10 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep){
 		if(conditionOR){
 			if(conditionJOIN){ //if they all sent JOIN
 				//become clusterhead
-				receiver.cluster.push(receiver);
+				receiver.cluster.push(receiver.id);
 				receiver.clusterhead = receiver.id;
 				receiver.toSend = {"type" : "CH", "timestep" : (timestep+1)};
-				console.log("Node "+receiver.id+" became clusterhead.");
+				timestepSolution.steps[stepIndex].text += "Node "+receiver.id+" became clusterhead. All bigger weighted neighbors have sent JOIN.";
 				//if those with smaller weight have sent JOIN exit
 				var exit = true;
 				for(var n=0; n<smallerWeightNeighbors.length; n++){
@@ -178,13 +192,18 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep){
 				}
 				if(exit){
 					receiver.EXIT = true;
-					console.log("Node "+receiver.id+" Exited.");
+					receiver.toSend = {};
+					timestepSolution.steps[stepIndex].text += "</br>Node "+receiver.id+" Exited."; 
 				}
 			}
-			else{ //they all sent CH
+			else{ //they all sent CH or JOIN
 				//choose the clusterhead with the biggest weight and JOIN him
 				receiver.clusterhead = _getBiggestClusterhead(receiver.CH_messagesInbox);
-				receiver.toSend = {"type" : "JOIN", "receiver" : clusterhead.id, "timestep" : (timestep+1)};
+				receiver.toSend = {"type" : "JOIN", "receiver" : receiver.clusterhead, "timestep" : (timestep+1)};
+				timestepSolution.steps[stepIndex].text += "Node "+receiver.id+" sees that all the neighbors with bigger weights have" +
+				" sent either CH or JOIN. In the next step he will send JOIN to the clusterhead neighbor with the biggest weight, which is "
+				+receiver.clusterhead+
+				" .";
 			}
 		}
 	}
@@ -202,11 +221,13 @@ var _getBiggestClusterhead = function(CH_inbox){
 }
 
 //Initial procedure : Those with the biggest ids in their neighborhood send CH
-var _procedureInit = function(network){
-	console.log("Time step 1 ==================================");
+var _procedureInit = function(network, solution){
 	var greaterWeight;
 	var receiveQueue = [];
 	var neighbors = [];
+	var timestep1 = solutionFactory.solution();
+	solution["DCA_timesteps"].push(timestep1);
+	timestep1.text ="Timestep 1.<br/>Beginning with \"Procedure Init\" of the DCA Algorithm.</br>Only the nodes with the highest weight in their neighborhood send CH.";
 	//First send the messages
 	for(var i=0; i<network.nodes.length; i++){
 		neighbors = netOperator.returnNeighborObjects(network.nodes[i], network);
@@ -218,16 +239,17 @@ var _procedureInit = function(network){
 			}
 		}
 		if(greaterWeight){
-			_sendCH(network.nodes[i], network);
+			_sendCH(network.nodes[i], network, timestep1);
 			for(var k=0; k<neighbors.length; k++){
 				receiveQueue.push({"nodeToCall" : neighbors[k], "sender" : network.nodes[i]});
 			}
 		}
 	}
-	//Now call the receive methids
+	//Now call the receive methods
 	for(var i=0; i<receiveQueue.length; i++){
-		_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, 1);
+		_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, 1, timestep1);
 	}
+	timestep1.result = {"clusters" : _returnClusters(network)};
 }
 
 //Have all nodes exited the execution?
@@ -241,49 +263,71 @@ var _haveAllExited = function(network){
 }
 
 //It simulates the steps of execution for the algorithm after _procedureInit
-var _stepSimulator = function(network){
+var _stepSimulator = function(network, solution){
 	var node;
 	var neighbors;
 	var timestep = 2;
+	var stepCounter;
+	var timestepSol;	//will contain the solution of the current timestep
 	var receiveQueue = [];	//In an execution step receiving a message happens at the end, after sending all messages pending so far. 
 							//So we use a queue to track which receive functions to call after all nodes have sent their messages.
 	while(!_haveAllExited(network)){
-	//while(timestep < 20){
-		console.log("Time step"+timestep+"==================================");
+		stepCounter = 0;
+		timestepSol = solutionFactory.solution();
+		solution["DCA_timesteps"].push(timestepSol);
+		timestepSol.text ="Timestep "+timestep+".</br>";
 		receiveQueue = [];
 		//First send all pending messages for this step
 		for(var i=0; i<network.nodes.length; i++){
 			node = network.nodes[i];
-			if(node.toSend["type"] != null){
-				neighbors = netOperator.returnNeighborObjects(node, network);
-				if((node.toSend["type"] == "CH") && (node.toSend["timestep"] == timestep)){
-					_sendCH(node, network);
-					for(var j=0; j<neighbors.length; j++){
-						receiveQueue.push({"type" : "CH", "nodeToCall" : neighbors[j], "sender" : node});
+			if(!node.EXIT){
+				if(node.toSend["type"] != null){
+					neighbors = netOperator.returnNeighborObjects(node, network);
+					if((node.toSend["type"] == "CH") && (node.toSend["timestep"] == timestep)){
+						_sendCH(node, network, timestepSol);
+						for(var j=0; j<neighbors.length; j++){
+							receiveQueue.push({"type" : "CH", "nodeToCall" : neighbors[j], "sender" : node});
+						}
+						node.toSend = {};
 					}
-					node.toSend = {};
-				}
-				else if((node.toSend["type"] == "JOIN") && (node.toSend["timestep"] == timestep)){
-					_sendJOIN(node, netOperator.returnNodeById(node.toSend["receiver"], network), network);
-					for(var j=0; j<neighbors.length; j++){
-						receiveQueue.push({"type" : "JOIN", "nodeToCall" : neighbors[j], "sender" : node, 
-							"receiver" : netOperator.returnNodeById(node.toSend["receiver"], network)});
+					else if((node.toSend["type"] == "JOIN") && (node.toSend["timestep"] == timestep)){
+						_sendJOIN(node, netOperator.returnNodeById(node.toSend["receiver"], network), network, timestepSol);
+						for(var j=0; j<neighbors.length; j++){
+							receiveQueue.push({"type" : "JOIN", "nodeToCall" : neighbors[j], "sender" : node, 
+								"receiver" : netOperator.returnNodeById(node.toSend["receiver"], network)});
+						}
+						node.toSend = {};
 					}
-					node.toSend = {};
 				}
 			}
 		}
 		//Now execute the receiving functions
 		for(var i=0; i<receiveQueue.length; i++){
 			if((receiveQueue[i]["type"] == "CH") && (receiveQueue[i]["nodeToCall"].EXIT == false)){
-				_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, timestep);
+				_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, timestep, timestepSol);
 			}
 			else if((receiveQueue[i]["type"] == "JOIN") && (receiveQueue[i]["nodeToCall"].EXIT == false)){
-				_receiveJOIN(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], receiveQueue[i]["receiver"], network, timestep);
+				_receiveJOIN(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], receiveQueue[i]["receiver"], network, timestep, timestepSol);
 			}
 		}
 		timestep ++;
+		timestepSol.result = {"clusters" : _returnClusters(network)};
 	}
+}
+
+var _returnClusters = function(network){
+	debugger;
+	var clusters = [];
+	var newCluster;
+	for(var i=0; i<network.nodes.length; i++){
+		if(network.nodes[i].id == network.nodes[i].clusterhead){
+			newCluster = new Cluster();
+			newCluster.clusterhead = network.nodes[i].clusterhead;
+			newCluster.group = network.nodes[i].cluster.slice();
+			clusters.push(newCluster);
+		}
+	}
+	return clusters;
 }
 
 module.exports.dcaFactory = dcaFactory;

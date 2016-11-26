@@ -148,7 +148,6 @@ input{
 }
 
 /* Tools panel ============================ */
-
 #tools_panel{
 	width: $toolbarWidth;
 	min-width: 160px;
@@ -218,6 +217,7 @@ input{
 .step {
 	margin-bottom: 5px;
 	padding: 5px;
+	@include border_radius();
 }
 
 .step:hover, .step:active{
@@ -226,7 +226,6 @@ input{
 }
 
 /* Buttons ============================================ */
-
 .workspace_btn{
 	background-color: $btn_color;
 	color:white;
@@ -249,7 +248,6 @@ input{
 }
 
 /* Footer =========================== */
-
 footer{
 	background-color: $footer_color;
 	color: white;
