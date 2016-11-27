@@ -76,6 +76,7 @@ var _sendCH = function(node, network, timestepSolution){
 		node.clusterhead = node.id;
 		node.cluster.push(node.id);
 	}
+	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
 
 //Simulates sending a JOIN message to the neighborhood
@@ -85,6 +86,7 @@ var _sendJOIN = function(node, clusterhead, network, timestepSolution){
 	stepIndex = timestepSolution.steps.length - 1;
 	timestepSolution.steps[stepIndex].text = "Node "+node.id+" broadcasted JOIN ("+node.id+","+clusterhead.id+") and Exited.";
 	node.EXIT = true;
+	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
 
 //Called when a node receives CH
@@ -116,6 +118,7 @@ var _receiveCH = function(node, sender, network, timestep, timestepSolution){
 		//send JOIN to sender
 		node.toSend = {"type" : "JOIN", "receiver" : sender.id, "timestep" : (timestep+1)};
 	}
+	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
 
 //How a clusterhead handles a JOIN message
@@ -207,6 +210,7 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep, ti
 			}
 		}
 	}
+	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
 
 //Get the clusterhead with the biggest weight
@@ -249,7 +253,6 @@ var _procedureInit = function(network, solution){
 	for(var i=0; i<receiveQueue.length; i++){
 		_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, 1, timestep1);
 	}
-	timestep1.result = {"clusters" : _returnClusters(network)};
 }
 
 //Have all nodes exited the execution?
@@ -311,7 +314,6 @@ var _stepSimulator = function(network, solution){
 			}
 		}
 		timestep ++;
-		timestepSol.result = {"clusters" : _returnClusters(network)};
 	}
 }
 

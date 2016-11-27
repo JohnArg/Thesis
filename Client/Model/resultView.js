@@ -14,7 +14,6 @@ var CLUSTER_COLORS = [
 	{"head_color" : "#3b4bf7", "group_color" : "#1c29b2", "stroke": "#1c29b2" },
 	{"head_color" : "#d87117", "group_color" : "#b25401", "stroke": "#b25401" },
 	{"head_color" : "#d8d817", "group_color" : "#adad05", "stroke": "#adad05" },
-	{"head_color" : "#17a2d8", "group_color" : "#1078a0", "stroke": "#1078a0" },
 	{"head_color" : "#3ed817", "group_color" : "#26a008", "stroke": "#26a008" },
 	{"head_color" : "#6b17d8", "group_color" : "#4d119b", "stroke": "#4d119b" },
 	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" }
@@ -46,6 +45,11 @@ function _paintDominators(dominatorList){
 function _paintClusters(clusterList, network){
 	var tempNode;
 	var index = 0;
+	//repaint all nodes with default color
+	for(var i=0; i<network.nodes.length; i++){
+		network.nodes[i].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
+	}
+	//paint only the clusters
 	for(var i=0; i< clusterList.length; i++){
 		if( index == CLUSTER_COLORS.length){
 			index = 0;
@@ -162,19 +166,21 @@ function _dcaAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+_stringifyDcaResult(solution.final_result)
-				+" ].</br>The weights given for each node by id order were : ["+ ajaxObject["extras"]["weights"] +"].</br>Execution Analysis :</p>";		
+				+" ].</br>The weights given for each node by id order were : ["+ ajaxObject["extras"]["weights"] 
+				+"].</br>Execution Analysis :</p>";		
 	for(var i=0; i< solution["DCA_timesteps"].length; i++){
 		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
 		for(var j=0; j<solution["DCA_timesteps"][i].steps.length; j++){
 			text += "<div class=\"well dca-step step\" id=\""+stepId+"\">";
 			text += solution["DCA_timesteps"][i].steps[j].text;
 			text += "</div>";
+			stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
 			stepId++;
 		}
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
-	_paintClusters(response["solution"].final_result);
+	_paintClusters(response["solution"].final_result, network);
 }
 
 //Handle clicks on objects related to algorithm results
@@ -185,5 +191,9 @@ $(document).ready(function(){
 
 	$(document).on("click",".mpr-step",function(){
 		_paintDominators(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click",".dca-step",function(){
+		_paintClusters(stepDataArray[$(this).attr("id")], network);
 	});
 });
