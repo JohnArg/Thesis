@@ -13,13 +13,14 @@ solution : the data to be sent to the client
 var WuLiModule = require("./Algorithms/wu_li_cds");
 var MPR_Module = require("./Algorithms/mpr_set");
 var DCA_Module = require("./Algorithms/dca_clusters");
+var MaxMinModule = require("./Algorithms/max_min_clusters");
 
 var ajaxRoute = function(code, net, extras, response){
 	switch(code){
 		case 'alg_1': handler["wu_li"](net,response);break;
 		case 'alg_2': handler["mpr"](net,response);break;
 		case 'alg_3': handler["dca"](net,extras,response);break;
-		case 'alg_4': handler["max_min"](net,response);break;
+		case 'alg_4': handler["max_min"](net,extras,response);break;
 		case 'alg_5': handler["mis"](net,response);break;
 		case 'alg_6': handler["lmst"](net,response);break;
 		case 'alg_7': handler["rng"](net,response);break;
@@ -56,9 +57,13 @@ var handler = {
 		response.write(responseData);
 		response.end();
 	},
-	"max_min" : function(net, response){
+	"max_min" : function(net, extras, response){
+		var MaxMinClusters = MaxMinModule.newMaxMinObject();
+		var MaxMinSolution = MaxMinClusters.calculateMaxMixClusters(extras["d"], net);
+		responseData = {"code" : 4, "solution" : MaxMinSolution};
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write("");
+		response.write(responseData);
 		response.end();
 	},
 	"mis" : function(net, response){

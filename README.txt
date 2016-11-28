@@ -11,16 +11,17 @@ in wireless ad hoc networks
 
 Software Purpose :
 Visually aid the professor's teaching and students' studying of 
-the Ad Hoc networking algorithms for the University lesson "Mobile 
+the Ad Hoc networking algorithms assosiated with "Mobile 
 and Ad Hoc Computing". The algorithms supported are:
 * Wu & Li
-* DCA clusters
 * Multipoint Relays
+* DCA clusters
 * Max Min D Cluster
 * MIS (Maximal Independent Set)
 * LMST graph
 * RNG graph
 * GG graph
+These algorithms are based on the papers mentioned in "References" below.
 
 Functionality :
 The users can construct a wireless network represented by
@@ -33,7 +34,8 @@ when they wish.
 
 Technical :
 This is a Node.js Web App. 
-The app starts by executing the application.js file with Node's command.
+The app starts by executing the application.js file with Node's command: nodejs application.js
+The server runs on localhost:3000.
 node_modules is a folder used by node js packages.
 The code is divided in the Client code and the Server code, in
 their respective folders.
@@ -48,3 +50,18 @@ uses requestHandler.js's functions to respond, and the ajaxHandler
 takes the network info and which algorithm was selected and calls
 the appropriate algorithm passing the network info. Then it sends
 the response back to the client.
+
+Algorithm References :
+* Wu & Li algorithm : "On Calculating Connected Dominating Set for Efficient Routing in Ad Hoc Wireless Networks"
+by Jie Wu and Hailan Li
+* Multipoint Relays : "Computing connected dominated sets with multipoint relays" by Cedric Adjih, Philippe Jacquet, 
+Laurent Viennot
+* DCA clusters : "On the Complexity of Clustering Multi-Hop Wireless Networks" by Stefano Basagni
+* Max-Min D-Cluster : "Max-Min D-Cluster Formation in Wireless Ad Hoc Networks" by Alan D. Amis, Ravi Prakash, 
+Thai H.P. Vuong, Dung T. Huynh
+* Maximal Independent Set : "Distributed Construction of Connected Dominating Set in Wireless Ad Hoc Networks" by
+Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder
+* LMST : "Design and Analysis of an MST-Based Topology Control Algorithm" by Ning Li, Jennifer C. Hou, Lui Sha
+* RNG : "Localized LMST and RNG based minimum-energy broadcast protocols in ad hoc networks" by 
+Julien Cartigny, Francois Ingelrest, David Simplot-Ryl, Ivan Stojmenovic
+* GG :  
