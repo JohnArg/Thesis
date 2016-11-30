@@ -23,8 +23,9 @@ var MaxMinClusters = function(){
         //the d value is assosiated with the hops in the algorithm
         _convertToMaxMinNodes(network);
         _roundSimulator(network , d);
-        _finalWinners(network, d, solution);
-        _constructSolution(network, solution);
+        _finalWinners(network, d, that.solution);
+        _constructSolution(network, that.solution, d);
+        console.log(network);
         return that.solution;
     };
 }
@@ -39,6 +40,50 @@ var _convertToMaxMinNodes = function(network){
     }
 }
 
+//Insert the node to the appropriate cluster
+var _insertToCluster = function(solution, node){
+    if(solution["clusters"].length > 0){     
+        var found=false;   
+        var index=-1;
+        for(var i=0; i<solution["clusters"].length; i++){
+            if(solution["clusters"][i]["clusterhead"] == node.finalWinner["winner"]){
+                found = true; 
+                index = i;
+                break;
+            }
+        }
+        if(!found){
+            if(node.id == node.finalWinner["winner"]){  //if i am a clusterhead
+                solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.id]});
+            }
+            else{ //if somebody else is my clusterhead
+                solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.finalWinner["winner"],node.id]});
+            }    
+        }
+        else{
+            solution["clusters"][index]["group"].push(node.id);
+        }
+    }
+    else{
+        if(node.id == node.finalWinner["winner"]){  //if i am a clusterhead
+            solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.id]});
+        }
+        else{ //if somebody else is my clusterhead
+            solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.finalWinner["winner"],node.id]});
+        }
+    }
+}
+
+//Put the results to the solution object
+var _constructSolution = function(network, solution, d){
+    for(var i=0; i<network.nodes.length; i++){
+        solution["floodmax"].push(network.nodes[i]["floodmax"]);
+        solution["floodmin"].push(network.nodes[i]["floodmin"]);
+        _insertToCluster(solution, network.nodes[i]);       
+    }
+    
+}
+
 //Clears the received list of each node
 var _clearReceiveList = function(network){
     for(var i=0; i<network.nodes.lenth; i++){
@@ -50,7 +95,7 @@ var _clearReceiveList = function(network){
 var _broadcastWinner = function(sender, winner_id, network){
     var tempNode;
     for(var i=0; i<sender.neighbors.length; i++){
-        tempNode = netOperator.returnNodeById(sender.neighbors[i]);
+        tempNode = netOperator.returnNodeById(sender.neighbors[i], network);
         tempNode.received.push({"sender" : sender.id, "winner" : winner_id});
     }
 }
@@ -141,12 +186,22 @@ var _returnFloodIntersection = function(node){
     return intersect;
 }
 
-//Returns the senders of the winner id from the node pairs
-var _returnWinnerSenders = function(comparisonType, nodePairs){
-    var senders = [];
-    for(var i=0; i<nodePairs.length; i++){
-
+//Returns the list's winner according to comparison type
+var _returnListWinner = function(comparisonType, list){
+    var result = list[0];
+    for(var i=0; i<list.length; i++){
+        if (comparisonType == "max"){
+            if(list[i]["winner"] >= result["winner"]){
+                result = list[i];
+            }
+        }
+        else{
+            if(list[i]["winner"] <= result["winner"]){
+                result = list[i];
+            }
+        }
     }
+    return result;
 }
 
 //Will decide the final winners of the execution
@@ -160,21 +215,13 @@ var _finalWinners = function(network, d, solution){
         else{
             var nodePairs = _returnFloodIntersection(network.nodes[i]);
             if(nodePairs.length > 0){
-                network.nodes[i].finalWinner = _.min(nodePairs, function(elem){return elem["winner"];});
+                network.nodes[i].finalWinner = _returnListWinner("min", nodePairs);
             }
             else{
-                network.nodes[i].finalWinner = _.max(network.nodes[i].floodmax, function(elem){return elem["winner"];});
+                network.nodes[i].finalWinner = _returnListWinner("max", network.nodes[i].floodmax);
             }
         }
     }
-    //Nodes will send their id to the cluster they selected. If another cluster is found in the path
-    //then the sender node must change his previous clusterhead to this one. Below we simulate this behaviour.
-
-}
-
-//Put the results to the solution object
-var _constructSolution = function(solution){
-
 }
 
 module.exports.newMaxMinObject = MaxMinFactory;

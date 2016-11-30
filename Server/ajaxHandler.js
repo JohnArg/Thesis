@@ -59,8 +59,8 @@ var handler = {
 	},
 	"max_min" : function(net, extras, response){
 		var MaxMinClusters = MaxMinModule.newMaxMinObject();
-		var MaxMinSolution = MaxMinClusters.calculateMaxMixClusters(extras["d"], net);
-		responseData = {"code" : 4, "solution" : MaxMinSolution};
+		var MaxMinSolution = MaxMinClusters.calculateMaxMixClusters(net, 3);//extras["d"]);
+		responseData = {"code" : "4", "solution" : MaxMinSolution};
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);

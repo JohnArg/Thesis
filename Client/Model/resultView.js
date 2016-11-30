@@ -54,14 +54,16 @@ function _paintClusters(clusterList, network){
 		if( index == CLUSTER_COLORS.length){
 			index = 0;
 		}
+		//paint the rest of the cluster
+		for(var k=0; k<clusterList[i].group.length; k++){
+			tempNode = returnNodeById(clusterList[i].group[k]);
+			if(tempNode.id != clusterList[i].clusterhead){
+				tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["group_color"], stroke : CLUSTER_COLORS[index]["stroke"]}});
+			}
+		}
 		//paint clusterhead
 		tempNode = returnNodeById(clusterList[i].clusterhead);
 		tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["head_color"], stroke : CLUSTER_COLORS[index]["stroke"]}});
-		//paint the rest of the cluster
-		for(var k=1; k<clusterList[i].group.length; k++){
-			tempNode = returnNodeById(clusterList[i].group[k]);
-			tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["group_color"], stroke : CLUSTER_COLORS[index]["stroke"]}});
-		}
 		index++;
 	}
 }
@@ -79,7 +81,7 @@ function handleResponse(data, status, XMLHttpRequest){
 		case "1" : _wuLiDominatorsAnalysis(data); break;
 		case "2" : _mprCdsAnalysis(data); break;
 		case "3" : _dcaAnalysis(data); break;
-		case "4" : break;
+		case "4" : _maxMinAnalysis(data); break;
 		case "5" : break;
 		case "6" : break;
 		case "7" : break;
@@ -181,6 +183,10 @@ function _dcaAnalysis(response){
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
 	_paintClusters(response["solution"].final_result, network);
+}
+
+var _maxMinAnalysis = function(response){
+	_paintClusters(response["solution"]["clusters"], network);	
 }
 
 //Handle clicks on objects related to algorithm results
