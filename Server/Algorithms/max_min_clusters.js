@@ -25,7 +25,6 @@ var MaxMinClusters = function(){
         _roundSimulator(network , d);
         _finalWinners(network, d, that.solution);
         _constructSolution(network, that.solution, d);
-        console.log(network);
         return that.solution;
     };
 }
@@ -104,22 +103,24 @@ var _broadcastWinner = function(sender, winner_id, network){
 var _evaluateWinner = function(node, floodType){
     //find the max "winner"
     if(floodType == "max"){
-        var max = node.received[0];
-        for(var j=1; j<node.received.length; j++){
+        var max = node.finalWinner;
+        for(var j=0; j<node.received.length; j++){
             if(node.received[j]["winner"] > max["winner"]){
                 max = node.received[j];
             }
         }
         node.floodmax.push(max);
+        node.finalWinner = max;
     }
     else{
-        var min = node.received[0];
-        for(var j=1; j<node.received.length; j++){
+        var min = node.finalWinner;
+        for(var j=0; j<node.received.length; j++){
             if(node.received[j]["winner"] < min["winner"]){
                 min = node.received[j];
             }
         }
         node.floodmin.push(min);
+        node.finalWinner = min;
     }
     node.received = [];
 }
@@ -127,6 +128,7 @@ var _evaluateWinner = function(node, floodType){
 //Initial procedure
 var _procedureInit = function(network){
     for(var i=0; i<network.nodes.length; i++){
+        network.nodes[i].finalWinner = {"sender" : network.nodes[i].id, "winner" : network.nodes[i].id};
         _broadcastWinner(network.nodes[i], network.nodes[i].id, network);
     }
     for(var i=0; i<network.nodes.length; i++){
@@ -176,10 +178,15 @@ var _roundSimulator = function(network , d){
 //Return the intersection of floodmax and floodmin
 var _returnFloodIntersection = function(node){
     intersect = [];
+    var winners = [];
     for( var i=0; i< node.floodmax.length; i++){
-        for(var j=0; j<node.floodmin.length; j++){
-            if(node.floodmax[i]["winner"] == node.floodmin[j]["winner"]){
-                intersect.push(node.floodmax[i]);
+        if(_.indexOf(winners, node.floodmax[i]) == -1){ //no need to check for the already checked value
+            winners.push(node.floodmax[i]["winner"]);
+            for(var j=node.floodmin.length-1; j>(-1); j--){ //start from the bottom to insert only the last occurence
+                if(node.floodmax[i]["winner"] == node.floodmin[j]["winner"]){
+                    intersect.push(node.floodmin[j]);
+                    break;
+                }
             }
         }
     }

@@ -11,6 +11,22 @@
 	</head>
 	<body>
 		<div id="modals_container">
+			<div id="max_min_dialog" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header dialogHeader">
+							<h4 class="modal-title">Max Min D-Cluster</h4>
+						</div>
+						<div class="modal-body">
+							<form>Select a positive integer value for d <input type="number" id="max_min_input"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-default btn-primary accentColor" id="max_min_continue">Continue</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
 			<div id="instructions_dialog" class="modal" tabindex="-1" role="dialog">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">

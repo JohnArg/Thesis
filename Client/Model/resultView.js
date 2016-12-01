@@ -18,6 +18,25 @@ var CLUSTER_COLORS = [
 	{"head_color" : "#6b17d8", "group_color" : "#4d119b", "stroke": "#4d119b" },
 	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" }
 ];
+var max_min_table = function(solution){
+	this.text = "";
+	for(var i=0; i<network.nodes.length; i++){
+		this.text += "<div class=\"max_min_col_container\">";
+		this.text += "<div class=\"max_min_col_heading\"><p>"+network.nodes[i].id+"</p></div>";
+		for(var j=0; j<solution["floodmax"][i].length; j++){
+			this.text += "<div class=\"max_min_col_data\"><p>";	//column data container
+			this.text += solution["floodmax"][i][j]["winner"];
+			this.text += "</p></div>";
+		}
+		this.text += "<div class=\"max_min_col_divider\"></div>";
+		for(var j=0; j<solution["floodmin"][i].length; j++){
+			this.text += "<div class=\"max_min_col_data\"><p>";	//column data container
+			this.text += solution["floodmin"][i][j]["winner"];
+			this.text += "</p></div>";
+		}
+		this.text += "</div>";
+	}
+}
 
 //Checks if a node is dominator
 function _isDominator(id, dominatorList){
@@ -186,7 +205,13 @@ function _dcaAnalysis(response){
 }
 
 var _maxMinAnalysis = function(response){
-	_paintClusters(response["solution"]["clusters"], network);	
+	stepDataArray = [];
+	var solution = response["solution"];
+	var table = new max_min_table(solution);
+	var text = "<p class=\"solution-result colored-text\">The result of the floodmax and floodmin stages are shown in the table below.</p>";
+	text += table.text; 
+	$("#solutionBoxData").html(text);
+	_paintClusters(solution["clusters"], network);	
 }
 
 //Handle clicks on objects related to algorithm results

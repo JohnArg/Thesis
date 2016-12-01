@@ -123,6 +123,9 @@ $(document).ready(function() {
 					$("#dca_dialog_list").html(_dcaDialogCreateInputs());
 					$("#dca_dialog").modal("show");
 				}
+				else if(algorithm_code == "alg_4"){
+					$("#max_min_dialog").modal("show");
+				}
 				else{
 					_sendAjaxRequest();
 				}	
@@ -155,6 +158,23 @@ $(document).ready(function() {
 
 	$("#dca_dialog_continue").click(function(){
 		_dcaDialogWeightsHandler();
+	});
+
+	$("#max_min_continue").click(function(){
+		var d = parseInt($("#max_min_input").val());
+		if(isNaN(d)){
+			alert("D must be a positive integer");
+		}
+		else{
+			if(d>0){
+				ajaxObject["extras"]["d"] = d;
+				_sendAjaxRequest();
+				$("#max_min_dialog").modal("hide");
+			}
+			else{
+				alert("Please insert a positive value");
+			} 
+		}
 	});
 
 	$("#weights_randomBtn").click(function(){

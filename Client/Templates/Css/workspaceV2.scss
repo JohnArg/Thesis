@@ -23,6 +23,17 @@ $graphView_color : #f4fcff;
 	 	-ms-border-radius:0 !important;
           border-radius: 0 !important;
 }
+@mixin table_cell_style(){
+	display: block;
+	width:30px;
+	height:30px;
+	background-color: #f4fcff;
+	border-style: solid;
+	border-color: #444444;
+	text-align: center;
+	border-width: 1px;
+	padding-top:5px;
+}
 /*Other Globals*/
 $toolbarWidth : 160px;
 $footer_height: 90px;
@@ -278,6 +289,29 @@ input[type="radio"] {
     position: relative;
 	width:20px;
 	height: 20px;
+}
+
+/* custom table ======================================== */
+.max_min_col_container{
+	float:left;
+	margin-top:10px;
+}
+
+.max_min_col_heading{
+	@include table_cell_style();
+	font-weight: bold;
+	background-color:#0dbcae;
+	color:white;
+}
+
+.max_min_col_data{
+	@include table_cell_style();
+}
+
+.max_min_col_divider{
+	display:block;
+	height:5px;
+	background-color: #04a071;
 }
 
 /* joint js disable link tools ====================== */

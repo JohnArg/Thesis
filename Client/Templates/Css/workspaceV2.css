@@ -243,6 +243,41 @@ input[type="radio"] {
   width: 20px;
   height: 20px; }
 
+/* custom table ======================================== */
+.max_min_col_container {
+  float: left;
+  margin-top: 10px; }
+
+.max_min_col_heading {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: #f4fcff;
+  border-style: solid;
+  border-color: #444444;
+  text-align: center;
+  border-width: 1px;
+  padding-top: 5px;
+  font-weight: bold;
+  background-color: #0dbcae;
+  color: white; }
+
+.max_min_col_data {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: #f4fcff;
+  border-style: solid;
+  border-color: #444444;
+  text-align: center;
+  border-width: 1px;
+  padding-top: 5px; }
+
+.max_min_col_divider {
+  display: block;
+  height: 5px;
+  background-color: #04a071; }
+
 /* joint js disable link tools ====================== */
 .link-tool .tool-remove {
   display: none; }
