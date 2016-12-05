@@ -2,6 +2,10 @@
 This module will contain functions to perform 
 network operations
 */
+var netOperatorFactory = function(){
+	return new netOperator();
+}
+
 var netOperator = function(){
 	var that = this;
 	this.returnNodeById = function(search_id, network){
@@ -37,4 +41,4 @@ var netOperator = function(){
 	};
 }
 
-module.exports.netOperator = new netOperator();
+module.exports.netOperator = netOperatorFactory();

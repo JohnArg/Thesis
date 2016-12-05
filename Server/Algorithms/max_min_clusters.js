@@ -3,7 +3,6 @@ This module will handle the execution of the Max-Mix D-Cluster algorithm.
 */
 var _ = require('underscore');
 var netOperator = require("./networkOperations").netOperator;
-var solutionFactory = require("./steps");
 
 //Object factory
 var MaxMinFactory = function(){
