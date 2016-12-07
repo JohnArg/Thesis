@@ -26,7 +26,8 @@ function _reset(){
 	linkSelect2 = false;							
 	linkStart = null;										
 	linkEnd = null; 	 
-	ajaxObject["extras"] = {};	
+	ajaxObject["extras"] = {};
+	ajaxObject["net"] = { };		
 }
 
 //Send an Ajax Request to the server
@@ -113,11 +114,19 @@ $(document).ready(function() {
 		}
 	}
 	
+	function _updateAjaxNet(){
+		for(var i=0; i<network.nodes.length; i++){
+			network.nodes[i].position.x = network.nodes[i].graphic.attributes.position.x;
+			network.nodes[i].position.y = network.nodes[i].graphic.attributes.position.y;
+		}
+	}
+
 	//Buttons Reactions ===========================================================
 	$("#execute_btn").click(function() {
 		if(algorithm_code != "empty"){
 			if(network.nodes.length > 2){
 				ajaxObject.code = algorithm_code;
+				_updateAjaxNet();
 				ajaxObject.net = network;
 				if(algorithm_code == "alg_3"){
 					$("#dca_dialog_list").html(_dcaDialogCreateInputs());

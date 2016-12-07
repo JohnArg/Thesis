@@ -8,10 +8,13 @@ joint.js elements, to be used in our algorithm file.
 //Node class
 //the graphic is used for rendering a node graphics shape
 var Node = function (id_in, neighbors, graphic){
-
 	this.id = id_in;
 	this.neighbors = neighbors;
 	this.graphic = graphic;
+	this.position = { //It will only be updated before the ajax call
+		x : 0,
+		y : 0
+	}
 }
 //The network class => an array of nodes
 var Network = function (){
@@ -102,19 +105,13 @@ $(document).ready(function(){
 		}
 		//else if we are connecting nodes ======
 		else if(linkSelect1){
-			/*
-			I selected the first node to link (source). 
-			I need to select another one as the end of the link (edge)
-			*/
+			//I selected the first node to link (source). I need to select another one as the end of the link (edge)
 			linkStart = cellView.model;
 			linkSelect1 = false;
 			linkSelect2 = true;
 		}
 		else if(linkSelect2){
-			/*
-			I selected 2 nodes to link. An edge will be created between
-			them and their neighboring sets will be updated
-			*/
+			//I selected 2 nodes to link. An edge will be created between them and their neighboring sets will be updated
 			linkEnd = cellView.model;
 			linkSelect2 = false;
 			if(linkStart != linkEnd){

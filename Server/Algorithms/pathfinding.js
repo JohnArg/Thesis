@@ -10,7 +10,7 @@ var pathfindingFactory = function(){
 var pathFinding = function(){
 	var that = this;
 	that.pathList = [];
-	that.findPaths = function(start, destination){
+	that.findPaths = function(start, destination, network){
 		_initializePathfinding(start, destination, that.pathList);
 		_constructPaths(destination, that.pathList, network);
 		_keepDestinationPaths(destination, that.pathList);

@@ -14,6 +14,7 @@ var WuLiModule = require("./Algorithms/wu_li_cds");
 var MPR_Module = require("./Algorithms/mpr_set");
 var DCA_Module = require("./Algorithms/dca_clusters");
 var MaxMinModule = require("./Algorithms/max_min_clusters");
+var LMST_Module = require("./Algorithms/lmst");
 
 var ajaxRoute = function(code, net, extras, response){
 	switch(code){
@@ -33,7 +34,7 @@ var handler = {
 	"wu_li" : function(net,response){
 		var WuLi = WuLiModule.WuLiFactory();
 		var wu_li_solution = WuLi.calculateWuLi(net);
-		responseData = {"code" : "1", "solution" : wu_li_solution}; 
+		var responseData = {"code" : "1", "solution" : wu_li_solution}; 
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);
@@ -42,7 +43,7 @@ var handler = {
 	"mpr" : function(net, response){
 		var MPR_cds = MPR_Module.MPR_Factory();
 		var mpr_solution = MPR_cds.calculate_MPR_CDS(net);
-		responseData = {"code" : "2", "solution" : mpr_solution}; 
+		var responseData = {"code" : "2", "solution" : mpr_solution}; 
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);
@@ -51,7 +52,7 @@ var handler = {
 	"dca" : function(net, extras, response){
 		var dcaClusters = DCA_Module.dcaFactory();
 		var dca_solution = dcaClusters.calculate_DCA_Clusters(net, extras);
-		responseData = {"code" : "3", "solution" : dca_solution}; 
+		var responseData = {"code" : "3", "solution" : dca_solution}; 
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);
@@ -60,7 +61,7 @@ var handler = {
 	"max_min" : function(net, extras, response){
 		var MaxMinClusters = MaxMinModule.newMaxMinObject();
 		var MaxMinSolution = MaxMinClusters.calculateMaxMixClusters(net, extras["d"]);
-		responseData = {"code" : "4", "solution" : MaxMinSolution};
+		var responseData = {"code" : "4", "solution" : MaxMinSolution};
 		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
 		response.write(responseData);
@@ -72,8 +73,12 @@ var handler = {
 		response.end();
 	},
 	"lmst" : function(net, response){
+		var lmst = LMST_Module.newLMST();
+		var lmstSolution = lmst.constructLMST(net);
+		var responseData = {"code" : "6", "solution" : lmstSolution};
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write("");
+		response.write(responseData);
 		response.end();
 	},
 	"rng" : function(net, response){
