@@ -3,10 +3,6 @@ All network joint.js functionality will be placed here
 We will also create a global network object from the
 joint.js elements, to be used in our algorithm file.
 */
-
-//Network Structure 
-//Node class
-//the graphic is used for rendering a node graphics shape
 var Node = function (id_in, neighbors, graphic){
 	this.id = id_in;
 	this.neighbors = neighbors;
@@ -127,6 +123,7 @@ $(document).ready(function(){
 			    });
 				//add the edge to the graph
 				graph.addCell(link);
+				console.log("Link ", link);
 				//return funcitonality to selecting the source of a link
 				linkSelect1 = true;
 				console.log(network);

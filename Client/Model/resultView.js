@@ -61,7 +61,7 @@ function _paintDominators(dominatorList){
 }
 
 //Paint Clusters with different colors
-function _paintClusters(clusterList, network){
+function _paintClusters(clusterList){
 	var tempNode;
 	var index = 0;
 	//repaint all nodes with default color
@@ -87,6 +87,48 @@ function _paintClusters(clusterList, network){
 	}
 }
 
+//Paint the edges of a list, use the global graph object to get the link graphics
+function _paintEdgesFromList(edgeList){
+	var node;
+	var links;
+	var link;
+	var source;
+	var target;
+	for(var i=0; i<edgeList.length; i++){
+		node = returnNodeById(edgeList[i]["source"]); //we need it to get the graphics model
+		links = graph.getConnectedLinks(node.graphic, {});
+		for(var j=0; j<links.length; j++){
+			source = links[j].attributes.prop.node1;
+			target = links[j].attributes.prop.node2;
+			if((source == edgeList[i]["source"])&&(target == edgeList[i]["target"])){
+				links[j].attr({ '.connection': { stroke : "#58fc60", "stroke-width" : "5" } });
+				links[j].attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
+			}
+			else if((source == edgeList[i]["target"])&&(target == edgeList[i]["source"])){
+				links[j].attr({ '.connection': { stroke : "#58fc60", "stroke-width" : "5" }});
+				links[j].attr({ '.' : { filter: { name: 'blur', args: { x:1} } } });
+			}
+		}
+	}
+}
+
+//Repaints the edges with their original color
+function _repaintEdgesDefault(){
+	var links  = graph.getLinks();
+	for(var i=0; i<links.length; i++){
+		links[i].attr({ '.connection': { stroke : "#000000", "stroke-width" : "1" } });
+		links[i].attr( { '.' : { filter: { name: 'blur', args: { x:0} } } } );
+	}
+}
+
+//Paint the whole LMST tree
+function _paintLMST(LMSTs){
+	_repaintEdgesDefault();
+	for(var i=0; i<LMSTs.length; i++){
+		_paintEdgesFromList(LMSTs[i]);
+	}
+}
+
 /*Check response type and use appropriate handler
 The response will be an object that contains the 
 fields:
@@ -96,6 +138,7 @@ the client knows how to handle the representation
 	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
 solution : the data to be sent to the client */
 function handleResponse(data, status, XMLHttpRequest){
+	stepDataArray = []; //clear the global steps data from previous executions
 	switch(data["code"]){
 		case "1" : _wuLiDominatorsAnalysis(data); break;
 		case "2" : _mprCdsAnalysis(data); break;
@@ -111,7 +154,6 @@ function handleResponse(data, status, XMLHttpRequest){
 
 //Show the steps from th Wu Li CDS algorithm
 function _wuLiDominatorsAnalysis(response){
-	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
 				+" ]<br> Execution Analysis :</p>";
@@ -146,7 +188,6 @@ function _stringifyDcaResult(clusters){
 
 //Show the steps of the Multipoint Relay CDS algorithm
 function _mprCdsAnalysis(response){
-	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
 				+" ]<br> Execution Analysis :</p>";
@@ -184,7 +225,6 @@ function _mprCdsAnalysis(response){
 
 //Show steps of the DCA algorithm
 function _dcaAnalysis(response){
-	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+_stringifyDcaResult(solution.final_result)
@@ -207,7 +247,6 @@ function _dcaAnalysis(response){
 
 //Show steps of Max Min D-Cluster algorithm
 var _maxMinAnalysis = function(response){
-	stepDataArray = [];
 	var solution = response["solution"];
 	var table = new max_min_table(solution);
 	var text = "<p class=\"solution-result colored-text\">The result of the floodmax and floodmin stages are shown in the table below.</p>";
@@ -218,7 +257,6 @@ var _maxMinAnalysis = function(response){
 
 //Show steps of LMST algorithm
 var _lmstAnalysis = function(response){
-	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of LMST algorithm on given network. Click on each step"+
@@ -234,6 +272,7 @@ var _lmstAnalysis = function(response){
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
+	_paintLMST(solution["LMSTs"]);
 }
 
 //Handle clicks on objects related to algorithm results
@@ -247,6 +286,18 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click",".dca-step",function(){
-		_paintClusters(stepDataArray[$(this).attr("id")], network);
+		_paintClusters(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click",".lmst-step",function(){
+		_repaintEdgesDefault();
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click","#lmst_btn_orig",function(){
+		_repaintEdgesDefault();
+		for(var i=0; i<stepDataArray.length; i++){
+			_paintEdgesFromList(stepDataArray[i]);
+		}
 	});
 });
