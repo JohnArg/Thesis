@@ -13,9 +13,9 @@ var WuLiFactory = function(){
 //Main object to be returned
 var Wu_Li_CDS = function(){
 	var that = this;
-	that.step1Solution = solutionFactory.solution();
-	that.rule1Solution = solutionFactory.solution();
-	that.rule2Solution = solutionFactory.solution();
+	that.step1Solution = solutionFactory.newSolution();
+	that.rule1Solution = solutionFactory.newSolution();
+	that.rule2Solution = solutionFactory.newSolution();
 	that.solution = { //This object will contain a solution object for each of the 3 parts of the algorithm
 		"final_result" : [], //--> Although "rule2" has the final result, the viewManager.js response handler in the Client  
 		"step1" : that.step1Solution, // is written to work with many algorithms and it doesn't know where else and how the final

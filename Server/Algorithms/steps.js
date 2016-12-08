@@ -32,4 +32,4 @@ var solutionFactory = function(){
 	return new Solution();
 }
 
-module.exports.solution = solutionFactory;
+module.exports.newSolution = solutionFactory;

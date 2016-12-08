@@ -102,7 +102,7 @@ function handleResponse(data, status, XMLHttpRequest){
 		case "3" : _dcaAnalysis(data); break;
 		case "4" : _maxMinAnalysis(data); break;
 		case "5" : break;
-		case "6" : break;
+		case "6" : _lmstAnalysis(data); break;
 		case "7" : break;
 		case "8" : break;
 		default:break;
@@ -182,6 +182,7 @@ function _mprCdsAnalysis(response){
 	_paintDominators(response["solution"].final_result);
 }
 
+//Show steps of the DCA algorithm
 function _dcaAnalysis(response){
 	stepDataArray = []; //clear the global steps data from previous executions
 	var stepId = 0; //will be used for indexing a global array of step data
@@ -204,6 +205,7 @@ function _dcaAnalysis(response){
 	_paintClusters(response["solution"].final_result, network);
 }
 
+//Show steps of Max Min D-Cluster algorithm
 var _maxMinAnalysis = function(response){
 	stepDataArray = [];
 	var solution = response["solution"];
@@ -212,6 +214,26 @@ var _maxMinAnalysis = function(response){
 	text += table.text; 
 	$("#solutionBoxData").html(text);
 	_paintClusters(solution["clusters"], network);	
+}
+
+//Show steps of LMST algorithm
+var _lmstAnalysis = function(response){
+	stepDataArray = []; //clear the global steps data from previous executions
+	var stepId = 0; //will be used for indexing a global array of step data
+	var solution = response["solution"];
+	var text = "<div><p class=\"solution-result colored-text\">Results of LMST algorithm on given network. Click on each step"+
+	" to see the LMST for a specific node. Press the buttons below to show again the whole tree.</p>"+
+	"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"</br><p class=\"colored-text\">Execution Analysis :</p></div>";	
+	for(var i=0; i<solution["step_data"].steps.length; i++){
+		text += "<div class=\"well lmst-step step\" id=\""+stepId+"\">";
+		text += solution["step_data"].steps[i].text;
+		text += "</div>";
+		stepDataArray.push(solution["LMSTs"][i]);
+		stepId++;
+	}
+	$("#solutionBoxData").html(text);
 }
 
 //Handle clicks on objects related to algorithm results

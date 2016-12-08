@@ -180,6 +180,18 @@ input {
 .colored-text {
   color: #1ea9db; }
 
+.colored-text2 {
+  color: #263238;
+  font-weight: bold; }
+
+.colored-text3 {
+  color: #444444;
+  font-weight: bold; }
+
+.btn-margins {
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
 .solution-result {
   font-size: 12pt; }
 

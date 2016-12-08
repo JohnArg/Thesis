@@ -229,7 +229,7 @@ var _procedureInit = function(network, solution){
 	var greaterWeight;
 	var receiveQueue = [];
 	var neighbors = [];
-	var timestep1 = solutionFactory.solution();
+	var timestep1 = solutionFactory.newSolution();
 	solution["DCA_timesteps"].push(timestep1);
 	timestep1.text ="Timestep 1.<br/>Beginning with \"Procedure Init\" of the DCA Algorithm.</br>Only the nodes with the highest weight in their neighborhood send CH.";
 	//First send the messages
@@ -276,7 +276,7 @@ var _stepSimulator = function(network, solution){
 							//So we use a queue to track which receive functions to call after all nodes have sent their messages.
 	while(!_haveAllExited(network)){
 		stepCounter = 0;
-		timestepSol = solutionFactory.solution();
+		timestepSol = solutionFactory.newSolution();
 		solution["DCA_timesteps"].push(timestepSol);
 		timestepSol.text ="Timestep "+timestep+".</br>";
 		receiveQueue = [];

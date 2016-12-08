@@ -14,17 +14,21 @@ var lmstFactory = function(){
 var lmstObject = function(){
     var that = this;
     that.solution = {
-        "LMSTs" : [] //list of all LMST trees
+        "LMSTs" : [], //list of all LMST trees
+        "step_data" : solutionFactory.newSolution(),
+        "uni-directional" : []
     };
     that.constructLMST = function(network){
         var subnetwork;
         var edges;
         for(var i=0; i<network.nodes.length; i++){
-            console.log("Checking node ", network.nodes[i].id);
+            that.solution["step_data"].createStep();
+            that.solution["step_data"].steps[i].text = "<p class=\"colored-text2\">Current node : "+network.nodes[i].id+".</p>";
             subnetwork = _returnSubnetwork(network.nodes[i], network);
-            edges = _returnEdges(subnetwork);
-            that.solution["LMSTs"].push(_executePrim(subnetwork, edges));
+            edges = _returnEdges(subnetwork, that.solution["step_data"]);
+            that.solution["LMSTs"].push(_executePrim(subnetwork, edges, that.solution["step_data"]));
         }
+        that.solution["uni-directional"] = _uniDirectionalEdges(that.solution["LMSTs"]);
         return that.solution;
     };
 }
@@ -78,13 +82,14 @@ var _checkIfEdgeExists = function (edge, edges){
 }
 
 //Returns the edges of the network and their assosiated distance
-var _returnEdges = function(subnetwork){
+var _returnEdges = function(subnetwork, step_data){
     var edges = [];
     var index = 0;
     var distance;
     var x_diff;
     var y_diff;
     var neighbor;
+    step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text2\">All subnetwork edges : </p><ul class=\"step-ul\">";
     for(var i=0; i<subnetwork.nodes.length; i++){
         for(var j=0; j<subnetwork.nodes[i].neighbors.length; j++){
             if(!_checkIfEdgeExists({"source" : subnetwork.nodes[i].id, "target" : subnetwork.nodes[i].neighbors[j]}, edges)){ //to avoid duplicate edges
@@ -95,11 +100,13 @@ var _returnEdges = function(subnetwork){
                 edges.push({"source" : subnetwork.nodes[i].id, "target" : neighbor.id, "distance" : distance});
                 subnetwork.nodes[i].edges.push(index);
                 neighbor.edges.push(index);
+                step_data.steps[step_data.steps.length - 1].text += "<li>[ source : "+edges[index]["source"]+" , target : "+edges[index]["target"]
+                +" , distance : "+edges[index]["distance"]+" ]</li>";
                 index++;
             }
         }
     }
-    console.log("All the subnetwork edges ", edges);
+    step_data.steps[step_data.steps.length - 1].text += "</ul>";
     return edges;
 }
 
@@ -175,7 +182,7 @@ var _minVertexIdEdges = function(edges){
 }
 
 //The function that Prim's Algorithm will use to choose the next edge
-var _chooseEdgeFunction = function(edges){
+var _chooseEdgeFunction = function(edges, step_data){
     var result;
     var minDistanceEdges = _minimumDistanceEdges(edges);
     if(minDistanceEdges.length == 1){ //only one edge has the minimum distance, we can stop
@@ -183,12 +190,17 @@ var _chooseEdgeFunction = function(edges){
     }
     else{ //more than one edges have the minimum distance
         //get the ones with max(vertex id)
+        step_data.steps[step_data.steps.length - 1].text += "<p>Multiple edges have the same minimum distance :</br>"+_stringifyEdgeList(minimumDistanceEdges)
+        +"We calculate the value of max(source_id, target_id) for all of them. Then we keep the one (or those) with the maximum such value.</p>";
         var maxEdges = _maxVertexIdEdges(minDistanceEdges);
         if(maxEdges.length == 1){   //only one edge with the maximum value, i'm done
             result = maxEdges[0];
         }
         else{   //still more than one edges have the maximum value
             //from the edges with the same max values get the one with the minimum(source_id, target_id)
+            step_data.steps[step_data.steps.length - 1].text += "<p>Still more than one edges with the previous maximum value :</br>"
+            +_stringifyEdgeList(maxEdges) + "Now for these ones we"+
+            " calculate the minimum(source_id, target_id) and get the unique one with the minimum such value.</p>";
             result = _minVertexIdEdges(maxEdges);
         }
     }
@@ -215,9 +227,21 @@ var _returnNewVertex = function(vertices, edge){
    }
 }
 
+//returns string of edges list
+var _stringifyEdgeList = function(edgeList){
+    var text = "<ul class=\"step-ul\">";
+    for(var i=0; i<edgeList.length; i++){
+        text += "<li>[ source : "+edgeList[i]["source"]+" , target : "+edgeList[i]["target"]
+        +", distance : "+edgeList[i]["distance"]+" ]</li>";
+    }
+    text += "</ul>";
+    return text;
+}
+
 //Excute Prim's Algorithm on the given subnetwork
-var _executePrim = function(subnetwork, edges){
+var _executePrim = function(subnetwork, edges, step_data){
     //keep a list with all the vertices to visit except for the 1st node
+    step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text2\">Prim's execution for this subnetwork : </p>";
     var verticesLeft = [];
     for(var i=1; i<subnetwork.nodes.length; i++){
         verticesLeft.push(subnetwork.nodes[i].id);
@@ -227,15 +251,20 @@ var _executePrim = function(subnetwork, edges){
     for(var i=0; i<subnetwork.nodes[0].edges.length; i++){
         availableEdges.push(edges[ subnetwork.nodes[0].edges[i] ]);
     }
+    var verticesVisited = [subnetwork.nodes[0].id];
+    step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text3\">Vertices visited so far : ["+verticesVisited+"]</p>";
+    step_data.steps[step_data.steps.length - 1].text += "<p>Choosing edge from :</br>"+_stringifyEdgeList(availableEdges)+"</p>";
     var edgesUsed = [];
-    var edgeSelected = _chooseEdgeFunction(availableEdges); //choose an edge
-    console.log("Selected edge ",edgeSelected);
+    var edgeSelected = _chooseEdgeFunction(availableEdges, step_data); //choose an edge
+    step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text2\">Selected edge [ source : "+edgeSelected["source"]+" , target : "+edgeSelected["target"]
+    +", distance : "+edgeSelected["distance"]+" ]</p>";
     edgesUsed.push(edgeSelected);
     var vertexVisited = _returnOtherVertex(subnetwork.nodes[0].id, edgeSelected); //keep the vertex visited following this edge
+    step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text3\">New vertex added : "+vertexVisited+"</p>";
     verticesLeft = verticesLeft.filter(function(el){ //remove the visited vertex from the remaining vertices to visit
         return el != vertexVisited;
     });
-    var verticesVisited = [subnetwork.nodes[0].id, vertexVisited]; //keep an array with all the vertices visited so far
+    verticesVisited.push(vertexVisited); //keep an array with all the vertices visited so far
     //Keep running Prim until all vertices are visited
     var node;
     var condition1;
@@ -253,16 +282,47 @@ var _executePrim = function(subnetwork, edges){
                 }
             }
         }
-        var edgeSelected = _chooseEdgeFunction(availableEdges); //choose an edge
-        console.log("Selected edge ",edgeSelected);
+        step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text3\">Vertices visited so far : ["+verticesVisited+"]</p>";
+        step_data.steps[step_data.steps.length - 1].text += "<p>Choosing edge from :</br>"+_stringifyEdgeList(availableEdges)+"</p>";
+        var edgeSelected = _chooseEdgeFunction(availableEdges, step_data); //choose an edge
+        step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text2\">Selected edge [ source : "+edgeSelected["source"]+" , target : "+edgeSelected["target"]
+    +", distance : "+edgeSelected["distance"]+" ]</p>";
         edgesUsed.push(edgeSelected);
         var vertexVisited = _returnNewVertex(verticesVisited, edgeSelected); //keep the vertex visited following this edge
+        step_data.steps[step_data.steps.length - 1].text += "<p class=\"colored-text3\">New vertex added : "+vertexVisited+"</p>";
         verticesLeft = verticesLeft.filter(function(el){ //remove the visited vertex from the remaining vertices to visit
             return el != vertexVisited;
         });
         verticesVisited.push(vertexVisited); 
     }
     return edgesUsed;
+}
+
+//Returns the index in LMSTs array where the node with the given id is located 
+var _returnLMSTNodeIndex = function(node_id, LMSTs){
+    for(var i=0; i<LMSTs.length; i++){
+        if(LMSTs[i][0]["source"] == node_id){   //each row of LMST contains edges and the 1st edge's "source" contains the corresponding node id
+            return i;
+        }
+    }
+}
+
+//Returns the unidirectional edges from the LMSTs array in the solution
+var _uniDirectionalEdges = function(LMSTs){
+    var result = [];
+    var edge;
+    var found;
+    var index;
+    for(var i=0; i<LMSTs.length; i++){
+        for(var j=0; j<LMSTs[i].length; j++){
+            index = _returnLMSTNodeIndex(LMSTs[i][j]["target"], LMSTs);
+            found = _checkIfEdgeExists(LMSTs[i][j], LMSTs[index]);
+            if(!found){ //it's unidirectional
+                result.push([i,j]); //push the indexes to the edge inside the LMSTs array
+            }
+        }
+    }
+    return result;
 }
 
 module.exports.newLMST = lmstFactory;

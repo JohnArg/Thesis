@@ -14,8 +14,8 @@ var mprFactory = function(){
 
 var MPR_cds = function(){ 
 	var that = this;
-	that.solutionMPR = solutionFactory.solution();
-	that.solutionCDS = solutionFactory.solution();
+	that.solutionMPR = solutionFactory.newSolution();
+	that.solutionCDS = solutionFactory.newSolution();
 	that.solution = {
 		"final_result" : [],
 		"MPR_set" : that.solutionMPR, 

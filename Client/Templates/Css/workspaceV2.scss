@@ -221,6 +221,21 @@ input{
 	color:$btn_color;
 }
 
+.colored-text2{
+	color:$footer_color;
+	font-weight: bold;
+}
+
+.colored-text3{
+	color:#444444;
+	font-weight: bold;
+}
+
+.btn-margins{
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
 .solution-result{
 	font-size: 12pt;
 }
@@ -234,6 +249,10 @@ input{
 .step:hover, .step:active{
 	background-color: $header_color;
 	color:white;
+}
+
+.step-ul{
+
 }
 
 /* Buttons ============================================ */
