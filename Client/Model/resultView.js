@@ -3,12 +3,16 @@ This file has functions used to handle the response from the server
 and represent the algorithms' results
 */
 var stepDataArray = [];
+var unidirectionalEdges = [];
 //Coloring Globals
 //Some color globals used in our graph
 var DEFAULTFILL = "#27a7ce";
 var DOMINATOR_FILL = "#59cc16";
-var DEFAULTSTROKE = "#22629e";
+var DEFAULTSTROKE = "#1986a8";
 var DOMINATOR_STROKE = "#4f9e22";
+var LINK_DEFAULT = {'.connection': { stroke : "#444444", "stroke-width" : "2" }};
+var LINK_BI = { '.connection': { stroke : "#2fd829", "stroke-width" : "3" } };
+var LINK_UNI = { '.connection': { stroke : "#f4b218", "stroke-width" : "3" } };
 var CLUSTER_COLORS = [
 	{"head_color" : "#d81717", "group_color" : "#a00404", "stroke": "#a00404" },
 	{"head_color" : "#3b4bf7", "group_color" : "#1c29b2", "stroke": "#1c29b2" },
@@ -38,6 +42,39 @@ var max_min_table = function(solution){
 	}
 }
 
+/*Check response type and use appropriate handler
+The response will be an object that contains the 
+fields:
+code : the type of data the algorithm returns so that 
+the client knows how to handle the representation
+	1: wu li dominators list, 2: multipoint relays cds 
+	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
+solution : the data to be sent to the client */
+function handleResponse(data, status, XMLHttpRequest){
+	stepDataArray = []; //clear the global steps data from previous executions
+	unidirectionalEdges = [];
+	_hideArrowHeads();
+	switch(data["code"]){
+		case "1" : _wuLiDominatorsAnalysis(data); break;
+		case "2" : _mprCdsAnalysis(data); break;
+		case "3" : _dcaAnalysis(data); break;
+		case "4" : _maxMinAnalysis(data); break;
+		case "5" : break;
+		case "6" : _lmstAnalysis(data); break;
+		case "7" : break;
+		case "8" : break;
+		default:break;
+	}
+}
+
+//Paint everything with the default color
+function _paintEverythingDefault(){
+	for(var j=0; j<network.nodes.length; j++){
+		network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
+	}
+	_repaintEdgesDefault();
+}
+
 //Checks if a node is dominator
 function _isDominator(id, dominatorList){
 	for(var i=0; i<dominatorList.length; i++){
@@ -50,11 +87,9 @@ function _isDominator(id, dominatorList){
 
 //Paint dominators in the graph with the appropriate colors
 function _paintDominators(dominatorList){	
+	_repaintEdgesDefault();
 	for(var j=0; j<network.nodes.length; j++){
-		if(!_isDominator(network.nodes[j].id, dominatorList)){
-			network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
-		}
-		else{
+		if(_isDominator(network.nodes[j].id, dominatorList)){
 			network.nodes[j].graphic.attr({ circle: {fill: DOMINATOR_FILL, stroke : DOMINATOR_STROKE}});
 		}
 	}
@@ -62,6 +97,7 @@ function _paintDominators(dominatorList){
 
 //Paint Clusters with different colors
 function _paintClusters(clusterList){
+	_repaintEdgesDefault();
 	var tempNode;
 	var index = 0;
 	//repaint all nodes with default color
@@ -91,7 +127,6 @@ function _paintClusters(clusterList){
 function _paintEdgesFromList(edgeList){
 	var node;
 	var links;
-	var link;
 	var source;
 	var target;
 	for(var i=0; i<edgeList.length; i++){
@@ -101,54 +136,87 @@ function _paintEdgesFromList(edgeList){
 			source = links[j].attributes.prop.node1;
 			target = links[j].attributes.prop.node2;
 			if((source == edgeList[i]["source"])&&(target == edgeList[i]["target"])){
-				links[j].attr({ '.connection': { stroke : "#58fc60", "stroke-width" : "5" } });
-				links[j].attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
+				link = links[j];
+				break;
 			}
 			else if((source == edgeList[i]["target"])&&(target == edgeList[i]["source"])){
-				links[j].attr({ '.connection': { stroke : "#58fc60", "stroke-width" : "5" }});
-				links[j].attr({ '.' : { filter: { name: 'blur', args: { x:1} } } });
+				link = links[j];
+				break;
 			}
 		}
+		link.attr(LINK_BI);
+		//link.attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
 	}
+}
+
+/* Paint the unidirectional links from the stepDataArray and unidirectionalEdges globals
+	option_g0 =:
+	default --> paint the uni-directional links with their specified color
+	"+" --> paint the uni-directional links with the bi-directional link color (g0+)
+	"-" --> paint the uni-directional links with the deafault link color (g0-)
+	options.g0
+*/
+function _paintUnidirectionalEdges(option_g0){
+	var edge;
+	var node;
+	var links;
+	var link;
+	var source;
+	var target;
+	var style;
+	if(option_g0 == "+"){
+		style = LINK_BI;
+	}
+	else if(option_g0 == "-"){
+		style = LINK_DEFAULT;
+	}
+	else{
+		style = LINK_UNI;
+	}
+	for(var i=0; i<unidirectionalEdges.length; i++){
+		edge = stepDataArray[ unidirectionalEdges[i][0] ][ unidirectionalEdges[i][1] ];
+		node = returnNodeById(edge["source"]); //we need it to get the graphics model
+		links = graph.getConnectedLinks(node.graphic, {});
+		for(var j=0; j<links.length; j++){
+			source = links[j].attributes.prop.node1;
+			target = links[j].attributes.prop.node2;
+			if((source == edge["source"])&&(target == edge["target"])){
+				link = links[j];
+				break;
+			}
+			else if((source == edge["target"])&&(target == edge["source"])){
+				link = links[j];
+				break;
+			}
+		}
+		link.attr(style);
+		//link.attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
+		if(style == LINK_UNI){
+			var id = link.id;
+			$("[ model-id ="+id+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
+		}
+	}
+}
+
+//Hides all arroheads
+function _hideArrowHeads(){
+	$(".marker-arrowhead-group-target").css({ "opacity" : "0"});
 }
 
 //Repaints the edges with their original color
 function _repaintEdgesDefault(){
 	var links  = graph.getLinks();
 	for(var i=0; i<links.length; i++){
-		links[i].attr({ '.connection': { stroke : "#000000", "stroke-width" : "1" } });
-		links[i].attr( { '.' : { filter: { name: 'blur', args: { x:0} } } } );
+		links[i].attr(LINK_DEFAULT);
+		//links[i].attr( { '.' : { filter: { name: 'blur', args: { x:0} } } } );
 	}
 }
 
 //Paint the whole LMST tree
-function _paintLMST(LMSTs){
+function _paintLMST(){
 	_repaintEdgesDefault();
-	for(var i=0; i<LMSTs.length; i++){
-		_paintEdgesFromList(LMSTs[i]);
-	}
-}
-
-/*Check response type and use appropriate handler
-The response will be an object that contains the 
-fields:
-code : the type of data the algorithm returns so that 
-the client knows how to handle the representation
-	1: wu li dominators list, 2: multipoint relays cds 
-	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
-solution : the data to be sent to the client */
-function handleResponse(data, status, XMLHttpRequest){
-	stepDataArray = []; //clear the global steps data from previous executions
-	switch(data["code"]){
-		case "1" : _wuLiDominatorsAnalysis(data); break;
-		case "2" : _mprCdsAnalysis(data); break;
-		case "3" : _dcaAnalysis(data); break;
-		case "4" : _maxMinAnalysis(data); break;
-		case "5" : break;
-		case "6" : _lmstAnalysis(data); break;
-		case "7" : break;
-		case "8" : break;
-		default:break;
+	for(var i=0; i<stepDataArray.length; i++){
+		_paintEdgesFromList(stepDataArray[i]);
 	}
 }
 
@@ -174,6 +242,7 @@ function _wuLiDominatorsAnalysis(response){
 		}
 	}
 	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
 	_paintDominators(response["solution"].final_result);
 }
 
@@ -220,6 +289,7 @@ function _mprCdsAnalysis(response){
 		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["MPR_cds"]+" ]</p>";
 	}
 	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
 	_paintDominators(response["solution"].final_result);
 }
 
@@ -242,6 +312,7 @@ function _dcaAnalysis(response){
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
 	_paintClusters(response["solution"].final_result, network);
 }
 
@@ -252,6 +323,7 @@ var _maxMinAnalysis = function(response){
 	var text = "<p class=\"solution-result colored-text\">The result of the floodmax and floodmin stages are shown in the table below.</p>";
 	text += table.text; 
 	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
 	_paintClusters(solution["clusters"], network);	
 }
 
@@ -260,8 +332,10 @@ var _lmstAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of LMST algorithm on given network. Click on each step"+
-	" to see the LMST for a specific node. Press the buttons below to show again the whole tree.</p>"+
-	"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
+	" to see the LMST for a specific node. Press the buttons below to show again the whole tree.</p>"
+	+"<p class=\"small-line-color1 text-center\">bi-directional link</p>"
+	+"<p class=\"small-line-color2 text-center\">uni-directional link</p>"
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"</br><p class=\"colored-text\">Execution Analysis :</p></div>";	
 	for(var i=0; i<solution["step_data"].steps.length; i++){
@@ -271,33 +345,54 @@ var _lmstAnalysis = function(response){
 		stepDataArray.push(solution["LMSTs"][i]);
 		stepId++;
 	}
+	unidirectionalEdges = solution["uni-directional"];
 	$("#solutionBoxData").html(text);
-	_paintLMST(solution["LMSTs"]);
+	_paintEverythingDefault();
+	_paintLMST();
+	_paintUnidirectionalEdges("0");
 }
 
 //Handle clicks on objects related to algorithm results
 $(document).ready(function(){
 	$(document).on("click",".dom-step",function(){
+		_paintEverythingDefault();
 		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".mpr-step",function(){
+		_paintEverythingDefault();
 		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".dca-step",function(){
+		_paintEverythingDefault();
 		_paintClusters(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".lmst-step",function(){
-		_repaintEdgesDefault();
+		_hideArrowHeads();
+		_paintEverythingDefault();
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
 	});
 
-	$(document).on("click","#lmst_btn_orig",function(){
-		_repaintEdgesDefault();
-		for(var i=0; i<stepDataArray.length; i++){
-			_paintEdgesFromList(stepDataArray[i]);
-		}
+	$(document).on("click","#lmst_btn_orig",function(c){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintLMST();
+		_paintUnidirectionalEdges("0");
+	});
+
+	$(document).on("click","#lmst_btn_g0plus",function(c){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintLMST();
+		_paintUnidirectionalEdges("+");
+	});
+
+	$(document).on("click","#lmst_btn_g0minus",function(c){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintLMST();
+		_paintUnidirectionalEdges("-");
 	});
 });

@@ -72,7 +72,7 @@ $(document).ready(function(){
 	    	var circleShape = new joint.shapes.basic.Circle({
 	    		position: { x: x - 20, y: y - 20},
 	    		size:{ width:35, height:35},
-	    		attrs:{ circle: {fill: DEFAULTFILL, stroke: DEFAULTSTROKE, "stroke-width" : "1"}, text: { text : nodeID, fill : 'white'}},
+	    		attrs:{ circle: {fill: DEFAULTFILL, stroke: DEFAULTSTROKE, "stroke-width" : "2"}, text: { text : nodeID, fill : 'white'}},
 	    		prop:{ node_id : nodeID}
 	    	});
 	    	//stop adding/removing nodes if you moved one
@@ -121,6 +121,7 @@ $(document).ready(function(){
 			        target: { id: linkEnd.id },
 			        prop:{ node1: shape1_node.id, node2: shape2_node.id } //network ids
 			    });
+				link.attr(LINK_DEFAULT);
 				//add the edge to the graph
 				graph.addCell(link);
 				console.log("Link ", link);

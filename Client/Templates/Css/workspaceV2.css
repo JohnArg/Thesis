@@ -207,6 +207,18 @@ input {
   background-color: #1b8db7;
   color: white; }
 
+.small-line-color1 {
+  width: 120px;
+  padding: 1px;
+  background-color: #2fd829;
+  color: white; }
+
+.small-line-color2 {
+  width: 120px;
+  padding: 1px;
+  background-color: #f4b218;
+  color: white; }
+
 /* Buttons ============================================ */
 .workspace_btn {
   background-color: #1ea9db;
@@ -300,13 +312,26 @@ input[type="radio"] {
 .joint-link .mark-errors {
   display: none; }
 
-.joint-link .marker-arrowheads {
-  display: none; }
-
 .joint-link .marker-vertices {
   display: none; }
 
 .joint-link .connection-wrap {
   display: none; }
+
+.joint-link.joint-theme-default .marker-arrowhead {
+  fill: #f4b218; }
+
+.joint-link.joint-theme-default .marker-arrowhead:hover {
+  fill: #f4b218;
+  stroke: none; }
+
+.joint-link .marker-arrowheads {
+  opacity: 1; }
+
+.joint-link .marker-arrowhead-group-source {
+  opacity: 0; }
+
+.joint-link .marker-arrowhead-group-target {
+  opacity: 0; }
 
 /*# sourceMappingURL=workspaceV2.css.map */

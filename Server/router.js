@@ -19,7 +19,7 @@ var Router = function(){
 			case "/joint.css" : GETHandler.handle["Css"](response, "./Client/Templates/Css/External/joint.css"); break;
 			case "/lodash.js" : GETHandler.handle["Js"](response, "./Client/Model/External/lodash.js"); break;
 			case "/backbone.js": GETHandler.handle["Js"](response,"./Client/Model/External/backbone.js"); break;
-			case "/joint.js": GETHandler.handle["Js"](response, "./Client/Model/External/joint.js"); break;
+			case "/joint.js": GETHandler.handle["Js"](response, "./Client/Model/External/joint_mod.js"); break;
 			case "/networkManager.js": GETHandler.handle["Js"](response, "./Client/Model/networkManager.js"); break;
 			case "/viewManager.js": GETHandler.handle["Js"](response, "./Client/Model/viewManager.js"); break;
 			case "/resultView.js": GETHandler.handle["Js"](response, "./Client/Model/resultView.js"); break;

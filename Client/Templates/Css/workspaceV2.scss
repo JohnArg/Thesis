@@ -37,6 +37,8 @@ $graphView_color : #f4fcff;
 /*Other Globals*/
 $toolbarWidth : 160px;
 $footer_height: 90px;
+$bidirectionalLinkColor : #2fd829;
+$unidirectionalLinkColor : #f4b218;
 /* Initializers ================== */
 html,body,h1,h2,h3,h4,h5,h6,p{
 	margin: 0;
@@ -251,6 +253,20 @@ input{
 	color:white;
 }
 
+.small-line-color1{
+	width:120px;
+	padding:1px;
+	background-color: $bidirectionalLinkColor;
+	color:white;
+}
+
+.small-line-color2{
+	width:120px;
+	padding:1px;
+	background-color: $unidirectionalLinkColor;
+	color:white;
+}
+
 /* Buttons ============================================ */
 .workspace_btn{
 	background-color: $btn_color;
@@ -333,6 +349,15 @@ input[type="radio"] {
 .link-tool .tool-remove { display: none; }
 .link-tool .link-options { display: none; }
 .joint-link .mark-errors { display: none; }
-.joint-link .marker-arrowheads{ display: none; }
 .joint-link .marker-vertices{display: none;}
 .joint-link .connection-wrap{display: none;}
+.joint-link.joint-theme-default .marker-arrowhead {
+    fill: $unidirectionalLinkColor;
+}
+.joint-link.joint-theme-default .marker-arrowhead:hover {
+    fill: $unidirectionalLinkColor;
+    stroke: none;
+}
+.joint-link .marker-arrowheads{ opacity : 1};
+.joint-link .marker-arrowhead-group-source{ opacity: 0}
+.joint-link .marker-arrowhead-group-target{ opacity: 0}
