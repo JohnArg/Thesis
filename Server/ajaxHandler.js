@@ -15,6 +15,7 @@ var MPR_Module = require("./Algorithms/mpr_set");
 var DCA_Module = require("./Algorithms/dca_clusters");
 var MaxMinModule = require("./Algorithms/max_min_clusters");
 var LMST_Module = require("./Algorithms/lmst");
+var RNG_Module = require("./Algorithms/rng");
 
 var ajaxRoute = function(code, net, extras, response){
 	switch(code){
@@ -82,8 +83,12 @@ var handler = {
 		response.end();
 	},
 	"rng" : function(net, response){
+		var rng = RNG_Module.newRNG();
+		var rngSolution = rng.constructRNG(net);
+		var responseData = {"code" : "7", "solution" : rngSolution};
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write("");
+		response.write(responseData);
 		response.end();
 	},
 	"gg" : function(net, response){

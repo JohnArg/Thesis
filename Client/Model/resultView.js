@@ -61,7 +61,7 @@ function handleResponse(data, status, XMLHttpRequest){
 		case "4" : _maxMinAnalysis(data); break;
 		case "5" : break;
 		case "6" : _lmstAnalysis(data); break;
-		case "7" : break;
+		case "7" :_rngAnalysis(data); break;
 		case "8" : break;
 		default:break;
 	}
@@ -212,8 +212,8 @@ function _repaintEdgesDefault(){
 	}
 }
 
-//Paint the whole LMST tree
-function _paintLMST(){
+//Paint the whole Topology tree
+function _paintTopologyTree(){
 	_repaintEdgesDefault();
 	for(var i=0; i<stepDataArray.length; i++){
 		_paintEdgesFromList(stepDataArray[i]);
@@ -332,12 +332,12 @@ var _lmstAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of LMST algorithm on given network. Click on each step"+
-	" to see the LMST for a specific node. Press the buttons below to show again the whole tree.</p>"
+	" to see the LMST for a specific node. Press the buttons below to show the whole tree again.</p>"
 	+"<p class=\"small-line-color1 text-center\">bi-directional link</p>"
 	+"<p class=\"small-line-color2 text-center\">uni-directional link</p>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"</br><p class=\"colored-text\">Execution Analysis :</p></div>";	
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";	
 	for(var i=0; i<solution["step_data"].steps.length; i++){
 		text += "<div class=\"well lmst-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
@@ -348,8 +348,28 @@ var _lmstAnalysis = function(response){
 	unidirectionalEdges = solution["uni-directional"];
 	$("#solutionBoxData").html(text);
 	_paintEverythingDefault();
-	_paintLMST();
+	_paintTopologyTree();
 	_paintUnidirectionalEdges("0");
+}
+
+//Steps of the RNG Analysis
+var _rngAnalysis = function(response){
+	var stepId = 0; //will be used for indexing a global array of step data
+	var solution = response["solution"];
+	var text = "<div><p class=\"solution-result colored-text\">Results of RNG algorithm on given network. Click on each step"+
+	" to see the selected edges of a specific node. Press the button below to show the whole tree again.</p>"
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"rng_btn_orig\">Original Tree</button>"
+	+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
+	for(var i=0; i<solution["step_data"].steps.length; i++){
+		text += "<div class=\"well rng-step step\" id=\""+stepId+"\">";
+		text += solution["step_data"].steps[i].text;
+		text += "</div>";
+		stepDataArray.push(solution["RNG"][i]);
+		stepId++;
+	}
+	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
+	_paintTopologyTree();
 }
 
 //Handle clicks on objects related to algorithm results
@@ -378,21 +398,34 @@ $(document).ready(function(){
 	$(document).on("click","#lmst_btn_orig",function(c){
 		_hideArrowHeads();
 		_paintEverythingDefault();
-		_paintLMST();
+		_paintTopologyTree();
 		_paintUnidirectionalEdges("0");
 	});
 
 	$(document).on("click","#lmst_btn_g0plus",function(c){
 		_hideArrowHeads();
 		_paintEverythingDefault();
-		_paintLMST();
+		_paintTopologyTree();
 		_paintUnidirectionalEdges("+");
 	});
 
 	$(document).on("click","#lmst_btn_g0minus",function(c){
 		_hideArrowHeads();
 		_paintEverythingDefault();
-		_paintLMST();
+		_paintTopologyTree();
 		_paintUnidirectionalEdges("-");
 	});
+
+	$(document).on("click","#rng_btn_orig",function(c){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintTopologyTree();
+	});
+
+	$(document).on("click",".rng-step",function(){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+	});
+
 });
