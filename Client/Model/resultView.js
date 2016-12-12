@@ -61,8 +61,8 @@ function handleResponse(data, status, XMLHttpRequest){
 		case "4" : _maxMinAnalysis(data); break;
 		case "5" : break;
 		case "6" : _lmstAnalysis(data); break;
-		case "7" :_rngAnalysis(data); break;
-		case "8" : break;
+		case "7" : _rngAnalysis(data); break;
+		case "8" : _ggAnalysis(data); break;
 		default:break;
 	}
 }
@@ -359,12 +359,38 @@ var _rngAnalysis = function(response){
 	var text = "<div><p class=\"solution-result colored-text\">Results of RNG algorithm on given network. Click on each step"+
 	" to see the selected edges of a specific node. Press the button below to show the whole tree again.</p>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"rng_btn_orig\">Original Tree</button>"
+	+"<p class=\"solution-result2 text-warning\">The algorithm uses ONLY the edges of the graph to construct the topology tree. Even if a node"
+	+" is inside the checked region between 2 other nodes, it will not be taken into account if there are no edges connecting him"+ 
+	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
 	+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
 	for(var i=0; i<solution["step_data"].steps.length; i++){
 		text += "<div class=\"well rng-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
 		text += "</div>";
 		stepDataArray.push(solution["RNG"][i]);
+		stepId++;
+	}
+	$("#solutionBoxData").html(text);
+	_paintEverythingDefault();
+	_paintTopologyTree();
+}
+
+//Steps of the GG Analysis
+var _ggAnalysis = function(response){
+	var stepId = 0; //will be used for indexing a global array of step data
+	var solution = response["solution"];
+	var text = "<div><p class=\"solution-result colored-text\">Results of GG (Gabriel Graph) algorithm on given network. Click on each step"+
+	" to see the selected edges of a specific node. Press the button below to show the whole tree again.</p>"
+	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"gg_btn_orig\">Original Tree</button>"
+	+"<p class=\"solution-result2 text-warning\">The algorithm uses ONLY the edges of the graph to construct the topology tree. Even if a node"
+	+" is inside the checked region between 2 other nodes, it will not be taken into account if there are no edges connecting him"+ 
+	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
+	+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
+	for(var i=0; i<solution["step_data"].steps.length; i++){
+		text += "<div class=\"well gg-step step\" id=\""+stepId+"\">";
+		text += solution["step_data"].steps[i].text;
+		text += "</div>";
+		stepDataArray.push(solution["GG"][i]);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
@@ -423,6 +449,19 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click",".rng-step",function(){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+	});
+
+
+	$(document).on("click","#gg_btn_orig",function(c){
+		_hideArrowHeads();
+		_paintEverythingDefault();
+		_paintTopologyTree();
+	});
+
+	$(document).on("click",".gg-step",function(){
 		_hideArrowHeads();
 		_paintEverythingDefault();
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);

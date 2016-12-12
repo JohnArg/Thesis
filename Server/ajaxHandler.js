@@ -16,6 +16,7 @@ var DCA_Module = require("./Algorithms/dca_clusters");
 var MaxMinModule = require("./Algorithms/max_min_clusters");
 var LMST_Module = require("./Algorithms/lmst");
 var RNG_Module = require("./Algorithms/rng");
+var GG_Module = require("./Algorithms/gg");
 
 var ajaxRoute = function(code, net, extras, response){
 	switch(code){
@@ -92,8 +93,12 @@ var handler = {
 		response.end();
 	},
 	"gg" : function(net, response){
+		var gg = GG_Module.newGG();
+		var ggSolution = gg.constructGG(net);
+		var responseData = {"code" : "8", "solution" : ggSolution};
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write("");
+		response.write(responseData);
 		response.end();
 	},
 	"default" : function(response){

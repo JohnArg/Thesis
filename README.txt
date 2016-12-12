@@ -64,4 +64,4 @@ Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder
 * LMST : "Design and Analysis of an MST-Based Topology Control Algorithm" by Ning Li, Jennifer C. Hou, Lui Sha
 * RNG : "Localized LMST and RNG based minimum-energy broadcast protocols in ad hoc networks" by 
 Julien Cartigny, Francois Ingelrest, David Simplot-Ryl, Ivan Stojmenovic
-* GG :  
+* GG : "Distributed Topology Control in Wireless Ad Hoc Networks using β-Skeletons" by Manvendu Bhardwaj, Satyajayant Misra and Guoliang Xue 
