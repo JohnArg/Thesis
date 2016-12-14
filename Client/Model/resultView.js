@@ -1,15 +1,17 @@
 /*
 This file has functions used to handle the response from the server
-and represent the algorithms' results
+and visually represent the algorithms' results
 */
 var stepDataArray = [];
 var unidirectionalEdges = [];
-//Coloring Globals
-//Some color globals used in our graph
-var DEFAULTFILL = "#27a7ce";
-var DOMINATOR_FILL = "#59cc16";
-var DEFAULTSTROKE = "#1986a8";
-var DOMINATOR_STROKE = "#4f9e22";
+//Some color-styling globals used in our graph
+var NODE_DEF_STYLE =  {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"};
+var NODE_DOM_STYLE = {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"};
+var NODE_MIS_STYLE = {
+	"white" : {fill: "#efefef", stroke: "#444444", "stroke-width" : "2"},
+	"gray" : {fill: "#636363", stroke: "#444444", "stroke-width" : "2"},
+	"black" : {fill: "#1e1e1e", stroke: "#444444", "stroke-width" : "2"}
+}
 var LINK_DEFAULT = {'.connection': { stroke : "#444444", "stroke-width" : "2" }};
 var LINK_BI = { '.connection': { stroke : "#2fd829", "stroke-width" : "3" } };
 var LINK_UNI = { '.connection': { stroke : "#f4b218", "stroke-width" : "3" } };
@@ -22,6 +24,33 @@ var CLUSTER_COLORS = [
 	{"head_color" : "#6b17d8", "group_color" : "#4d119b", "stroke": "#4d119b" },
 	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" }
 ];
+
+/*Check response type and use appropriate handler
+The response will be an object that contains the 
+fields:
+code : the type of data the algorithm returns so that 
+the client knows how to handle the representation
+	1: wu li dominators list, 2: multipoint relays cds 
+	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
+solution : the data to be sent to the client */
+function handleResponse(data, status, XMLHttpRequest){
+	stepDataArray = []; //clear the global steps data from previous executions
+	unidirectionalEdges = [];
+	_hideArrowHeads();
+	switch(data["code"]){
+		case "1" : _wuLiDominatorsAnalysis(data); break;
+		case "2" : _mprCdsAnalysis(data); break;
+		case "3" : _dcaAnalysis(data); break;
+		case "4" : _maxMinAnalysis(data); break;
+		case "5" : _misAnalysis(data); break;
+		case "6" : _lmstAnalysis(data); break;
+		case "7" : _rngAnalysis(data); break;
+		case "8" : _ggAnalysis(data); break;
+		default:break;
+	}
+}
+
+//construct the Max Min Table
 var max_min_table = function(solution){
 	this.text = "";
 	for(var i=0; i<network.nodes.length; i++){
@@ -42,35 +71,10 @@ var max_min_table = function(solution){
 	}
 }
 
-/*Check response type and use appropriate handler
-The response will be an object that contains the 
-fields:
-code : the type of data the algorithm returns so that 
-the client knows how to handle the representation
-	1: wu li dominators list, 2: multipoint relays cds 
-	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
-solution : the data to be sent to the client */
-function handleResponse(data, status, XMLHttpRequest){
-	stepDataArray = []; //clear the global steps data from previous executions
-	unidirectionalEdges = [];
-	_hideArrowHeads();
-	switch(data["code"]){
-		case "1" : _wuLiDominatorsAnalysis(data); break;
-		case "2" : _mprCdsAnalysis(data); break;
-		case "3" : _dcaAnalysis(data); break;
-		case "4" : _maxMinAnalysis(data); break;
-		case "5" : break;
-		case "6" : _lmstAnalysis(data); break;
-		case "7" : _rngAnalysis(data); break;
-		case "8" : _ggAnalysis(data); break;
-		default:break;
-	}
-}
-
 //Paint everything with the default color
 function _paintEverythingDefault(){
 	for(var j=0; j<network.nodes.length; j++){
-		network.nodes[j].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
+		network.nodes[j].graphic.attr({ circle: NODE_DEF_STYLE});
 	}
 	_repaintEdgesDefault();
 }
@@ -90,20 +94,17 @@ function _paintDominators(dominatorList){
 	_repaintEdgesDefault();
 	for(var j=0; j<network.nodes.length; j++){
 		if(_isDominator(network.nodes[j].id, dominatorList)){
-			network.nodes[j].graphic.attr({ circle: {fill: DOMINATOR_FILL, stroke : DOMINATOR_STROKE}});
+			network.nodes[j].graphic.attr({ circle: NODE_DOM_STYLE});
 		}
 	}
 }
 
 //Paint Clusters with different colors
 function _paintClusters(clusterList){
-	_repaintEdgesDefault();
 	var tempNode;
 	var index = 0;
 	//repaint all nodes with default color
-	for(var i=0; i<network.nodes.length; i++){
-		network.nodes[i].graphic.attr({ circle: {fill: DEFAULTFILL, stroke : DEFAULTSTROKE}});
-	}
+	_paintEverythingDefault();
 	//paint only the clusters
 	for(var i=0; i< clusterList.length; i++){
 		if( index == CLUSTER_COLORS.length){
@@ -396,6 +397,14 @@ var _ggAnalysis = function(response){
 	$("#solutionBoxData").html(text);
 	_paintEverythingDefault();
 	_paintTopologyTree();
+}
+
+//Steps of MIS Analysis
+var _misAnalysis = function(response){
+	var stepId = 0; //will be used for indexing a global array of step data
+	var solution = response["solution"];
+	_paintEverythingDefault();
+	_paintEdgesFromList(solution["edges"]);
 }
 
 //Handle clicks on objects related to algorithm results
