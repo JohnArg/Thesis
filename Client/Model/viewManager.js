@@ -135,6 +135,9 @@ $(document).ready(function() {
 				else if(algorithm_code == "alg_4"){
 					$("#max_min_dialog").modal("show");
 				}
+				else if(algorithm_code == "alg_5"){
+					$("#mis_dialog").modal("show");
+				}
 				else{
 					_sendAjaxRequest();
 				}	
@@ -182,6 +185,24 @@ $(document).ready(function() {
 			}
 			else{
 				alert("Please insert a positive value");
+			} 
+		}
+	});
+
+	$("#mis_continue").click(function(){
+		var root = parseInt($("#mis_input").val());
+		var max = _.max(usedIds);
+		if(isNaN(root)){
+			alert("root must be a positive integer <= "+max);
+		}
+		else{
+			if(root>0 && root<=max){
+				ajaxObject["extras"]["root"] = root;
+				_sendAjaxRequest();
+				$("#mis_dialog").modal("hide");
+			}
+			else{
+				alert("Please insert a positive integer <= "+max);
 			} 
 		}
 	});

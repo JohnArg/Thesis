@@ -25,7 +25,7 @@ These algorithms are based on the papers mentioned in "References" below.
 
 Functionality :
 The users can construct a wireless network represented by
-a graph, with graph manipulating tools. Then they can choose
+a graph, with graph manipulating tools. Then, they can choose
 from a list of algorithms and execute them on the network that
 they created. The results of each step will be represented both 
 by visual changes in the graph and explanatory text. They will
@@ -61,7 +61,8 @@ Laurent Viennot
 Thai H.P. Vuong, Dung T. Huynh
 * Maximal Independent Set : "Distributed Construction of Connected Dominating Set in Wireless Ad Hoc Networks" by
 Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder
+and "Propagation and Leader Election in a Multihop Broadcast Environment" by Israel Cidon and Osnat Mokryn
 * LMST : "Design and Analysis of an MST-Based Topology Control Algorithm" by Ning Li, Jennifer C. Hou, Lui Sha
 * RNG : "Localized LMST and RNG based minimum-energy broadcast protocols in ad hoc networks" by 
 Julien Cartigny, Francois Ingelrest, David Simplot-Ryl, Ivan Stojmenovic
-* GG : "Distributed Topology Control in Wireless Ad Hoc Networks using β-Skeletons" by Manvendu Bhardwaj, Satyajayant Misra and Guoliang Xue 
+* GG : "Distributed Topology Control in Wireless Ad Hoc Networks using β-Skeletons" by Manvendu Bhardwaj, Satyajayant Misra and Guoliang Xue

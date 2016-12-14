@@ -17,6 +17,7 @@ var MaxMinModule = require("./Algorithms/max_min_clusters");
 var LMST_Module = require("./Algorithms/lmst");
 var RNG_Module = require("./Algorithms/rng");
 var GG_Module = require("./Algorithms/gg");
+var MIS_Module = require("./Algorithms/mis");
 
 var ajaxRoute = function(code, net, extras, response){
 	switch(code){
@@ -24,7 +25,7 @@ var ajaxRoute = function(code, net, extras, response){
 		case 'alg_2': handler["mpr"](net,response);break;
 		case 'alg_3': handler["dca"](net,extras,response);break;
 		case 'alg_4': handler["max_min"](net,extras,response);break;
-		case 'alg_5': handler["mis"](net,response);break;
+		case 'alg_5': handler["mis"](net,extras,response);break;
 		case 'alg_6': handler["lmst"](net,response);break;
 		case 'alg_7': handler["rng"](net,response);break;
 		case 'alg_8': handler["gg"](net,response);break;
@@ -69,9 +70,13 @@ var handler = {
 		response.write(responseData);
 		response.end();
 	},
-	"mis" : function(net, response){
+	"mis" : function(net, extras, response){
+		var mis = MIS_Module.newMIS();
+		var misSolution = mis.constructMIS(net, extras["root"]);
+		var responseData = {"code" : "5", "solution" : misSolution};
+		responseData = JSON.stringify(responseData);
 		response.writeHead(200, "OK", {"Content-Type" : "application/json"});
-		response.write("");
+		response.write(responseData);
 		response.end();
 	},
 	"lmst" : function(net, response){
