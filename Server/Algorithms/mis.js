@@ -13,7 +13,10 @@ var misFactory = function(){
 var misObject = function(){
     that = this;
     that.solution = {
-        "edges" : []
+        "edges" : [],
+        "levels" : solutionFactory.newSolution(),
+        "colors" : solutionFactory.newSolution(),
+        "cds" : solutionFactory.newSolution()
     };
     that.constructMIS = function(network, rootNode){
          var index = netOperator.returnNodeIndexById(rootNode, network); //get the index of the root inside the network.nodes array
@@ -105,14 +108,30 @@ var _lowerRankedNeighbors = function(node){
     }
 }
 
+//Send LEVEL message
+var _sendLEVEL = function(node, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length -1].text = "<p>Node "+node.id+" with level "+node.level+" broadcasts LEVEL message.</p>";
+    var neighbors = netOperator.returnNeighborObjects(node, network);
+    for(var i=0; i<neighbors.length; i++){
+        _onReceiveLEVEL(neighbors[i], node.id, node.level, solution);
+    }
+    node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
+        return el != "level";
+    });
+}
+
 //Receining a LEVEL message
-var _onReceiveLevel = function(node, sender_id, sender_level){
+var _onReceiveLEVEL= function(node, sender_id, sender_level, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received LEVEL message from "+sender_id+".</p>";
     if(sender_id == node.parent){
         node.level = sender_level+1;
         node.toSend.push("level");
         if(node.children.length == 0){  //i'm a leaf and now i know my level
             node.toSend.push("levelComplete");
         }
+        solution.steps[solution.steps.length-1].text += "<p>Node "+node.id+" set its level as "+node.level+".</p>";
     }
     node.levelList.push({ sender : sender_id, level : sender_level});
     node.nonLeveledNeighbors --;
@@ -121,17 +140,25 @@ var _onReceiveLevel = function(node, sender_id, sender_level){
     }
 }
 
+//Send a LEVEL complete message
+var _send_LEVEL_COMPLETE = function(node, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" sends LEVEL COMPLETE message to parent "+node.parent+".</p>";
+    var parent = netOperator.returnNodeById(node.parent, network);
+    _onReceive_LEVEL_COMPLETE(parent, sender_id, solution);
+}
+
+//Receive a LEVEL complete message
+var _onReceive_LEVEL_COMPLETE = function(node, sender_id, solution){
+
+}
+
 //Assign levels as the MIS algorithm instructs
-var _levelMarking = function(rootIndex, network){
-    var toBroadcastList = [];
+var _levelMarking = function(rootIndex, network, solution){
+    solution.text = "<p>First we begin with the Level Marking process. Given the rooted spanning tree, the root broadcasts a LEVEL message first"+
+    " and the process continues until all nodes have calculated their own levels.</p>";
     //root sends LEVEL message to the children first
-    var childrenObjs = _returnChildrenObjects(network[rootIndex], network);
-    for(var i=0; i<childrenObjs.length; i++){
-        childrenObjs[i].level = 1;
-        childrenObjs[i].levelList.push({ sender : network[rootIndex].id, level : 0});
-        childrenObjs[i].nonLeveledNeighbors --;
-        toBroadcastList.push(childrenObjs[i]);
-    }
+    
     //then the rest of the nodes boradcast a LEVEL message
 }
 
