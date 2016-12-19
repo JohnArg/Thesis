@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/application.js",
             "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "nodejs"
+            "runtimeExecutable": "node"
         },
         {
             "type": "node",

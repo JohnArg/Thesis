@@ -5,13 +5,13 @@ and visually represent the algorithms' results
 var stepDataArray = [];
 var unidirectionalEdges = [];
 //Some color-styling globals used in our graph
-var NODE_DEF_STYLE =  {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"};
-var NODE_DOM_STYLE = {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"};
+var NODE_DEF_STYLE =  { circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { fill : 'white'}};
+var NODE_DOM_STYLE = {circle : {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
 var NODE_MIS_STYLE = {
-	"white" : {fill: "#efefef", stroke: "#444444", "stroke-width" : "2"},
-	"gray" : {fill: "#636363", stroke: "#444444", "stroke-width" : "2"},
-	"black" : {fill: "#1e1e1e", stroke: "#444444", "stroke-width" : "2"}
-}
+	"white" : {circle : {fill: "#efefef", stroke: "#444444", "stroke-width" : "2"}, text: { fill : '#444444'}},
+	"gray" : { circle : {fill: "#777777", stroke: "#444444", "stroke-width" : "2"}, text: { fill : 'white'}},
+	"black" : {circle : {fill: "#1e1e1e", stroke: "#222222", "stroke-width" : "2"}, text: { fill : 'white'}}
+};
 var LINK_DEFAULT = {'.connection': { stroke : "#444444", "stroke-width" : "2" }};
 var LINK_BI = { '.connection': { stroke : "#2fd829", "stroke-width" : "3" } };
 var LINK_UNI = { '.connection': { stroke : "#f4b218", "stroke-width" : "3" } };
@@ -25,32 +25,7 @@ var CLUSTER_COLORS = [
 	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" }
 ];
 
-/*Check response type and use appropriate handler
-The response will be an object that contains the 
-fields:
-code : the type of data the algorithm returns so that 
-the client knows how to handle the representation
-	1: wu li dominators list, 2: multipoint relays cds 
-	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
-solution : the data to be sent to the client */
-function handleResponse(data, status, XMLHttpRequest){
-	stepDataArray = []; //clear the global steps data from previous executions
-	unidirectionalEdges = [];
-	_hideArrowHeads();
-	switch(data["code"]){
-		case "1" : _wuLiDominatorsAnalysis(data); break;
-		case "2" : _mprCdsAnalysis(data); break;
-		case "3" : _dcaAnalysis(data); break;
-		case "4" : _maxMinAnalysis(data); break;
-		case "5" : _misAnalysis(data); break;
-		case "6" : _lmstAnalysis(data); break;
-		case "7" : _rngAnalysis(data); break;
-		case "8" : _ggAnalysis(data); break;
-		default:break;
-	}
-}
-
-//construct the Max Min Table
+//Max Min Table Object
 var max_min_table = function(solution){
 	this.text = "";
 	for(var i=0; i<network.nodes.length; i++){
@@ -71,10 +46,60 @@ var max_min_table = function(solution){
 	}
 }
 
+
+/*Check response type and use appropriate handler
+The response will be an object that contains the 
+fields:
+code : the type of data the algorithm returns so that 
+the client knows how to handle the representation
+	1: wu li dominators list, 2: multipoint relays cds 
+	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
+solution : the data to be sent to the client */
+function handleResponse(data, status, XMLHttpRequest){
+	_clearViewAndData();
+	switch(data["code"]){
+		case "1" : _wuLiDominatorsAnalysis(data); break;
+		case "2" : _mprCdsAnalysis(data); break;
+		case "3" : _dcaAnalysis(data); break;
+		case "4" : _maxMinAnalysis(data); break;
+		case "5" : _misAnalysis(data); break;
+		case "6" : _lmstAnalysis(data); break;
+		case "7" : _rngAnalysis(data); break;
+		case "8" : _ggAnalysis(data); break;
+		default:break;
+	}
+}
+
+//Clear painted stuff and data from previous executions
+function _clearViewAndData(){
+	stepDataArray = []; //clear the global steps data from previous executions
+	unidirectionalEdges = [];
+	_clearView();
+}
+
+//Clear View only
+function _clearView(){
+	_hideArrowHeads();
+	_paintEverythingDefault();
+}
+
+//Hides all arroheads
+function _hideArrowHeads(){
+	$(".marker-arrowhead-group-target").css({ "opacity" : "0"});
+}
+
+//Repaints the edges with their original color
+function _repaintEdgesDefault(){
+	var links  = graph.getLinks();
+	for(var i=0; i<links.length; i++){
+		links[i].attr(LINK_DEFAULT);
+	}
+}
+
 //Paint everything with the default color
 function _paintEverythingDefault(){
 	for(var j=0; j<network.nodes.length; j++){
-		network.nodes[j].graphic.attr({ circle: NODE_DEF_STYLE});
+		network.nodes[j].graphic.attr(NODE_DEF_STYLE);
 	}
 	_repaintEdgesDefault();
 }
@@ -94,7 +119,7 @@ function _paintDominators(dominatorList){
 	_repaintEdgesDefault();
 	for(var j=0; j<network.nodes.length; j++){
 		if(_isDominator(network.nodes[j].id, dominatorList)){
-			network.nodes[j].graphic.attr({ circle: NODE_DOM_STYLE});
+			network.nodes[j].graphic.attr(NODE_DOM_STYLE);
 		}
 	}
 }
@@ -114,12 +139,12 @@ function _paintClusters(clusterList){
 		for(var k=0; k<clusterList[i].group.length; k++){
 			tempNode = returnNodeById(clusterList[i].group[k]);
 			if(tempNode.id != clusterList[i].clusterhead){
-				tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["group_color"], stroke : CLUSTER_COLORS[index]["stroke"]}});
+				tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["group_color"], stroke : CLUSTER_COLORS[index]["stroke"]}, text: { fill : 'white'}});
 			}
 		}
 		//paint clusterhead
 		tempNode = returnNodeById(clusterList[i].clusterhead);
-		tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["head_color"], stroke : CLUSTER_COLORS[index]["stroke"]}});
+		tempNode.graphic.attr({ circle: {fill: CLUSTER_COLORS[index]["head_color"], stroke : CLUSTER_COLORS[index]["stroke"]}, text: { fill : 'white'}});
 		index++;
 	}
 }
@@ -146,7 +171,6 @@ function _paintEdgesFromList(edgeList){
 			}
 		}
 		link.attr(LINK_BI);
-		//link.attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
 	}
 }
 
@@ -191,25 +215,10 @@ function _paintUnidirectionalEdges(option_g0){
 			}
 		}
 		link.attr(style);
-		//link.attr( { '.' : { filter: { name: 'blur', args: { x:1} } } } );
 		if(style == LINK_UNI){
 			var id = link.id;
 			$("[ model-id ="+id+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
 		}
-	}
-}
-
-//Hides all arroheads
-function _hideArrowHeads(){
-	$(".marker-arrowhead-group-target").css({ "opacity" : "0"});
-}
-
-//Repaints the edges with their original color
-function _repaintEdgesDefault(){
-	var links  = graph.getLinks();
-	for(var i=0; i<links.length; i++){
-		links[i].attr(LINK_DEFAULT);
-		//links[i].attr( { '.' : { filter: { name: 'blur', args: { x:0} } } } );
 	}
 }
 
@@ -218,6 +227,17 @@ function _paintTopologyTree(){
 	_repaintEdgesDefault();
 	for(var i=0; i<stepDataArray.length; i++){
 		_paintEdgesFromList(stepDataArray[i]);
+	}
+}
+
+//Paint the MIS color marked nodes
+function _paintMIS(nodeList){
+	for(var i=0; i<nodeList.length; i++){
+		switch(nodeList[i]){
+			case "white" :	network.nodes[i].graphic.attr(NODE_MIS_STYLE["white"]); break;
+			case "gray" : network.nodes[i].graphic.attr(NODE_MIS_STYLE["gray"]); break;
+			case "black" : network.nodes[i].graphic.attr(NODE_MIS_STYLE["black"]); break;
+		}
 	}
 }
 
@@ -232,10 +252,10 @@ function _wuLiDominatorsAnalysis(response){
 			//for each step of that part
 			text += "<p class=\"solution-heading\">"+ response["solution"][property].text + "</p>"; 
 			for(var j=0; j<response["solution"][property].steps.length; j++){
-				text += "<div class=\"well dom-step step\" id=\""+stepId+"\">";
+				text += "<a href=\"#\" class=\"dom-step step\" id=\""+stepId+"\">";
 				text += response["solution"][property].steps[j].text;
 				text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
-				text += "</div>";
+				text += "</a>";
 				stepDataArray.push(response["solution"][property].steps[j].data["dominators"]);
 				stepId ++;
 			}
@@ -243,7 +263,6 @@ function _wuLiDominatorsAnalysis(response){
 		}
 	}
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintDominators(response["solution"].final_result);
 }
 
@@ -264,10 +283,10 @@ function _mprCdsAnalysis(response){
 	if(response["solution"].hasOwnProperty("MPR_set")){
 		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_set"].text + "</p>";
 		for(var j=0; j<response["solution"]["MPR_set"].steps.length; j++){
-			text += "<div class=\"well mpr-step step\" id=\""+stepId+"\">";
+			text += "<a href=\"#\" class=\"mpr-step step\" id=\""+stepId+"\">";
 			text += response["solution"]["MPR_set"].steps[j].text;
 			text += "<br/>MPR set [ " + response["solution"]["MPR_set"].steps[j].data["mpr_set"] +" ]";
-			text += "</div>";
+			text += "</a>";
 			stepDataArray.push(response["solution"]["MPR_set"].steps[j].data["mpr_set"]);
 			stepId ++;
 		}
@@ -280,17 +299,16 @@ function _mprCdsAnalysis(response){
 	if(response["solution"].hasOwnProperty("MPR_cds")){
 		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_cds"].text + "</p>";
 		for(var j=0; j<response["solution"]["MPR_cds"].steps.length; j++){
-			text += "<div class=\"well mpr-step step\" id=\""+stepId+"\">";
+			text += "<a href=\"#\" class=\"mpr-step step\" id=\""+stepId+"\">";
 			text += response["solution"]["MPR_cds"].steps[j].text;
 			text += "<br/>Dominators [ " + response["solution"]["MPR_cds"].steps[j].data["dominators"] +" ]";
-			text += "</div>";
+			text += "</a>";
 			stepDataArray.push(response["solution"]["MPR_cds"].steps[j].data["dominators"]);
 			stepId ++;
 		}
 		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["MPR_cds"]+" ]</p>";
 	}
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintDominators(response["solution"].final_result);
 }
 
@@ -304,16 +322,15 @@ function _dcaAnalysis(response){
 	for(var i=0; i< solution["DCA_timesteps"].length; i++){
 		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
 		for(var j=0; j<solution["DCA_timesteps"][i].steps.length; j++){
-			text += "<div class=\"well dca-step step\" id=\""+stepId+"\">";
+			text += "<a href=\"#\" class=\"dca-step step\" id=\""+stepId+"\">";
 			text += solution["DCA_timesteps"][i].steps[j].text;
-			text += "</div>";
+			text += "</a>";
 			stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
 			stepId++;
 		}
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintClusters(response["solution"].final_result, network);
 }
 
@@ -324,7 +341,6 @@ var _maxMinAnalysis = function(response){
 	var text = "<p class=\"solution-result colored-text\">The result of the floodmax and floodmin stages are shown in the table below.</p>";
 	text += table.text; 
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintClusters(solution["clusters"], network);	
 }
 
@@ -340,15 +356,14 @@ var _lmstAnalysis = function(response){
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
 	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";	
 	for(var i=0; i<solution["step_data"].steps.length; i++){
-		text += "<div class=\"well lmst-step step\" id=\""+stepId+"\">";
+		text += "<a href=\"#\" class=\"lmst-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
-		text += "</div>";
+		text += "</a>";
 		stepDataArray.push(solution["LMSTs"][i]);
 		stepId++;
 	}
 	unidirectionalEdges = solution["uni-directional"];
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintTopologyTree();
 	_paintUnidirectionalEdges("0");
 }
@@ -365,14 +380,13 @@ var _rngAnalysis = function(response){
 	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
 	+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
 	for(var i=0; i<solution["step_data"].steps.length; i++){
-		text += "<div class=\"well rng-step step\" id=\""+stepId+"\">";
+		text += "<a href=\"#\" class=\"rng-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
-		text += "</div>";
+		text += "</a>";
 		stepDataArray.push(solution["RNG"][i]);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintTopologyTree();
 }
 
@@ -388,14 +402,13 @@ var _ggAnalysis = function(response){
 	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
 	+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
 	for(var i=0; i<solution["step_data"].steps.length; i++){
-		text += "<div class=\"well gg-step step\" id=\""+stepId+"\">";
+		text += "<a href=\"#\" class=\"gg-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
-		text += "</div>";
+		text += "</a>";
 		stepDataArray.push(solution["GG"][i]);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
-	_paintEverythingDefault();
 	_paintTopologyTree();
 }
 
@@ -403,77 +416,109 @@ var _ggAnalysis = function(response){
 var _misAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
-	_paintEverythingDefault();
+	var text = "<div><p class=\"solution-result colored-text\">Results of the Maximal Independent Set (MIS) algorithm.</p>"+
+	"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
+	text += solution["levels"].text;
+	//No need to push these steps in the stepDataArray
+	for(var i=0; i<solution["levels"].steps.length; i++){
+		text += "<div class=\"well mis-step step\" >";	//we don't need ids for these
+		text += solution["levels"].steps[i].text;
+		text += "</div>";
+	}
+	text += solution["colors"].text;
+	var oldData = [];	//show the data of the last changes
+	for(var i=0; i<solution["colors"].steps.length; i++){
+		text += "<a href=\"#\" class=\"mis-step mis-color step\" id=\""+stepId+"\">";
+		text += solution["colors"].steps[i].text;
+		text += "</a>";
+		if("colors" in solution["colors"].steps[i].data){
+			stepDataArray.push({ "id" : stepId, "data" : solution["colors"].steps[i].data["colors"]});
+			oldData = solution["colors"].steps[i].data["colors"].slice();
+		}
+		else{
+			stepDataArray.push({ "id" : stepId, "data" : oldData});
+		}
+		stepId++;
+	}
+	$("#solutionBoxData").html(text);
+	_paintMIS(solution["colors"].data);
 	_paintEdgesFromList(solution["edges"]);
 }
 
 //Handle clicks on objects related to algorithm results
 $(document).ready(function(){
+	$(document).on("click", ".step", function(){
+		$(".step").removeClass("step-selected");
+		$(this).addClass("step-selected");
+	});
+
 	$(document).on("click",".dom-step",function(){
-		_paintEverythingDefault();
+		_clearView();
 		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".mpr-step",function(){
-		_paintEverythingDefault();
+		_clearView();
 		_paintDominators(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".dca-step",function(){
-		_paintEverythingDefault();
+		_clearView();
 		_paintClusters(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click",".lmst-step",function(){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
 	});
 
 	$(document).on("click","#lmst_btn_orig",function(c){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintTopologyTree();
 		_paintUnidirectionalEdges("0");
 	});
 
 	$(document).on("click","#lmst_btn_g0plus",function(c){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintTopologyTree();
 		_paintUnidirectionalEdges("+");
 	});
 
 	$(document).on("click","#lmst_btn_g0minus",function(c){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintTopologyTree();
 		_paintUnidirectionalEdges("-");
 	});
 
 	$(document).on("click","#rng_btn_orig",function(c){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintTopologyTree();
 	});
 
 	$(document).on("click",".rng-step",function(){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
 	});
 
 
 	$(document).on("click","#gg_btn_orig",function(c){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintTopologyTree();
 	});
 
 	$(document).on("click",".gg-step",function(){
-		_hideArrowHeads();
-		_paintEverythingDefault();
+		_clearView();
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click", ".mis-color", function(){
+		//_clearView();
+		for(var i=0; i<stepDataArray.length; i++){
+			if(stepDataArray[i]["id"] == $(this).attr("id")){
+				_paintMIS(stepDataArray[i]["data"]);
+				break;
+			}
+		}
 	});
 
 });

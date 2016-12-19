@@ -35,6 +35,12 @@ input {
   border-radius: 5px;
   margin-right: 10px; }
 
+a {
+  text-decoration: none !important; }
+
+a:hover, a:visited, a:active {
+  text-decoration: none !important; }
+
 /* Bootstrap override ========= */
 .btn-group-vertical {
   -webkit-border-radius: 0 !important;
@@ -193,12 +199,19 @@ input {
   margin-bottom: 10px; }
 
 .solution-result {
-  font-size: 12pt; }
+  font-size: 11pt; }
 
 .solution-result2 {
   font-size: 10pt; }
 
+.solution-heading {
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
 .step {
+  color: #000000;
+  display: block;
+  background-color: #ffffff;
   margin-bottom: 5px;
   padding: 5px;
   -webkit-border-radius: 0 !important;
@@ -206,9 +219,9 @@ input {
   -ms-border-radius: 0 !important;
   border-radius: 0 !important; }
 
-.step:hover, .step:active {
+.step-selected {
   background-color: #1b8db7;
-  color: white; }
+  color: white !important; }
 
 .small-line-color1 {
   width: 120px;
