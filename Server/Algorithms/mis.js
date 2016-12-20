@@ -46,7 +46,6 @@ var _convertToMisNodes = function(rootIndex, network){
         network.nodes[i].childrenNotComplete = 0;
         network.nodes[i].levelList = [];
         network.nodes[i].lowerRankedNeighbors = 0;
-        network.nodes[i].toSend = []; //list of texts indicating what message should the node send in the next step
         network.nodes[i].blackList = []; //list of black neighbor's ids
         network.nodes[i].color = "white";
     }
@@ -54,6 +53,7 @@ var _convertToMisNodes = function(rootIndex, network){
     //(since the network object is a parameter in most functions, there is no need to add a new object holding these booleans)
     network.beginColorMarking = false;
     network.beginCDS =false;
+    network.messageQueue = []; //it will be used to keep an order of the messages to be sent over the network
 }
 
 //Every node must have parent/children - use of the PIF algorithm (see references in README)
@@ -76,7 +76,6 @@ var _constructRootedTree = function(rootIndex, network){
     while(toBroadcastList.length > 0){
         newBcastList = toBroadcastList.slice();
         for(var i=0; i<toBroadcastList.length; i++){
-            console.log("Parent ", toBroadcastList[i].id);
             neighbors = netOperator.returnNeighborObjects(toBroadcastList[i], network);
             for(var j=0; j<neighbors.length; j++){
                 if(neighbors[j].parent == -1){  //if this neighbor doesn't have a parent already
@@ -90,7 +89,6 @@ var _constructRootedTree = function(rootIndex, network){
             newBcastList = newBcastList.filter(function(el){ //after finishing remove the node from the Broadcast List
                 return el.id != toBroadcastList[i].id;
             });
-            console.log("Children ", toBroadcastList[i].children);
         }
         toBroadcastList = newBcastList.slice();
     }
@@ -125,17 +123,11 @@ var _sendMessage = function(type, node, network, solution){
         case "level" :
             solution.steps[solution.steps.length -1].text += "LEVEL message.</p>";
             for(var i=0; i<neighbors.length; i++){
-                _onReceiveLEVEL(neighbors[i], node.id, node.level, solution);
+                _onReceiveLEVEL(neighbors[i], node.id, node.level, network, solution);
             }
-            node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
-                return el != "level";
-            });
             break;
         case "levelComplete":
             solution.steps[solution.steps.length -1].text += "LEVEL COMPLETE message to parent "+node.parent+".</p>";
-            node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
-                return el != "levelComplete";
-            });
             var parent = netOperator.returnNodeById(node.parent, network);
             _onReceive_LEVEL_COMPLETE(parent, node.id, network, solution);
             break;
@@ -147,24 +139,15 @@ var _sendMessage = function(type, node, network, solution){
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveBLACK(neighbors[i], node.id, network, solution);
             }
-            node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
-                return el != "black";
-            });
             break;
         case "gray":
             solution.steps[solution.steps.length -1].text += "GRAY message.</p>";
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveGRAY(neighbors[i], node.id, node.level, network, solution);
             }
-            node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
-                return el != "gray";
-            });
             break;
         case "markComplete":
             solution.steps[solution.steps.length -1].text += "MARK COMPLETE message to parent "+node.parent+".</p>";
-            node.toSend = node.toSend.filter(function(el){ //remove the LEVEL message from the queue
-                return el != "markComplete";
-            });
             var parent = netOperator.returnNodeById(node.parent, network);
             _onReceive_MARK_COMPLETE(parent, node.id, network, solution);
             break;
@@ -173,14 +156,14 @@ var _sendMessage = function(type, node, network, solution){
 }
 
 //Receiving a LEVEL message
-var _onReceiveLEVEL= function(node, sender_id, sender_level, solution){
+var _onReceiveLEVEL= function(node, sender_id, sender_level, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received LEVEL message from "+sender_id+".</p>";
     if(sender_id == node.parent){
         node.level = sender_level+1;
-        node.toSend.push("level");
+        network.messageQueue.push({ sender : node.id, type : "level"});
         if(node.children.length == 0){  //i'm a leaf and now i know my level
-            node.toSend.push("levelComplete");
+            network.messageQueue.push({ sender : node.id, type : "levelComplete"});
         }
         solution.steps[solution.steps.length-1].text += "<p>Node "+node.id+" set its level as "+node.level+".</p>";
     }
@@ -201,7 +184,7 @@ var _onReceive_LEVEL_COMPLETE = function(node, sender_id, network, solution){
     if(node.childrenNotComplete == 0){
         if(!node.root){
             solution.steps[solution.steps.length-1].text += "<p>The node has received LEVEL_COMPLETE from all children.</p>";
-            node.toSend.push("levelComplete");
+            network.messageQueue.push({ sender : node.id, type : "levelComplete"});
         }
         else{
             solution.steps[solution.steps.length-1].text += "<p>The root has received LEVEL_COMPLETE from all children.</p>";
@@ -230,9 +213,9 @@ var _onReceiveBLACK = function(node, sender_id, network, solution){
             node.color = "gray";
             solution.steps[solution.steps.length-1].text += "<p>The node changed its color to GRAY.</p>";
             solution.steps[solution.steps.length-1].data["colors"] = _returnColorArray(network);
-            node.toSend.push("gray");
+            network.messageQueue.push({ sender : node.id, type : "gray"});
             if(node.children.length == 0){ //leaf
-                node.toSend.push("markComplete");
+                network.messageQueue.push({sender : node.id, type : "markComplete"});
             }
         }
     }
@@ -249,9 +232,9 @@ var _onReceiveGRAY = function(node, sender_id, sender_level, network, solution){
                 node.color = "black";
                 solution.steps[solution.steps.length-1].text += "<p>The node changed its color to BLACK.</p>";
                 solution.steps[solution.steps.length-1].data["colors"] = _returnColorArray(network);
-                node.toSend.push("black");
+                network.messageQueue.push({ sender : node.id, type : "black"});
                 if(node.children.length == 0){ //leaf
-                    node.toSend.push("markComplete");
+                    network.messageQueue.push({sender : node.id, type : "markComplete"});
                 }
             }
         }
@@ -265,7 +248,7 @@ var _onReceive_MARK_COMPLETE = function(node, sender_id, network, solution){
     node.childrenNotComplete --;
     if(node.childrenNotComplete == 0){
         if(!node.root){
-            node.toSend.push("markComplete");
+            network.messageQueue.push({ sender : node.id, type : "markComplete"});
             solution.steps[solution.steps.length-1].text += "<p>The node got MARK COMPLETE from all children. It can brodcast MARK COMPLETE now.</p>";
         }
         else{
@@ -284,21 +267,19 @@ var _beginMessaging = function(rootIndex, network, solution){
     var rootNode = network.nodes[rootIndex];
     _sendMessage("level", rootNode, network, solution["levels"]);
     //then the rest of the nodes broadcast a LEVEL message
-    var messageList = [];
+    var message;
+    var node;
     while(!network.beginColorMarking){
-        for(var i=0; i<network.nodes.length; i++){
-            messageList = network.nodes[i].toSend.slice(); // hold the original queue (it changes after sending message)
-            for(var j=0; j<messageList.length; j++){
-                switch(messageList[j]){
-                    case "level": 
-                        _sendMessage("level", network.nodes[i], network, solution["levels"]); 
-                        break;
-                    case "levelComplete": 
-                        _sendMessage("levelComplete", network.nodes[i], network, solution["levels"]); 
-                        break;
-                    default : break;
-                }
-            }
+        message = network.messageQueue.shift(); //remove and return the first element
+        node = netOperator.returnNodeById(message.sender, network);
+        switch(message.type){
+            case "level": 
+                _sendMessage("level", node, network, solution["levels"]); 
+                break;
+            case "levelComplete": 
+                _sendMessage("levelComplete", node, network, solution["levels"]); 
+                break;
+                default : break;
         }
     }
     //Color marking process ===========================================
@@ -307,22 +288,19 @@ var _beginMessaging = function(rootIndex, network, solution){
     rootNode.color = "black";
     _sendMessage("black", rootNode, network, solution["colors"]);
     while(!network.beginCDS){
-        for(var i=0; i<network.nodes.length; i++){
-            messageList = network.nodes[i].toSend.slice(); // hold the original queue (it changes after sending message)
-            for(var j=0; j<messageList.length; j++){
-                switch(messageList[j]){
-                    case "black": 
-                        _sendMessage("black", network.nodes[i], network, solution["colors"]); 
-                        break;
-                    case "gray": 
-                        _sendMessage("gray", network.nodes[i], network, solution["colors"]); 
-                        break;
-                    case "markComplete":
-                        _sendMessage("markComplete", network.nodes[i], network, solution["colors"]); 
-                        break;
-                    default : break;
-                }
-            }
+        message = network.messageQueue.shift(); //remove and return the first element
+        node = netOperator.returnNodeById(message.sender, network);
+        switch(message.type){
+            case "black": 
+                _sendMessage("black", node, network, solution["colors"]); 
+                break;
+            case "gray": 
+                _sendMessage("gray", node, network, solution["colors"]); 
+                break;
+             case "markComplete":
+                 _sendMessage("markComplete", node, network, solution["colors"]); 
+                break;
+            default : break;
         }
     }
     console.log("Ended color marking");
