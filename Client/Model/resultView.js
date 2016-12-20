@@ -432,17 +432,27 @@ var _misAnalysis = function(response){
 		text += solution["colors"].steps[i].text;
 		text += "</a>";
 		if("colors" in solution["colors"].steps[i].data){
-			stepDataArray.push({ "id" : stepId, "data" : solution["colors"].steps[i].data["colors"]});
 			oldData = solution["colors"].steps[i].data["colors"].slice();
 		}
-		else{
-			stepDataArray.push({ "id" : stepId, "data" : oldData});
+		stepDataArray.push(oldData);
+		stepId++;
+	}
+	text += solution["cds"].text;
+	oldData = [];	//show the data of the last changes
+	for(var i=0; i<solution["cds"].steps.length; i++){
+		text += "<a href=\"#\" class=\"mis-step mis-cds step\" id=\""+stepId+"\">";
+		text += solution["cds"].steps[i].text;
+		text += "</a>";
+		if("cds" in solution["cds"].steps[i].data){
+			oldData = solution["cds"].steps[i].data["cds"].slice();
 		}
+		stepDataArray.push(oldData);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
 	_paintMIS(solution["colors"].data);
 	_paintEdgesFromList(solution["edges"]);
+	_paintUnidirectionalEdges(solution["cds"].result["edges"]);
 }
 
 //Handle clicks on objects related to algorithm results
@@ -512,13 +522,8 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click", ".mis-color", function(){
-		//_clearView();
-		for(var i=0; i<stepDataArray.length; i++){
-			if(stepDataArray[i]["id"] == $(this).attr("id")){
-				_paintMIS(stepDataArray[i]["data"]);
-				break;
-			}
-		}
+		_clearView();
+		_paintMIS(stepDataArray[$(this).attr("id")]);
 	});
 
 });

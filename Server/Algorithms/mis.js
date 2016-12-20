@@ -21,8 +21,8 @@ var misObject = function(){
     that.constructMIS = function(network, rootNode){
          var index = netOperator.returnNodeIndexById(rootNode, network); //get the index of the root inside the network.nodes array
         _convertToMisNodes(index, network);    //add the appropriate properties to the network nodes  
-        that.solution["edges"] = _constructRootedTree(index, network); //the network object is transformed to a rooted tree
-        _beginMessaging(index, network, that.solution);
+        that.solution["edges"] = _constructRootedTree(network); //the network object is transformed to a rooted tree
+        _beginMessaging(network, that.solution);
         return that.solution;
     };
 }
@@ -35,6 +35,8 @@ var _convertToMisNodes = function(rootIndex, network){
             network.nodes[i].root = true;
             network.nodes[i].parent = network.nodes[i].id;
             network.nodes[i].level = 0;
+            network.nodes[i].cdsRoot = -1;
+            network.nodes[i].cdsDegree = 0;
         }
         else{
             network.nodes[i].root = false;
@@ -48,29 +50,34 @@ var _convertToMisNodes = function(rootIndex, network){
         network.nodes[i].lowerRankedNeighbors = 0;
         network.nodes[i].blackList = []; //list of black neighbor's ids
         network.nodes[i].color = "white";
+        network.nodes[i].inCdsTree = false;
+        network.nodes[i].cdsRoot = false;
+        network.nodes[i].cdsParent = -1;
+        network.nodes[i].cdsChildren = [];
     }
     //Also add some properties to the network object used later in the solutions 
     //(since the network object is a parameter in most functions, there is no need to add a new object holding these booleans)
+    network.rootIndex = rootIndex;
+    network.cdsRootIndex = -1;
     network.beginColorMarking = false;
     network.beginCDS =false;
+    network.finishedAll = false;
     network.messageQueue = []; //it will be used to keep an order of the messages to be sent over the network
 }
 
 //Every node must have parent/children - use of the PIF algorithm (see references in README)
-var _constructRootedTree = function(rootIndex, network){
+var _constructRootedTree = function(network){
     var edges = []; //Will be used for visually representing the tree
     var toBroadcastList = []; //It will hold which nodes will broadcast next
     //First the root sends to all its neighbors
-    console.log("Parent ", network.nodes[rootIndex].id);
-    var neighbors = netOperator.returnNeighborObjects(network.nodes[rootIndex], network);
+    var neighbors = netOperator.returnNeighborObjects(network.nodes[network.rootIndex], network);
     for(var i=0; i<neighbors.length; i++){
-        neighbors[i].parent = network.nodes[rootIndex].id;
-        network.nodes[rootIndex].children.push(neighbors[i].id);
-        network.nodes[rootIndex].childrenNotComplete ++;
+        neighbors[i].parent = network.nodes[network.rootIndex].id;
+        network.nodes[network.rootIndex].children.push(neighbors[i].id);
+        network.nodes[network.rootIndex].childrenNotComplete ++;
         toBroadcastList.push(neighbors[i]);
-        edges.push({"source" : network.nodes[rootIndex].id, "target" : neighbors[i].id});
+        edges.push({"source" : network.nodes[network.rootIndex].id, "target" : neighbors[i].id});
     }   
-    console.log("Children ", network.nodes[rootIndex].children);
     //Then the rest of the nodes broadcast
     var newBcastList = [];
     while(toBroadcastList.length > 0){
@@ -115,24 +122,24 @@ var _lowerRankedNeighbors = function(node){
 }
 
 //Broadcast a message
-var _sendMessage = function(type, node, network, solution){
+var _sendMessage = function(type, node, receiver, network, solution){
     solution.createStep();
-    solution.steps[solution.steps.length -1].text = "<p>Node "+node.id+" with level "+node.level+" broadcasts "
+    solution.steps[solution.steps.length -1].text = "<p>Node "+node.id+" with level "+node.level+" ";
     var neighbors = netOperator.returnNeighborObjects(node, network);
     switch(type){
         case "level" :
-            solution.steps[solution.steps.length -1].text += "LEVEL message.</p>";
+            solution.steps[solution.steps.length -1].text += "broadcasts LEVEL message.</p>";
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveLEVEL(neighbors[i], node.id, node.level, network, solution);
             }
             break;
         case "levelComplete":
-            solution.steps[solution.steps.length -1].text += "LEVEL COMPLETE message to parent "+node.parent+".</p>";
+            solution.steps[solution.steps.length -1].text += "sends LEVEL COMPLETE message to parent "+node.parent+".</p>";
             var parent = netOperator.returnNodeById(node.parent, network);
             _onReceive_LEVEL_COMPLETE(parent, node.id, network, solution);
             break;
         case "black":
-            solution.steps[solution.steps.length -1].text += "BLACK message.</p>";
+            solution.steps[solution.steps.length -1].text += "broadcasts BLACK message.</p>";
             if(node.root){
                 solution.steps[solution.steps.length -1].data["colors"] = _returnColorArray(network);
             }
@@ -141,17 +148,48 @@ var _sendMessage = function(type, node, network, solution){
             }
             break;
         case "gray":
-            solution.steps[solution.steps.length -1].text += "GRAY message.</p>";
+            solution.steps[solution.steps.length -1].text += "broadcasts GRAY message.</p>";
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveGRAY(neighbors[i], node.id, node.level, network, solution);
             }
             break;
         case "markComplete":
-            solution.steps[solution.steps.length -1].text += "MARK COMPLETE message to parent "+node.parent+".</p>";
+            solution.steps[solution.steps.length -1].text += "sends MARK COMPLETE message to parent "+node.parent+".</p>";
             var parent = netOperator.returnNodeById(node.parent, network);
             _onReceive_MARK_COMPLETE(parent, node.id, network, solution);
             break;
-    }
+        case "query":
+            solution.steps[solution.steps.length -1].text += "broadcasts QUERY message.</p>";
+            for(var i=0; i<neighbors.length; i++){
+                _onReceiveQUERY(neighbors[i], node.id, network, solution);
+            }
+            break;
+        case "report":
+            solution.steps[solution.steps.length -1].text += "sends REPORT message to "+receiver+".</p>";
+            _onReceiveREPORT(receiver, node.id, node.blackList.length, network, solution);
+            break;
+        case "root" :
+            solution.steps[solution.steps.length -1].text += "sends REPORT message to "+receiver+".</p>";
+            _onReceiveROOT(receiver, node.id, network, solution);
+            break;
+        case "invite1":
+            solution.steps[solution.steps.length -1].text += "broadcasts INVITE1 message.</p>";
+            for(var i=0; i<neighbors.length; i++){
+                _onReceiveInvite1(neighbors[i], node.id, network, solution);
+            }
+            break;
+        case "invite2":
+            solution.steps[solution.steps.length -1].text += "broadcasts INVITE2 message.</p>";
+            for(var i=0; i<neighbors.length; i++){
+                _onReceiveInvite2(neighbors[i], node.id, network, solution);
+            }
+            break;
+        case "join" :
+            solution.steps[solution.steps.length -1].text += "sends JOIN message to "+receiver+".</p>";
+            _onReceiveJOIN(receiver, node.id, network, solution);
+            break;
+        default : break;
+    }   
     return true;
 }
 
@@ -258,54 +296,156 @@ var _onReceive_MARK_COMPLETE = function(node, sender_id, network, solution){
     }
 }
 
+//Receive QUERY message
+var _onReceiveQUERY = function(node, sender_id, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received QUERY message from "+sender_id+".</p>";
+    if(node.color == "gray"){
+        network.messageQueue.push({sender : node.id, receiver : sender_id , type : "report", blackNeighbors : node.blackList.length});
+    }
+}
+
+//Receive Report message
+var _onReceiveREPORT = function(node, sender_id, blackNeighbors, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received REPORT message from "+sender_id+" with a number of"+
+    " black neighbors "+blackNeighbors+".</p>";   
+    if(node.root){
+        node.nonLeveledNeighbors --;
+        if(blackNeighbors > node.cdsDegree){
+            node.cdsDegree = blackNeighbors;
+            node.cdsRoot = sender_id;
+        }
+        if(node.nonLeveledNeighbors == 0){
+            network.messageQueue.push({sender : node.id, receiver : node.cdsRoot , type : "root"});
+        }
+    }
+ }
+
+//Receive a ROOT message
+var _onReceiveROOT = function(node, sender_id, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received ROOT message from "+sender_id+". It becomes the root of the CDS tree.</p>";  
+    node.rootCds = true;
+    network.cdsRootIndex = netOperator.returnNodeIndexById(node, network);
+    node.inCdsTree = true;
+    network.messageQueue.push({sender : node.id, type : "invite2"});
+}
+
+//Receive Invite2
+var _onReceiveInvite2 = function(node, sender_id, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received INVITE2 message from "+sender_id+".</p>"; 
+    if((node.color == "black")&&(!node.inCdsTree)){
+        node.inCdsTree = true;
+        node.cdsParent = sender_id;
+        network.messageQueue.push({sender: node.id, receiver : node.cdsParent, type : "join"});
+        network.messageQueue.push({sender: node.id, type : "invite1"});
+    }
+}
+
+//Receive Invite1
+var _onReceiveInvite1 = function(node, sender_id, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received INVITE1 message from "+sender_id+".</p>"; 
+    if((node.color == "gray")&&(!node.inCdsTree)){
+        node.inCdsTree = true;
+        node.cdsParent = sender_id;
+        network.messageQueue.push({sender: node.id, receiver : node.cdsParent, type : "join"});
+        network.messageQueue.push({sender: node.id, type : "invite2"});
+    }
+}
+
+//Receive JOIN
+var _onReceiveJOIN = function(node, sender_id, network, solution){
+    solution.createStep();
+    solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received JOIN message from "+sender_id+". It put the node to its children in the cds tree.</p>"; 
+    node.cdsChildren.push(sender_id);
+    solution.steps[solution.steps.length-1].data.edges.push({"source" : node.id , "target": sender_id});
+}
+
 //Run the algorithm by sending messages 
-var _beginMessaging = function(rootIndex, network, solution){
+var _beginMessaging = function(network, solution){
     //Level Marking process ==========================================
-    solution["levels"].text = "<p class=\"solution-heading\">First we begin with the Level Marking process. Given the rooted spanning tree, the root broadcasts a LEVEL message first"+
+    solution["levels"].text = "<p class=\"solution-heading\"><strong>Part 1 :</strong> First we begin with the Level Marking process. Given the rooted spanning tree, the root broadcasts a LEVEL message first"+
     " and the process continues until all nodes have calculated their own levels.</p>";
     //root sends LEVEL message to the children first
-    var rootNode = network.nodes[rootIndex];
-    _sendMessage("level", rootNode, network, solution["levels"]);
+    var rootNode = network.nodes[network.rootIndex];
+    _sendMessage("level", rootNode, null, network, solution["levels"]);
     //then the rest of the nodes broadcast a LEVEL message
     var message;
-    var node;
+    var sender;
     while(!network.beginColorMarking){
         message = network.messageQueue.shift(); //remove and return the first element
-        node = netOperator.returnNodeById(message.sender, network);
+        sender = netOperator.returnNodeById(message.sender, network);
         switch(message.type){
             case "level": 
-                _sendMessage("level", node, network, solution["levels"]); 
+                _sendMessage("level", sender, null, network, solution["levels"]); 
                 break;
             case "levelComplete": 
-                _sendMessage("levelComplete", node, network, solution["levels"]); 
+                _sendMessage("levelComplete", sender, null, network, solution["levels"]); 
                 break;
                 default : break;
         }
     }
     //Color marking process ===========================================
-    solution["colors"].text = "<p class=\"solution-heading\">Now we continue with the color marking process. All nodes are initially marked with white color and will be marked with either"+
+    solution["colors"].text = "<p class=\"solution-heading\"><strong>Part 2 :</strong> Now we continue with the color marking process. All nodes are initially marked with white color and will be marked with either"+
     " gray or black eventually.</p>";
     rootNode.color = "black";
-    _sendMessage("black", rootNode, network, solution["colors"]);
+    _sendMessage("black", rootNode, null, network, solution["colors"]);
     while(!network.beginCDS){
         message = network.messageQueue.shift(); //remove and return the first element
-        node = netOperator.returnNodeById(message.sender, network);
+        sender = netOperator.returnNodeById(message.sender, network);
         switch(message.type){
             case "black": 
-                _sendMessage("black", node, network, solution["colors"]); 
+                _sendMessage("black", sender, null, network, solution["colors"]); 
                 break;
             case "gray": 
-                _sendMessage("gray", node, network, solution["colors"]); 
+                _sendMessage("gray", sender, null, network, solution["colors"]); 
                 break;
              case "markComplete":
-                 _sendMessage("markComplete", node, network, solution["colors"]); 
+                 _sendMessage("markComplete", sender, null, network, solution["colors"]); 
                 break;
             default : break;
         }
     }
-    console.log("Ended color marking");
     //keep the colors of the nodes at their current state as the final result of this process
     solution["colors"].data = _returnColorArray(network);
+    //CDS construction ==============================================================
+    solution["cds"].text = "<p class=\"solution-heading\"><strong>Part 3 :</strong> Now the construction of a Conencted Dominating Set Tree will begin. The tree's root will be the gray"+
+    " neighbor of the spanning tree root with the largest number of black neighbors.</p>";
+    solution["cds"].result.edges = [];
+    rootNode.nonLeveledNeighbors = rootNode.neighbors.length;
+    _sendMessage("query", rootNode, null, network, solution["cds"]);
+    var receiver;
+    while(!network.messageQueue.length > 0){
+        message = network.messageQueue.shift(); //remove and return the first element
+        sender = netOperator.returnNodeById(message.sender, network);
+        switch(message.type){
+            case "query": 
+                _sendMessage("query", sender, null, network, solution["cds"]); 
+                break;
+            case "report":
+                receiver = netOperator.returnNodeById(message.receiver, network);
+                _sendMessage("report", sender, receiver, network, solution["cds"]); 
+                break;
+            case "root":
+                receiver = netOperator.returnNodeById(message.receiver, network);
+                _sendMessage("root", sender, receiver,  network, solution["cds"]); 
+                break;
+            case "invite2":
+                _sendMessage("invite2", sender, null, network, solution["cds"]); 
+                break;
+            case "invite1":
+                _sendMessage("invite1", sender, null, network, solution["cds"]); 
+                break;
+            case "join" :
+                receiver = netOperator.returnNodeById(message.receiver, network);
+                _sendMessage("join", sender, receiver, network, solution["cds"]); 
+                break;
+            default : break;
+        }
+    }
 }
 
 module.exports.newMIS = misFactory;
