@@ -16,7 +16,9 @@ var misObject = function(){
         "edges" : [],
         "levels" : solutionFactory.newSolution(),
         "colors" : solutionFactory.newSolution(),
-        "cds" : solutionFactory.newSolution()
+        "cds" : solutionFactory.newSolution(),
+        "cdsRootIndex" : -1,
+        "cdsRootColoringStep" : -1
     };
     that.constructMIS = function(network, rootNode){
          var index = netOperator.returnNodeIndexById(rootNode, network); //get the index of the root inside the network.nodes array
@@ -124,17 +126,17 @@ var _lowerRankedNeighbors = function(node){
 //Broadcast a message
 var _sendMessage = function(type, node, receiver, network, solution){
     solution.createStep();
-    solution.steps[solution.steps.length -1].text = "<p>Node "+node.id+" with level "+node.level+" ";
+    solution.steps[solution.steps.length -1].text = "<p>Node "+node.id+" ";
     var neighbors = netOperator.returnNeighborObjects(node, network);
     switch(type){
         case "level" :
-            solution.steps[solution.steps.length -1].text += "broadcasts LEVEL message.</p>";
+            solution.steps[solution.steps.length -1].text += " with level "+node.level+" broadcasts LEVEL message.</p>";
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveLEVEL(neighbors[i], node.id, node.level, network, solution);
             }
             break;
         case "levelComplete":
-            solution.steps[solution.steps.length -1].text += "sends LEVEL COMPLETE message to parent "+node.parent+".</p>";
+            solution.steps[solution.steps.length -1].text += " with level "+node.level+" sends LEVEL COMPLETE message to parent "+node.parent+".</p>";
             var parent = netOperator.returnNodeById(node.parent, network);
             _onReceive_LEVEL_COMPLETE(parent, node.id, network, solution);
             break;
@@ -160,32 +162,38 @@ var _sendMessage = function(type, node, receiver, network, solution){
             break;
         case "query":
             solution.steps[solution.steps.length -1].text += "broadcasts QUERY message.</p>";
+            solution.steps[solution.steps.length-1].data.edges = [];
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveQUERY(neighbors[i], node.id, network, solution);
             }
             break;
         case "report":
-            solution.steps[solution.steps.length -1].text += "sends REPORT message to "+receiver+".</p>";
+            solution.steps[solution.steps.length -1].text += "sends REPORT message to "+receiver.id+".</p>";
+            solution.steps[solution.steps.length-1].data.edges = [];
             _onReceiveREPORT(receiver, node.id, node.blackList.length, network, solution);
             break;
         case "root" :
-            solution.steps[solution.steps.length -1].text += "sends REPORT message to "+receiver+".</p>";
+            solution.steps[solution.steps.length -1].text += "sends ROOT message to "+receiver.id+".</p>";
+            solution.steps[solution.steps.length-1].data.edges = [];
             _onReceiveROOT(receiver, node.id, network, solution);
             break;
         case "invite1":
             solution.steps[solution.steps.length -1].text += "broadcasts INVITE1 message.</p>";
+            solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveInvite1(neighbors[i], node.id, network, solution);
             }
             break;
         case "invite2":
             solution.steps[solution.steps.length -1].text += "broadcasts INVITE2 message.</p>";
+            solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
             for(var i=0; i<neighbors.length; i++){
                 _onReceiveInvite2(neighbors[i], node.id, network, solution);
             }
             break;
         case "join" :
-            solution.steps[solution.steps.length -1].text += "sends JOIN message to "+receiver+".</p>";
+            solution.steps[solution.steps.length -1].text += "sends JOIN message to "+receiver.id+".</p>";
+            solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
             _onReceiveJOIN(receiver, node.id, network, solution);
             break;
         default : break;
@@ -300,6 +308,7 @@ var _onReceive_MARK_COMPLETE = function(node, sender_id, network, solution){
 var _onReceiveQUERY = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received QUERY message from "+sender_id+".</p>";
+    solution.steps[solution.steps.length-1].data.edges = [];
     if(node.color == "gray"){
         network.messageQueue.push({sender : node.id, receiver : sender_id , type : "report", blackNeighbors : node.blackList.length});
     }
@@ -310,6 +319,7 @@ var _onReceiveREPORT = function(node, sender_id, blackNeighbors, network, soluti
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received REPORT message from "+sender_id+" with a number of"+
     " black neighbors "+blackNeighbors+".</p>";   
+    solution.steps[solution.steps.length-1].data.edges = [];
     if(node.root){
         node.nonLeveledNeighbors --;
         if(blackNeighbors > node.cdsDegree){
@@ -320,14 +330,15 @@ var _onReceiveREPORT = function(node, sender_id, blackNeighbors, network, soluti
             network.messageQueue.push({sender : node.id, receiver : node.cdsRoot , type : "root"});
         }
     }
- }
+}
 
 //Receive a ROOT message
 var _onReceiveROOT = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received ROOT message from "+sender_id+". It becomes the root of the CDS tree.</p>";  
+    solution.steps[solution.steps.length-1].data.edges = [];
     node.rootCds = true;
-    network.cdsRootIndex = netOperator.returnNodeIndexById(node, network);
+    network.cdsRootIndex = netOperator.returnNodeIndexById(node.id, network);
     node.inCdsTree = true;
     network.messageQueue.push({sender : node.id, type : "invite2"});
 }
@@ -336,6 +347,7 @@ var _onReceiveROOT = function(node, sender_id, network, solution){
 var _onReceiveInvite2 = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received INVITE2 message from "+sender_id+".</p>"; 
+    solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
     if((node.color == "black")&&(!node.inCdsTree)){
         node.inCdsTree = true;
         node.cdsParent = sender_id;
@@ -348,6 +360,7 @@ var _onReceiveInvite2 = function(node, sender_id, network, solution){
 var _onReceiveInvite1 = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received INVITE1 message from "+sender_id+".</p>"; 
+    solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
     if((node.color == "gray")&&(!node.inCdsTree)){
         node.inCdsTree = true;
         node.cdsParent = sender_id;
@@ -360,8 +373,9 @@ var _onReceiveInvite1 = function(node, sender_id, network, solution){
 var _onReceiveJOIN = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received JOIN message from "+sender_id+". It put the node to its children in the cds tree.</p>"; 
+    solution.result.edges.push({"source" : node.id , "target": sender_id});
+    solution.steps[solution.steps.length-1].data.edges = solution.result.edges.slice();
     node.cdsChildren.push(sender_id);
-    solution.steps[solution.steps.length-1].data.edges.push({"source" : node.id , "target": sender_id});
 }
 
 //Run the algorithm by sending messages 
@@ -412,13 +426,13 @@ var _beginMessaging = function(network, solution){
     //keep the colors of the nodes at their current state as the final result of this process
     solution["colors"].data = _returnColorArray(network);
     //CDS construction ==============================================================
-    solution["cds"].text = "<p class=\"solution-heading\"><strong>Part 3 :</strong> Now the construction of a Conencted Dominating Set Tree will begin. The tree's root will be the gray"+
+    solution["cds"].text = "<p class=\"solution-heading\"><strong>Part 3 :</strong> Now the construction of a Connected Dominating Set Tree will begin. The tree's root will be the gray"+
     " neighbor of the spanning tree root with the largest number of black neighbors.</p>";
     solution["cds"].result.edges = [];
     rootNode.nonLeveledNeighbors = rootNode.neighbors.length;
     _sendMessage("query", rootNode, null, network, solution["cds"]);
     var receiver;
-    while(!network.messageQueue.length > 0){
+    while(network.messageQueue.length > 0){
         message = network.messageQueue.shift(); //remove and return the first element
         sender = netOperator.returnNodeById(message.sender, network);
         switch(message.type){
@@ -432,6 +446,7 @@ var _beginMessaging = function(network, solution){
             case "root":
                 receiver = netOperator.returnNodeById(message.receiver, network);
                 _sendMessage("root", sender, receiver,  network, solution["cds"]); 
+                solution["cdsRootColoringStep"] = solution["cds"].steps.length;
                 break;
             case "invite2":
                 _sendMessage("invite2", sender, null, network, solution["cds"]); 
@@ -446,6 +461,8 @@ var _beginMessaging = function(network, solution){
             default : break;
         }
     }
+    solution["cdsRootIndex"] = network.cdsRootIndex;
+    solution["cds"].result.edges = solution["cds"].steps[solution["cds"].steps.length - 1].data.edges.slice();
 }
 
 module.exports.newMIS = misFactory;

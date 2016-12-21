@@ -2,8 +2,14 @@
 This file has functions used to handle the response from the server
 and visually represent the algorithms' results
 */
-var stepDataArray = [];
-var unidirectionalEdges = [];
+var stepDataArray = [];	//holds each step data in memory after the ajax response object is lost
+var unidirectionalEdgesIndexes = []; //holds INDEXES not edge objects (to minimize data), which refer to positions in the step data Array. Used ONLY on LMST
+var bidirectionalEdgeList = [];	//this one and the one below will hold edge objects when necessary
+var unidirectionalEdgeList = [];
+var finalMisColors = []; //it will hold the final result of MIS coloring for repainting
+var misRootIndex = -1;
+var misPaintRootStepIndex = -1;	//from which step to start painting the MIS cds root 
+var stepThreshold = -1; //it will be used with misPaintRootStepIndex
 //Some color-styling globals used in our graph
 var NODE_DEF_STYLE =  { circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { fill : 'white'}};
 var NODE_DOM_STYLE = {circle : {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
@@ -73,7 +79,13 @@ function handleResponse(data, status, XMLHttpRequest){
 //Clear painted stuff and data from previous executions
 function _clearViewAndData(){
 	stepDataArray = []; //clear the global steps data from previous executions
-	unidirectionalEdges = [];
+	unidirectionalEdgesIndexes = [];
+	bidirectionalEdgeList = [];
+	unidirectionalEdgeList = [];
+	finalMisColors = [];
+	misRootIndex = -1;
+	misPaintRootStepIndex = -1;
+	stepThreshold = -1;
 	_clearView();
 }
 
@@ -86,6 +98,7 @@ function _clearView(){
 //Hides all arroheads
 function _hideArrowHeads(){
 	$(".marker-arrowhead-group-target").css({ "opacity" : "0"});
+	$(".marker-arrowhead-group-source").css({ "opacity" : "0"});
 }
 
 //Repaints the edges with their original color
@@ -150,38 +163,55 @@ function _paintClusters(clusterList){
 }
 
 //Paint the edges of a list, use the global graph object to get the link graphics
-function _paintEdgesFromList(edgeList){
+//areUnidirectional is boolean
+function _paintEdgesFromList(edgeList, areUnidirectional){
 	var node;
 	var links;
 	var source;
 	var target;
+	var linkID;
+	var reverseSourceTarget = false;
 	for(var i=0; i<edgeList.length; i++){
 		node = returnNodeById(edgeList[i]["source"]); //we need it to get the graphics model
 		links = graph.getConnectedLinks(node.graphic, {});
 		for(var j=0; j<links.length; j++){
 			source = links[j].attributes.prop.node1;
 			target = links[j].attributes.prop.node2;
+			reverseSourceTarget = false;
 			if((source == edgeList[i]["source"])&&(target == edgeList[i]["target"])){
 				link = links[j];
 				break;
 			}
 			else if((source == edgeList[i]["target"])&&(target == edgeList[i]["source"])){
+				reverseSourceTarget = true;
 				link = links[j];
 				break;
 			}
 		}
-		link.attr(LINK_BI);
+		if(!areUnidirectional){
+			link.attr(LINK_BI);
+		}
+		else{
+			link.attr(LINK_UNI);
+			linkID = link.id;
+			if(!reverseSourceTarget){
+				$("[ model-id ="+linkID+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
+			}
+			else{
+				$("[ model-id ="+linkID+"]").find(".marker-arrowhead-group-source").css({ "opacity" : "1"}); //show the arrowhead
+			}
+		}
 	}
 }
 
-/* Paint the unidirectional links from the stepDataArray and unidirectionalEdges globals
+/* Paint the unidirectional links from the stepDataArray and unidirectionalEdgesIndexes globals
 	option_g0 =:
 	default --> paint the uni-directional links with their specified color
 	"+" --> paint the uni-directional links with the bi-directional link color (g0+)
 	"-" --> paint the uni-directional links with the deafault link color (g0-)
 	options.g0
 */
-function _paintUnidirectionalEdges(option_g0){
+function _paintUnidirectionalEdgesLMST(option_g0){
 	var edge;
 	var node;
 	var links;
@@ -189,6 +219,7 @@ function _paintUnidirectionalEdges(option_g0){
 	var source;
 	var target;
 	var style;
+	var linkID;
 	if(option_g0 == "+"){
 		style = LINK_BI;
 	}
@@ -198,8 +229,8 @@ function _paintUnidirectionalEdges(option_g0){
 	else{
 		style = LINK_UNI;
 	}
-	for(var i=0; i<unidirectionalEdges.length; i++){
-		edge = stepDataArray[ unidirectionalEdges[i][0] ][ unidirectionalEdges[i][1] ];
+	for(var i=0; i<unidirectionalEdgesIndexes.length; i++){
+		edge = stepDataArray[ unidirectionalEdgesIndexes[i][0] ][ unidirectionalEdgesIndexes[i][1] ];
 		node = returnNodeById(edge["source"]); //we need it to get the graphics model
 		links = graph.getConnectedLinks(node.graphic, {});
 		for(var j=0; j<links.length; j++){
@@ -216,8 +247,8 @@ function _paintUnidirectionalEdges(option_g0){
 		}
 		link.attr(style);
 		if(style == LINK_UNI){
-			var id = link.id;
-			$("[ model-id ="+id+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
+			linkID = link.id;
+			$("[ model-id ="+linkID+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
 		}
 	}
 }
@@ -226,7 +257,7 @@ function _paintUnidirectionalEdges(option_g0){
 function _paintTopologyTree(){
 	_repaintEdgesDefault();
 	for(var i=0; i<stepDataArray.length; i++){
-		_paintEdgesFromList(stepDataArray[i]);
+		_paintEdgesFromList(stepDataArray[i], false);
 	}
 }
 
@@ -239,6 +270,11 @@ function _paintMIS(nodeList){
 			case "black" : network.nodes[i].graphic.attr(NODE_MIS_STYLE["black"]); break;
 		}
 	}
+}
+
+//Paint mis Root
+function _paintMisRoot(){
+	network.nodes[misRootIndex].graphic.attr(NODE_DOM_STYLE);
 }
 
 //Show the steps from th Wu Li CDS algorithm
@@ -362,10 +398,10 @@ var _lmstAnalysis = function(response){
 		stepDataArray.push(solution["LMSTs"][i]);
 		stepId++;
 	}
-	unidirectionalEdges = solution["uni-directional"];
+	unidirectionalEdgesIndexes = solution["uni-directional"];
 	$("#solutionBoxData").html(text);
 	_paintTopologyTree();
-	_paintUnidirectionalEdges("0");
+	_paintUnidirectionalEdgesLMST("0");
 }
 
 //Steps of the RNG Analysis
@@ -437,22 +473,25 @@ var _misAnalysis = function(response){
 		stepDataArray.push(oldData);
 		stepId++;
 	}
+	stepThreshold = stepId - 1;
 	text += solution["cds"].text;
-	oldData = [];	//show the data of the last changes
 	for(var i=0; i<solution["cds"].steps.length; i++){
 		text += "<a href=\"#\" class=\"mis-step mis-cds step\" id=\""+stepId+"\">";
 		text += solution["cds"].steps[i].text;
 		text += "</a>";
-		if("cds" in solution["cds"].steps[i].data){
-			oldData = solution["cds"].steps[i].data["cds"].slice();
-		}
-		stepDataArray.push(oldData);
+		stepDataArray.push(solution["cds"].steps[i].data.edges);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
-	_paintMIS(solution["colors"].data);
-	_paintEdgesFromList(solution["edges"]);
-	_paintUnidirectionalEdges(solution["cds"].result["edges"]);
+	finalMisColors = solution["colors"].data;
+	bidirectionalEdgeList = solution["edges"];
+	unidirectionalEdgeList = solution["cds"].result.edges;
+	misRootIndex = solution["cdsRootIndex"];
+	misPaintRootStepIndex = stepThreshold + solution["cdsRootColoringStep"];
+	_paintMIS(finalMisColors);
+	_paintEdgesFromList(bidirectionalEdgeList, false);
+	_paintMisRoot();
+	_paintEdgesFromList(unidirectionalEdgeList, true);
 }
 
 //Handle clicks on objects related to algorithm results
@@ -479,25 +518,25 @@ $(document).ready(function(){
 
 	$(document).on("click",".lmst-step",function(){
 		_clearView();
-		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")], false);
 	});
 
 	$(document).on("click","#lmst_btn_orig",function(c){
 		_clearView();
 		_paintTopologyTree();
-		_paintUnidirectionalEdges("0");
+		_paintUnidirectionalEdgesLMST("0");
 	});
 
 	$(document).on("click","#lmst_btn_g0plus",function(c){
 		_clearView();
 		_paintTopologyTree();
-		_paintUnidirectionalEdges("+");
+		_paintUnidirectionalEdgesLMST("+");
 	});
 
 	$(document).on("click","#lmst_btn_g0minus",function(c){
 		_clearView();
 		_paintTopologyTree();
-		_paintUnidirectionalEdges("-");
+		_paintUnidirectionalEdgesLMST("-");
 	});
 
 	$(document).on("click","#rng_btn_orig",function(c){
@@ -507,7 +546,7 @@ $(document).ready(function(){
 
 	$(document).on("click",".rng-step",function(){
 		_clearView();
-		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")], false);
 	});
 
 
@@ -518,12 +557,23 @@ $(document).ready(function(){
 
 	$(document).on("click",".gg-step",function(){
 		_clearView();
-		_paintEdgesFromList(stepDataArray[$(this).attr("id")]);
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")], false);
 	});
 
 	$(document).on("click", ".mis-color", function(){
 		_clearView();
+		_paintEdgesFromList(bidirectionalEdgeList, false);
 		_paintMIS(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click", ".mis-cds", function(){
+		_clearView();
+		_paintMIS(finalMisColors);
+		_paintEdgesFromList(bidirectionalEdgeList, false);
+		if($(this).attr("id") >= misPaintRootStepIndex){
+			_paintMisRoot();
+		}
+		_paintEdgesFromList(stepDataArray[$(this).attr("id")], true);
 	});
 
 });
