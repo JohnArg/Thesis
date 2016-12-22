@@ -1,0 +1,18 @@
+$header_color : #1b8db7;
+$header_dark : #1b5f87;
+$toolbar_color : #2b373a;
+$btn_color : #1ea9db;
+$btn_active : #eaaf31;
+$btn_important: #cc5c16;
+$footer_color: #263238;
+
+#main_header{
+    background-color: $header_color;
+    color: white;
+    padding:20px;
+}
+
+code{
+    background-color: #444444;
+    color: $btn_active;
+}

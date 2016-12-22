@@ -3,17 +3,26 @@ Main file/Starting point of the application
 */
 var express = require('express');
 var app = express();
-var routerOptions = {
-    caseSensitive : true,
-    mergeParams : false,
-    strict : false
-}
-var router = express.Router(routerOptions); //create Router
-require('./Server/Routers/routeGET').defineGETRoutes(router); //add GET functionality to router
+var path = require('path');
+var hbs = require('express-handlebars');
+var homePageRouter = require('./Server/Routers/homePageRouter');
 
-app.use(router);
-console.log("AdHocEd application started ..");
+//set view engine
+app.engine('hbs', hbs({extname: 'hbs'}));
+app.set('views', __dirname + '/Client/Views');
+app.set('view-engine', 'hbs');
+app.enable('view cache');
+
+//load static files 
+app.use(express.static(path.join(__dirname,'/Client/Css')));
+app.use(express.static(path.join(__dirname,'/Client/Css/External')));
+app.use(express.static(path.join(__dirname,'/Client/Javascript')));
+app.use(express.static(path.join(__dirname,'/Client/Javascript/External')));
+
+//mount routers
+app.use(homePageRouter);
+
 //start a Web Server at some port
 app.listen(3000, function(){
-    console.log("Server started..");
+    console.log("AdHocEd application started ..");
 });

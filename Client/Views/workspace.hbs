@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="eng">
+	<head>
+		<title>Workspace</title>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="jquery-ui.css">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="joint.min.css">
+        <link rel="stylesheet" href="workspace.css">
+	</head>
+	<body>
+		<div id="modals_container">
+			<div id="mis_dialog" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header dialogHeader">
+							<h4 class="modal-title">Maximal Independent Set</h4>
+						</div>
+						<div class="modal-body">
+							<form>Select a root for the spanning tree <input type="number" id="mis_input"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-default btn-primary accentColor" id="mis_continue">Continue</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			<div id="max_min_dialog" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header dialogHeader">
+							<h4 class="modal-title">Max Min D-Cluster</h4>
+						</div>
+						<div class="modal-body">
+							<form>Select a positive integer value for d <input type="number" id="max_min_input"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-default btn-primary accentColor" id="max_min_continue">Continue</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			<div id="instructions_dialog" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header dialogHeader">
+							<h4 class="modal-title">Instructions</h4>
+						</div>
+						<div class="modal-body">
+							<section>
+								<article>
+									<p>Use the tools below to construct a connected network graph :</p>
+									<ul>
+										<li>Press <b class="text-info">Add Node</b> and click on an area inside the graph view</li>
+										<li>Press <b class="text-info">Remove Node</b> and select the nodes to be removed</li>
+										<li>Press <b class="text-info">Link Nodes</b> and select two nodes to link</li>
+										<li>To remove a link, press <b class="text-info">ESC</b> to deselect tools, and then hover the mouse over a link</li>
+										<li>Press <b class="text-info">ESC</b> to stop the tools</li>
+										<li>Press <b class="text-info">Clear Graph</b> to delete current network and clear the graph</li>
+										<li>Moving a node automatically deselects the tools</li>
+									</ul>
+								</article>
+							</section>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			<div id="dca_dialog" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header dialogHeader">
+							<h4 class="modal-title">DCA Weights</h4>
+						</div>
+						<div class="modal-body">
+							<p id="dca_dialog_heading">Specify the weights of the nodes before execution. Each node must have a different weight.</p>
+							<form>
+								<input type="radio" name="random" checked id="weights_randomBtn"> Random Weights <br/>
+								<input type="radio" name="random" id="weights_customBtn"> Insert weights manually <br/>
+							</form>
+							<div id="dca_dialog_scroll" class="scrollView">
+								<ul id="dca_dialog_list" class="ul_no_numbering ul_child">
+								</ul>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-default btn-primary accentColor" id="dca_dialog_continue">Continue</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+		<div id="pageHeader" class= " layer2Bot flexContainer">
+			<div id="logo"><h3>AdHocEd</h3></div>
+			<div id="logoSubText"><p class="subHeading">Workspace</p></div>
+		</div>
+		<div id="main_container">
+			<div id="tools_panel" class="layer1Right">
+				<div><p class="toolboxHeading text-center">Graph Tools</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn" id="instructions_btn">Instructions  <span class="glyphicon glyphicon-info-sign"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="clear_btn">Clear Graph</div>
+				</div>
+				<div><p class="toolboxHeading text-center">Select Algorithm</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_1">Wu & Li</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_2">Multipoint Relays</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_3">DCA</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_4">Max Min D-Cluster</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_5">Maximal Independent Set</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_6">LMST</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_7">RNG</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_8">Gabriel Graph</div>
+				</div>
+				<div><p class="toolboxHeading text-center" id="selection_text">Nothing Selected Yet</p></div>
+				<div class="btn btn-default btn-block workspace_btn accentColor" id="execute_btn">Execute</div>
+			</div>
+			<div id="drawHeader"><p>Graph View</p></div>
+			<div id="graph_panel"></div>
+			<div id="solutionBox">
+				<div id="solutionBoxHeader">
+					<p>Algorithm Analysis Panel </p>
+				</div>
+				<div id="solutionBoxData">
+				</div>
+			</div>
+		</div>	
+		<footer class="layer2Up">
+			<p>Created by John Argyroulis</p>
+			<p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
+		</footer>
+	</body>
+    <script src="jquery-2.2.4.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="lodash.js"></script>
+	<script src="backbone.js"></script>
+	<script src="joint_mod.js"></script>
+	<script src="networkManager.js"></script>
+	<script src="viewManager.js"></script>
+	<script src="resultView.js"></script>
+</html>
