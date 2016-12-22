@@ -1,6 +1,5 @@
 /*
-This module adds routing functions for GET requests to
-an express router
+This module routes requests that have to do with the homepage
 */
 var express = require('express');
 var app = module.exports = express();
@@ -21,17 +20,10 @@ var routerOptions = {
     strict : false
 }
 var router = express.Router(routerOptions);
-
-var tempData = {
-    day : new Date().getDate(),
-    month : new Date().getMonth(),
-    year : new Date().getFullYear(),
-    text : "<code>require('rest');</br>console.log(\"Please work :-(\");</code>"
-}
-
 //Route the requests =======================================
 router.get("/", function(request, response){
-    response.render("home.hbs", tempData);
+    response.render("home.hbs");
 });
+
 
 app.use(router);

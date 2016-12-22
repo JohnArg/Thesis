@@ -6,21 +6,44 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="jquery-ui.css">
         <link rel="stylesheet" href="bootstrap.min.css">
-        <link rel="stylesheet" href="joint.css" />
         <link rel="stylesheet" href ="home.css">
 	</head>
 	<body>
         <div class="jumbotron text-center" id="main_header">
             <h1>AdHocEd</h1>
             <p>Welcome to AdHocEd, an educational application for students and teachers with graphical representation of Ad Hoc networking algorithms.</p>
-            <p>Design an Ad Hoc network with graphics tools and choose from a list of algorithms to run. The results and the steps 
-                of the execution will be presented both visually and as text. Made as a practise tool for students who take Ad Hoc networking classes and as a 
-                presentation tool for teachers, replacing the blackboard.</p>
         </div>
-        <div>
-            <p>Todays it's {{day}}/{{month}}/{{year}}</p>
-            {{{text}}}
+        <div id="main_panel">
+            <section>
+                <article>
+                    <h4>Overview</h4>
+                    <p>Design an Ad Hoc network with graphics tools and choose from a list of algorithms to run. The results and the steps 
+                        of the execution will be presented both visually and as text. Made as a practise tool for students who take Ad Hoc networking classes and as a 
+                        presentation tool for teachers, replacing the blackboard.</p>
+                </article>
+                <article>
+                    <h4>Features</h4>
+                    <p>Visually aid the professor's teaching and students' studying of 
+                        the Ad Hoc networking algorithms assosiated with "Mobile 
+                        and Ad Hoc Computing". The algorithms supported are:</p>
+                        <ul>
+                            <li> Wu & Li </li>
+                            <li> Multipoint Relays </li>
+                            <li> DCA clusters </li>
+                            <li> Max Min D Cluster </li>
+                            <li> MIS (Maximal Independent Set) </li>
+                            <li> LMST graph </li>
+                            <li> RNG graph </li>
+                            <li> GG graph </li>
+                        </ul>
+                    <p>These algorithms are based on the papers mentioned in "References" below.</p>
+                </article>
+            </section>
         </div>
+        <footer class="layer2Up">
+            <p>Created by John Argyroulis</p>
+            <p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
+        </footer>
     </body>
     <script src="jquery-2.2.4.min.js"></script>
     <script src="jquery-ui.min.js"></script>
