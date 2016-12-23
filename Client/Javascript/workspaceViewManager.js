@@ -13,6 +13,58 @@ var randomWeights = true;
 var weightMap = [];
 var dialogError = false;
 var footerHeight = 90;
+var modalsData = {	//content to fill out modals rendered by handlebars
+     modals : [
+        {
+         id : "mis_dialog",
+        title : "Maximal Independent Set",
+        body : "<form>Select a root for the spanning tree <input type=\"number\" id=\"mis_input\"></form>",
+        footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"mis_continue\">Continue</button>"
+        },
+		 {
+        id : "max_min_dialog",
+        title : "Max Min D-Cluster",
+        body : "<form>Select a positive integer value for d <input type=\"number\" id=\"max_min_input\"></form>",
+        footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"max_min_continue\">Continue</button>"
+        },
+		{
+        id : "instructions_dialog",
+        title : "Instructions",
+        body : "<section>\
+					<article>\
+						<p>Use the tools below to construct a connected network graph :</p>\
+						<ul>\
+						<li>Press <b class=\"text-info\">Add Node</b> and click on an area inside the graph view</li>\
+						<li>Press <b class=\"text-info\">Remove Node</b> and select the nodes to be removed</li>\
+						<li>Press <b class=\"text-info\">Link Nodes</b> and select two nodes to link</li>\
+						<li>To remove a link, press <b class=\"text-info\">ESC</b> to deselect tools, and then hover the mouse over a link</li>\
+						<li>Press <b class=\"text-info\">ESC</b> to stop the tools</li>\
+						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
+						<li>Moving a node automatically deselects the tools</li>\
+						</ul>\
+					</article>\
+				</section>",
+    	footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"
+        },
+		{
+		id: "dca_dialog",
+		title: "DCA Weights",
+		body: "<p id=\"dca_dialog_heading\">Specify the weights of the nodes before execution. Each node must have a different weight.</p>\
+					<form>\
+						<input type=\"radio\" name=\"random\" checked id=\"weights_randomBtn\"> Random Weights <br/>\
+						<input type=\"radio\" name=\"random\" id=\"weights_customBtn\"> Insert weights manually <br/>\
+					</form>\
+					<div id=\"dca_dialog_scroll\" class=\"scrollView\">\
+						<ul id=\"dca_dialog_list\" class=\"ul_no_numbering ul_child\">\
+						</ul>\
+					</div>",
+		footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"dca_dialog_continue\">Continue</button>"
+		}
+    ]
+};
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
@@ -55,6 +107,10 @@ function _responsiveSizes(){
 }
 
 $(document).ready(function() {	
+	//add the modals to our html
+    var modalsTemplate = Handlebars.templates['modals.hbs'];
+    var modalsHtml = modalsTemplate(modalsData);
+	$("#modals_container").html(modalsHtml);
 	//Initialize on ready
 	_responsiveSizes();
 	//Capture Window events

@@ -9,6 +9,8 @@
         <link rel="stylesheet" href ="home.css">
 	</head>
 	<body>
+        <div id="modals_container">
+        </div>
         <div class="jumbotron text-center" id="main_header">
             <h1>AdHocEd</h1>
             <p>Welcome to AdHocEd, an educational application for students and teachers with graphical representation of Ad Hoc networking algorithms.</p>
@@ -27,14 +29,9 @@
                         the Ad Hoc networking algorithms assosiated with "Mobile 
                         and Ad Hoc Computing". The algorithms supported are:</p>
                         <ul>
-                            <li> Wu & Li </li>
-                            <li> Multipoint Relays </li>
-                            <li> DCA clusters </li>
-                            <li> Max Min D Cluster </li>
-                            <li> MIS (Maximal Independent Set) </li>
-                            <li> LMST graph </li>
-                            <li> RNG graph </li>
-                            <li> GG graph </li>
+                        {{#each algorithms}}
+                            <li>{{name}}</li>
+                        {{/each}}
                         </ul>
                     <p>These algorithms are based on the papers mentioned in "References" below.</p>
                 </article>
@@ -45,7 +42,10 @@
             <p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
         </footer>
     </body>
+    <script src ="handlebars-v4.0.5.js"></script>
+    <script src ="modals.js"></script>
     <script src="jquery-2.2.4.min.js"></script>
     <script src="jquery-ui.min.js"></script>
     <script src="bootstrap.min.js"></script>
+    <script src="home.js"></script>
 </html>

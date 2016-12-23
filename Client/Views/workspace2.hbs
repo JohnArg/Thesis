@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="eng">
+	<head>
+		<title>AdHocEd - Workspace</title>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="jquery-ui.css">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="joint.min.css">
+        <link rel="stylesheet" href="workspace.css">
+	</head>
+	<body>
+		<div id="modals_container">
+		</div>
+		<div id="pageHeader" class= " layer2Bot flexContainer">
+			<div id="logo"><h3>AdHocEd</h3></div>
+			<div id="logoSubText"><p class="subHeading">Workspace</p></div>
+		</div>
+		<div id="main_container">
+			<div id="tools_panel" class="layer1Right">
+				<div><p class="toolboxHeading text-center">Graph Tools</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn" id="instructions_btn">Instructions  <span class="glyphicon glyphicon-info-sign"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
+					<div class="btn btn-default btn-block workspace_btn" id="clear_btn">Clear Graph</div>
+				</div>
+				<div><p class="toolboxHeading text-center">Select Algorithm</p></div>
+				<div class="btn-group-vertical btn-block" role="group">
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_1">Wu & Li</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_2">Multipoint Relays</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_3">DCA</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_4">Max Min D-Cluster</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_5">Maximal Independent Set</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_6">LMST</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_7">RNG</div>
+					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_8">Gabriel Graph</div>
+				</div>
+				<div><p class="toolboxHeading text-center" id="selection_text">Nothing Selected Yet</p></div>
+				<div class="btn btn-default btn-block workspace_btn accentColor" id="execute_btn">Execute</div>
+			</div>
+			<div id="drawHeader"><p>Graph View</p></div>
+			<div id="graph_panel"></div>
+			<div id="solutionBox">
+				<div id="solutionBoxHeader">
+					<p>Algorithm Analysis Panel</p>
+				</div>
+				<div id="solutionBoxData">
+				</div>
+			</div>
+		</div>	
+		<footer class="layer2Up">
+			<p>Created by John Argyroulis</p>
+			<p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
+		</footer>
+	</body>
+	<script src ="handlebars-v4.0.5.js"></script>
+	<script src ="modals.js"></script>
+    <script src="jquery-2.2.4.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="lodash.js"></script>
+	<script src="backbone.js"></script>
+	<script src="joint_mod.js"></script>
+	<script src="workspaceNetworkManager.js"></script>
+	<script src="workspaceViewManager.js"></script>
+	<script src="workspaceResultView.js"></script>
+</html>
