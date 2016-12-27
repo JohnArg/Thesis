@@ -4,26 +4,29 @@
 		<title>AdHocEd</title>
 		<meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="jquery-ui.css">
-        <link rel="stylesheet" href="bootstrap.min.css">
-        <link rel="stylesheet" href ="home.css">
+        <link rel="stylesheet" href="css/jquery-ui.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href ="css/home.css">
 	</head>
 	<body>
         <div id="modals_container">
         </div>
-        <div class="jumbotron text-center" id="main_header">
+        <div class="jumbotron text-center" id="particles-js">
             <h1>AdHocEd</h1>
-            <p>Welcome to AdHocEd, an educational application for students and teachers with graphical representation of Ad Hoc networking algorithms.</p>
+            <p>Welcome to AdHocEd, an educational application for students and teachers with graphical representation of Mobile Ad Hoc networking algorithms.</p>
+            <div class="btn btn-default btn-block home-btn text-center" id="btn_logIn">Log In</div>
+            <div class="btn btn-default btn-block home-btn text-center" id="btn_SignUp">Sign Up</div>
         </div>
         <div id="main_panel">
             <section>
-                <article>
+                <article class="left_floater">
                     <h4>Overview</h4>
                     <p>Design an Ad Hoc network with graphics tools and choose from a list of algorithms to run. The results and the steps 
                         of the execution will be presented both visually and as text. Made as a practise tool for students who take Ad Hoc networking classes and as a 
                         presentation tool for teachers, replacing the blackboard.</p>
                 </article>
-                <article>
+                <img src='imgs/home_page_img1.png'></img>
+                <article class="left_floater">
                     <h4>Features</h4>
                     <p>Visually aid the professor's teaching and students' studying of 
                         the Ad Hoc networking algorithms assosiated with "Mobile 
@@ -42,10 +45,12 @@
             <p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
         </footer>
     </body>
-    <script src ="handlebars-v4.0.5.js"></script>
-    <script src ="modals.js"></script>
-    <script src="jquery-2.2.4.min.js"></script>
-    <script src="jquery-ui.min.js"></script>
-    <script src="bootstrap.min.js"></script>
-    <script src="home.js"></script>
+    <script src ="js/handlebars-v4.0.5.js"></script>
+    <script src ="js/modals.js"></script>
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/particles.min.js"></script>
+    <script src="js/server_url.js"></script>
+    <script src="js/home.js"></script>
 </html>

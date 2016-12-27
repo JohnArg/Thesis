@@ -237,10 +237,13 @@ a:hover, a:visited, a:active {
 
 /* Buttons ============================================ */
 .workspace_btn {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important;
   background-color: #1ea9db;
   color: white;
   border-style: none;
-  border-radius: 0px;
   white-space: normal;
   padding: 10px;
   font-size: 11pt; }

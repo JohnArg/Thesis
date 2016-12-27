@@ -6,15 +6,8 @@ var app = express();
 var path = require('path');
 var hbs = require('express-handlebars');
 var homePageRouter = require('./Server/Routers/homePageRouter');
-var mysql      = require('mysql');
-
-//connect to database
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'me',
-  password : 'secret',
-  database : 'my_db'
-});
+var workspaceRouter = require('./Server/Routers/workspaceRouter');
+const port = 3000;
 
 //set view engine
 app.engine('hbs', hbs({extname: 'hbs'}));
@@ -24,15 +17,17 @@ app.enable('view cache');
 
 //load static files 
 app.use('/fonts', express.static(path.join(__dirname,'/Client/Fonts')));
-app.use(express.static(path.join(__dirname,'/Client/Css')));
-app.use(express.static(path.join(__dirname,'/Client/Css/External')));
-app.use(express.static(path.join(__dirname,'/Client/Javascript')));
-app.use(express.static(path.join(__dirname,'/Client/Javascript/External')));
+app.use('/imgs',express.static(path.join(__dirname,'/Client/Images')));
+app.use('/css',express.static(path.join(__dirname,'/Client/Css')));
+app.use('/css',express.static(path.join(__dirname,'/Client/Css/External')));
+app.use('/js',express.static(path.join(__dirname,'/Client/Javascript')));
+app.use('/js',express.static(path.join(__dirname,'/Client/Javascript/External')));
 
 //mount routers
 app.use(homePageRouter);
+app.use(workspaceRouter);
 
 //start a Web Server at some port
-app.listen(3000, function(){
-    console.log("AdHocEd application started ..");
+app.listen(port, function(){
+    console.log("AdHocEd application started at port "+port+" ..");
 });

@@ -290,10 +290,10 @@ a:hover, a:visited, a:active
 
 /* Buttons ============================================ */
 .workspace_btn{
+	@include border_radius();
 	background-color: $btn_color;
 	color:white;
 	border-style:none;
-	border-radius:0px;
 	white-space: normal;
 	padding:10px;
 	font-size: 11pt;

@@ -85,7 +85,7 @@ function _reset(){
 //Send an Ajax Request to the server
 function _sendAjaxRequest(){
 	$.ajax({
-		url: "http://localhost:3000",
+		url: server_url + "/algorithms",
 		contentType: "application/json",
 		dataType: "json",
 		type: "POST",

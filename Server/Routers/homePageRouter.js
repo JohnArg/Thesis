@@ -5,7 +5,9 @@ var express = require('express');
 var app = module.exports = express();
 var ehbs = require('express-handlebars');
 var path = require('path');
+var bodyParser = require('body-parser');
 var rootDir = require('../../shared_data').sharedData.rootDir;
+var queriesModule = require('../../Database/queries.js');
 
 //set view engine
 app.engine('hbs', ehbs({extname: 'hbs'}));
@@ -39,10 +41,44 @@ router.get("/", function(request, response){
     response.render("home.hbs", templateData);
 });
 
-router.get("/workspace", function(request, response){
-    
-    response.render("workspace2.hbs");
+router.post("/logIn", function(request, response){
+    var database = queriesModule.newQueryObject();
+    database.connection.connect();
+    var username = request.body.username;
+    var password = request.body.password;
+    var result = database.logIn(username, password);
+    if(result == "err"){
+        response.status(500).send({message : "Internal database error."});
+    }
+    else if(result == "fail"){
+        response.status(200).send({message : "User not found."});
+    }
+    else{
+        response.render("workspace.hbs",{ first_name : result});
+    }
 });
 
-//mount the router to the app
-app.use(router);
+router.post("/signUp", function(request, response){
+    var database = queriesModule.newQueryObject();
+    database.connection.connect();
+    var data = {
+        first_name : request.body.first_name,
+        last_name : request.body.last_name,
+        username : request.body.username,
+        password : request.body.password
+    }
+    var result = database.signUp(data);
+    if(result == "err"){
+        response.status(500).send({message : "Internal database error."});
+    }
+    else if(result == "exists"){
+        response.status(200).send({message : "User already exists."});
+    }
+    else{
+        response.render("workspace.hbs",{ first_name : data.first_name});
+    }
+});
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(router);//mount the router to the app

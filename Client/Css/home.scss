@@ -7,6 +7,12 @@ $btn_important: #cc5c16;
 $footer_color: #263238;
 
 $footer_height: 90px;
+@mixin border_radius(){
+	-webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+	 	-ms-border-radius:0 !important;
+          border-radius: 0 !important;
+}
 /* Initializers ================== */
 html,body,h1,h2,h3,h4,h5,h6,p{
 	margin: 0;
@@ -27,14 +33,24 @@ ul{
 	padding: 10px;
 }
 
+p{
+	font-size: 12pt;
+}
+
 input{
-	width:50px;
+	width:250px;
 	height:30px;
 	margin-bottom: 20px;
 	background-color: #eeeeee;
 	border: 1px solid #aaaaaa;
 	border-radius: 5px;
-	margin-right:10px;
+	margin-right:auto;
+	margin-left:auto;
+}
+
+form{
+	padding: 20px;
+	position:relative;
 }
 
 a{
@@ -46,33 +62,30 @@ a:hover, a:visited, a:active
     text-decoration: none !important;
 }
 
-/*bootstrap overrides =============== */
-.jumbotron h1{
-    margin-bottom: 40px;
-    font-weight: bold;
-}
-.jumbotron p{
-    font-size: 14pt;
-    width:600px;
-    margin-left: auto;
-    margin-right: auto;
+img{
+	float:right;
+	width:300px;
+	height:300px;
 }
 
-/* main css =============================== */
-#main_header{
-    background-color: $header_color;
-    color: white;
-    padding:20px;
+canvas{
+	position:absolute !important;
+	top:0px !important;
+	left : 0px !important;
+	height:300px !important;
+	width:100% !important;
 }
 
-#main_panel{
-    width:800px;
-    margin-left:auto;
-    margin-right:auto;
+section{
+	margin-top:40px;
+	height:800px;
 }
-
 article{
     padding: 20px;
+}
+article h4{
+	margin-bottom: 20px;
+	color:$header_dark;
 }
 
 footer{
@@ -83,4 +96,90 @@ footer{
 	font-size: 12pt;
 	text-align: center;
 	height: $footer_height;
+}
+/*bootstrap overrides =============== */
+.jumbotron h1{
+    font-weight: bold;
+	margin-bottom: 40px;
+	position:relative;
+	z-index:1;
+}
+.jumbotron p{
+	position:relative;
+	z-index:1;
+    font-size: 14pt;
+    width:650px;
+	margin-bottom: 40px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-content{
+	@include border_radius();
+}
+
+.btn, .btn-primary, .btn-default{
+	@include border_radius();
+}
+
+/* main css =============================== */
+#particles-js{
+	height:300px;
+    background-color: $header_dark;
+    color: white;
+    padding:30px;
+	margin-bottom:0px !important;
+	position:relative;
+}
+
+#main_panel{
+    width:800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#repeat_bg{
+	height:150px;
+	background-image: url("../imgs/home_page_repeat.png");
+	background-repeat: repeat-x;
+}
+
+.left_floater{
+	float: left;
+	width:460px;
+	height:300px;
+}
+
+.home-btn{
+	margin-top:0px !important;
+	position:relative;
+	z-index:1;
+	border-style: none;
+	font-size: 12pt;
+	width:200px;
+	height:45px;
+	padding:10px;
+	background-color: $btn_color;
+	color: white;
+	margin-left:auto;
+	margin-right:auto;
+	display: inline-block;
+}
+
+.home-btn:hover {
+	background-color: $btn_active;
+	color: white;
+}
+
+.home-btn:active{
+	background-color: $btn_important;
+	color: white;
+}
+
+.dialogHeader{
+	background-color: $header_color;
+	color:white;
+	padding:10px;
+	font-size: 13pt;
+	border-radius:0px;
 }
