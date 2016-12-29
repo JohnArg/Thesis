@@ -14,52 +14,49 @@ var dbFactory = function(){
 var dbConnection = function(){
     var that = this;
     that.connection = mysql.createConnection(dbConfig);
-    that.signUp = function(user){
-        var queryStr = "SELECT * FROM users WHERE username=?";
+    that.signUp = function(response, user){
+        //First check if the user already exists
+        let queryStr = "SELECT * FROM users WHERE username=?";
         that.connection.query(queryStr, [user.username], function(err, rows){
             if(err){
-                console.log("Database query error : ", err.code);
-                return "err";
+                response.status(500).send({message : "Internal database error."});
             }
             else{
                 if(rows.length != 0){
-                    console.log("User already exists");
-                    return "exists";
+                    response.status(400).send({message : "User already exists."});
                 }
                 else{
-                    queryStr = "INSERT INTO users (first_name, last_name, username, password) VALUES (?,?,?,?);";
+                    //If the user doesn't already exist insert the data to the database
+                    let queryStr = "INSERT INTO users (first_name, last_name, username, password) VALUES (?,?,?,?);";
                     that.connection.query(queryStr, [user.first_name, user.last_name, user.username, user.password], function(err){
                         if(err){
-                            console.log("Database query error : ", err.code);
-                            return false;
+                            response.status(500).send({message : "Internal database error."});
                         }
                         else{
-                            return true;
+                            response.status(200).render("workspace.hbs",{ first_name : user.first_name});
                         }
                     });
                 }
             }
         });
     };
-    that.logIn = function(username, password){
-        var queryStr = "SELECT * FROM users WHERE username=? AND password=?;";
+    that.logIn = function(response, username, password){
+        let queryStr = "SELECT * FROM users WHERE username=? AND password=?;";
         that.connection.query(queryStr, [username, password], function(err,rows){
             if(err){
-                console.log("Database query error : ", err.code);
-                return "err";
+                response.status(500).send({message : "Internal database error."});
             }
             else{
                 if(rows.length != 0){
-                    console.log("user logged in!");
-                    return rows[0];
+                     response.status(200).render("workspace.hbs",{ first_name : rows[0]["first_name"]});
+                     console.log(rows[0]);
                 }
                 else{
-                    console.log("user not found");
-                    return "fail";
+                    response.status(400).send({message : "User not found."});
                 }
             }
         });
-    }
+    };
 }
 
 module.exports.newQueryObject = dbFactory;

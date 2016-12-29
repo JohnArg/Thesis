@@ -5,6 +5,7 @@ var modalsData = {
             id : "logInModal",
             title : "Log in",
             body : "<div>\
+                    <p class=\"err_message text-center\"></p>\
                     <form class=\"text-center\">\
                         <p>Username : </p>\
                         <input type=\"text\" id=\"log_in_username\"></input></br>\
@@ -19,6 +20,7 @@ var modalsData = {
             id : "signUpModal",
             title : "Sign Up",
             body : "<div>\
+                    <p class=\"err_message text-center\"></p>\
                     <form class=\"text-center\">\
                         <p>First Name : </p>\
                         <input type=\"text\" id=\"sign_up_first_name\"></input></br>\
@@ -38,8 +40,8 @@ var modalsData = {
 
 $(document).ready(function(){
     //Render the modals
-    var modalsTemplate = Handlebars.templates['modals.hbs'];
-    var modalsHtml = modalsTemplate(modalsData);
+    let modalsTemplate = Handlebars.templates['modals.hbs'];
+    let modalsHtml = modalsTemplate(modalsData);
     $("#modals_container").html(modalsHtml);
     //load the particles effect
     particlesJS.load('particles-js','/js/particlesjs-config.json', function() {
@@ -47,53 +49,75 @@ $(document).ready(function(){
     });
     //Button listeners ==================
     $("#btn_logIn").click(function(){
+        $(".err_message").text("");
         $("#logInModal").modal("show");
     });
     $("#btn_SignUp").click(function(){
+        $(".err_message").text("");
         $("#signUpModal").modal("show");
     });
     $("#btn_commit_logIn").click(function(){
-        var usernameIn = $("#log_in_username").val();
-        var passwordIn = $("#log_in_password").val();
-        var ajaxObject = {
+        let usernameIn = $("#log_in_username").val();
+        let passwordIn = $("#log_in_password").val();
+        let ajaxObject = {
             username : usernameIn,
             password : passwordIn
         }
-        $.ajax({
-            url: server_url + "/logIn",
-            contentType: "application/json",
-            dataType: "json",
-            type: "POST",
-            data: JSON.stringify(ajaxObject),
-            success : function(data, status, XMLHttpRequest){
-                if(data.message){
-                    alert(data.message);
-                }
-            }
-	    });
+        let empty = (usernameIn == "") || (passwordIn == "");
+        if(empty){
+            $(".err_message").text("Please fill in all the fields");
+        }
+        else{
+            $.ajax({
+                async: true,
+                url: server_url + "/logIn",
+                contentType: "application/json",
+                type: "POST",
+                data: JSON.stringify(ajaxObject),
+                error : function(jqXHR, status, error){
+                    if(jqXHR.responseJSON.message !== undefined){
+                        $(".err_message").text(jqXHR.responseJSON.message);
+                    }
+                },
+                success : function(response, status, XMLHttpRequest){
+                    $("#logInModal").modal("hide");
+                    $("html").html(response);
+                }   
+            });
+        }
     });
     $("#btn_commit_signUp").click(function(){
-        var first_nameIn = $("#sign_up_first_name").val();
-        var last_nameIn = $("#sign_up_last_name").val();
-        var usernameIn = $("#sign_up_username").val();
-        var passwordIn = $("#sign_up_password").val();
-        var ajaxObject = {
+        let first_nameIn = $("#sign_up_first_name").val();
+        let last_nameIn = $("#sign_up_last_name").val();
+        let usernameIn = $("#sign_up_username").val();
+        let passwordIn = $("#sign_up_password").val();
+        let ajaxObject = {
             first_name : first_nameIn,
             last_name : last_nameIn,
             username : usernameIn,
             password : passwordIn
         }
-        $.ajax({
-            url: server_url + "/signUp",
-            contentType: "application/json",
-            dataType: "json",
-            type: "POST",
-            data: JSON.stringify(ajaxObject),
-            success : function(data, status, XMLHttpRequest){
-                if(data.message){
-                    alert(data.message);
+        let empty = (first_nameIn == "") || (last_nameIn == "") || (usernameIn == "") || (passwordIn == "");
+        if(empty){
+            $(".err_message").text("Please fill in all the fields");
+        }
+        else{
+            $.ajax({
+                async: true,
+                url: server_url + "/signUp",
+                contentType: "application/json",
+                type: "POST",
+                data: JSON.stringify(ajaxObject),
+                error : function(jqXHR, status, error){
+                    if(jqXHR.responseJSON.message !== undefined){
+                        $(".err_message").text(jqXHR.responseJSON.message);
+                    }
+                },
+                success : function(response, status, XMLHttpRequest){
+                    $("#signUpModal").modal("hide");
+                    $("html").html(response);
                 }
-            }
-	    });
+            });
+        }
     });
 });

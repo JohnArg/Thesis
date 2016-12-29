@@ -7,7 +7,7 @@ var Node = function (id_in, neighbors, graphic){
 	this.id = id_in;
 	this.neighbors = neighbors;
 	this.graphic = graphic;
-	this.position = { //It will only be updated before the ajax call
+	this.position = { //It will only be updated before any ajax call
 		x : 0,
 		y : 0
 	}
@@ -17,21 +17,21 @@ var Network = function (){
 	this.nodes = [];
 } 
 
-var network = new Network();			//The Network object that holds all the network information
-var graph = new joint.dia.Graph;		//the main graph object
+var network = new Network();		//Global Network object that holds all the network information
+var graph = new joint.dia.Graph;	//the main graph object
 var paper = new joint.dia.Paper({	//the main view panel 
     el: $('#graph_panel'),
     model: graph,
     gridSize: 1,
     restrictTranslate: true
 });
-var usedIds = []; 									//A list of the used node ids so far
-var addingNode = false; 							//If the add node button is active
-var removingNode = false;							//If the remoce node button is active
-var linkSelect1 = false;							//I'm in 'select first node' functionality while drawing a link (edge)
-var linkSelect2 = false;							//I'm in 'select second node' functionality while drawing a link
-var linkStart;										//Start node of the link
-var linkEnd; 										//End node of the link
+var usedIds = []; 			//A list of the used node ids so far
+var addingNode = false; 	//If the add node button is active
+var removingNode = false;	//If the remoce node button is active
+var linkSelect1 = false;	//I'm in 'select first node' functionality while drawing a link (edge)
+var linkSelect2 = false;	//I'm in 'select second node' functionality while drawing a link
+var linkStart;				//Start node of the link
+var linkEnd; 				//End node of the link
 
 //Returns a node object from the network
 var returnNodeById = function(search_id){

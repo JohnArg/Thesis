@@ -26,7 +26,7 @@ var router = express.Router(routerOptions);
 //Route the requests =======================================
 router.get("/", function(request, response){
     //which algorithms are supported
-    var templateData ={
+    let templateData ={
         algorithms : [
         {name : "Wu & Li Connected Dominating Set"},
         {name : "Multipoint Relays Connected Dominating Set"},
@@ -42,41 +42,23 @@ router.get("/", function(request, response){
 });
 
 router.post("/logIn", function(request, response){
-    var database = queriesModule.newQueryObject();
+    let database = queriesModule.newQueryObject();
     database.connection.connect();
-    var username = request.body.username;
-    var password = request.body.password;
-    var result = database.logIn(username, password);
-    if(result == "err"){
-        response.status(500).send({message : "Internal database error."});
-    }
-    else if(result == "fail"){
-        response.status(200).send({message : "User not found."});
-    }
-    else{
-        response.render("workspace.hbs",{ first_name : result});
-    }
+    let username = request.body.username;
+    let password = request.body.password;
+    database.logIn(response, username, password);
 });
 
 router.post("/signUp", function(request, response){
-    var database = queriesModule.newQueryObject();
+    let database = queriesModule.newQueryObject();
     database.connection.connect();
-    var data = {
+    let data = {
         first_name : request.body.first_name,
         last_name : request.body.last_name,
         username : request.body.username,
         password : request.body.password
     }
-    var result = database.signUp(data);
-    if(result == "err"){
-        response.status(500).send({message : "Internal database error."});
-    }
-    else if(result == "exists"){
-        response.status(200).send({message : "User already exists."});
-    }
-    else{
-        response.render("workspace.hbs",{ first_name : data.first_name});
-    }
+    database.signUp(response, data);
 });
 
 app.use(bodyParser.json()); // support json encoded bodies
