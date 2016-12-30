@@ -81,7 +81,7 @@ $(document).ready(function(){
                 },
                 success : function(response, status, XMLHttpRequest){
                     $("#logInModal").modal("hide");
-                    $("html").html(response);
+                    window.location.href = "/workspace";
                 }   
             });
         }
@@ -115,7 +115,7 @@ $(document).ready(function(){
                 },
                 success : function(response, status, XMLHttpRequest){
                     $("#signUpModal").modal("hide");
-                    $("html").html(response);
+                    window.location.href = "/workspace";
                 }
             });
         }

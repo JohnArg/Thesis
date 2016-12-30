@@ -6,12 +6,14 @@ var app = module.exports = express();
 var ehbs = require('express-handlebars');
 var path = require('path');
 var bodyParser = require('body-parser');
-var rootDir = require('../../shared_data').sharedData.rootDir;
+var sharedData = require('../../shared_data').sharedData; //shared preferences
 var queriesModule = require('../../Database/queries.js');
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
 
 //set view engine
 app.engine('hbs', ehbs({extname: 'hbs'}));
-app.set('views', path.join(rootDir, '/Client/Views'));
+app.set('views', path.join(sharedData.rootDir, '/Client/Views'));
 app.set('view-engine', 'hbs');
 app.enable('view cache');
 
@@ -22,6 +24,15 @@ var routerOptions = {
     strict : false
 }
 var router = express.Router(routerOptions);
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(session({
+   // store : new MySQLStore(queriesModule.sessionConfig),
+    secret: sharedData.secret, 
+    resave:false, 
+    saveUninitialized:true}));
+app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/", function(request, response){
@@ -42,25 +53,33 @@ router.get("/", function(request, response){
 });
 
 router.post("/logIn", function(request, response){
-    let database = queriesModule.newQueryObject();
-    database.connection.connect();
-    let username = request.body.username;
-    let password = request.body.password;
-    database.logIn(response, username, password);
+    if(!request.session){
+        console.log("New session to be created");
+        let database = queriesModule.newQueryObject();
+        database.connection.connect();
+        let username = request.body.username;
+        let password = request.body.password;
+        database.logIn(request, response, username, password);
+    }
+    else{
+        response.status(200).send("OK");
+    }
 });
 
 router.post("/signUp", function(request, response){
-    let database = queriesModule.newQueryObject();
-    database.connection.connect();
-    let data = {
-        first_name : request.body.first_name,
-        last_name : request.body.last_name,
-        username : request.body.username,
-        password : request.body.password
+    if(!request.session){
+        console.log("New session to be created");
+        let database = queriesModule.newQueryObject();
+        database.connection.connect();
+        let data = {
+            first_name : request.body.first_name,
+            last_name : request.body.last_name,
+            username : request.body.username,
+            password : request.body.password
+        }
+        database.signUp(request, response, data);
     }
-    database.signUp(response, data);
+    else{
+        response.status(200).send("OK");
+    }
 });
-
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(router);//mount the router to the app

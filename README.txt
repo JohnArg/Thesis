@@ -33,7 +33,7 @@ have the ability to save the created network and load it again
 when they wish. 
 
 Technical :
-This is a Node.js Web App. 
+This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
 The app starts by executing the application.js file with Node's command: nodejs application.js
 The server runs on localhost:3000.
 node_modules is a folder used by node js packages.

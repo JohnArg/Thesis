@@ -90,7 +90,14 @@ function _sendAjaxRequest(){
 		dataType: "json",
 		type: "POST",
 		data: JSON.stringify(ajaxObject),
-		success : handleResponse
+		success : handleResponse,
+		error: function(jqXHR, status, error){
+            if(jqXHR.responseJSON.message){
+				if(qXHR.responseJSON.message == "reloggin"){
+					window.location.href = "/workspace";
+				}
+            }
+		}
 	});
 }
 
