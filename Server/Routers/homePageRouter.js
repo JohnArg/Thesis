@@ -62,6 +62,7 @@ router.post("/logIn", function(request, response){
         database.logIn(request, response, username, password);
     }
     else{
+        console.log(request.session);
         response.status(200).send("OK");
     }
 });

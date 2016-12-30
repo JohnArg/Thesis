@@ -40,7 +40,11 @@ router.get("/workspace", function(request, response){
 		response.status(200).render("loggedOut.hbs");
 	}
 	else{
-		response.status(200).render("workspace.hbs", request.session.first_name);
+		console.log(request.session.first_name);
+		console.log(request.session);
+		request.session.reload(function(err) {
+			response.status(200).render("workspace.hbs", request.session.first_name);
+		})
 	}
 });
 
