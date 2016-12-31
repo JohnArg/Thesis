@@ -83,7 +83,7 @@ function _reset(){
 }
 
 //Send an Ajax Request to the server
-function _sendAjaxRequest(){
+var _sendAlgorithmRequest =function(){
 	$.ajax({
 		url: server_url + "/algorithms",
 		contentType: "application/json",
@@ -97,6 +97,21 @@ function _sendAjaxRequest(){
 					window.location.href = "/workspace";
 				}
             }
+		}
+	});
+}
+
+
+var _sendLogOutRequest = function(){
+	$.ajax({
+		url: server_url + "/logOut",
+		type: "GET",
+		error: function(jqXHR, status, error){
+            console.log("Log out failed ", error);
+			alert("Log out failed :-(");
+		},
+		success: function(){
+			window.location.href = "/";
 		}
 	});
 }
@@ -148,7 +163,7 @@ $(document).ready(function() {
 			//then randomly suffle the weights
 			weightMap = _.shuffle(weightMap);
 			ajaxObject["extras"]["weights"] = weightMap;
-			_sendAjaxRequest();
+			_sendAlgorithmRequest();
 			$("#dca_dialog").modal("hide");
 		}
 		else{
@@ -168,7 +183,7 @@ $(document).ready(function() {
 				difference = weightMap.length - _.uniq(weightMap).length;
 				if(difference == 0){
 					ajaxObject["extras"]["weights"] = weightMap;
-					_sendAjaxRequest();
+					_sendAlgorithmRequest();
 					$("#dca_dialog").modal("hide");
 				}else{
 					alert("Please don't insert duplicate weights.");
@@ -202,7 +217,7 @@ $(document).ready(function() {
 					$("#mis_dialog").modal("show");
 				}
 				else{
-					_sendAjaxRequest();
+					_sendAlgorithmRequest();
 				}	
 			}
 			else{
@@ -243,7 +258,7 @@ $(document).ready(function() {
 		else{
 			if(d>0){
 				ajaxObject["extras"]["d"] = d;
-				_sendAjaxRequest();
+				_sendAlgorithmRequest();
 				$("#max_min_dialog").modal("hide");
 			}
 			else{
@@ -261,7 +276,7 @@ $(document).ready(function() {
 		else{
 			if(root>0 && root<=max){
 				ajaxObject["extras"]["root"] = root;
-				_sendAjaxRequest();
+				_sendAlgorithmRequest();
 				$("#mis_dialog").modal("hide");
 			}
 			else{
@@ -280,4 +295,7 @@ $(document).ready(function() {
 		$("#dca_dialog_scroll").show();
 	});
 
+	$("#btn_log_out").click(function(){
+		_sendLogOutRequest();
+	});
 });

@@ -7,23 +7,6 @@ var dbConfig={
   database : 'adhoced'
 };
 
-var sessionConfig={
-    host     : 'localhost',
-    port     : 3344,
-    user     : 'adhoc',
-    password : 'adhoced@!0091$',
-    database : 'adhoced',
-    createDatabaseTable: false,
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'sid',
-            expires: 'expires',
-            data: 'session'
-        }
-    }
-}
-
 var dbFactory = function(){
     return new dbConnection();
 }
@@ -31,7 +14,7 @@ var dbFactory = function(){
 var dbConnection = function(){
     var that = this;
     that.connection = mysql.createConnection(dbConfig);
-    that.signUp = function(request, response, user){
+    that.signUp = function(request, response, sessionStore, user){
         //First check if the user already exists
         let queryStr = "SELECT * FROM users WHERE username=?";
         that.connection.query(queryStr, [user.username], function(err, rows){
@@ -52,14 +35,16 @@ var dbConnection = function(){
                         else{
                             request.session.first_name = user.first_name;
                             request.session.username = user.username;
-                            response.status(200).send("OK");
+                            sessionStore.set(request.session.id, request.session, function(response){
+                                response.status(200).send("OK");
+                            });
                         }
                     });
                 }
             }
         });
     };
-    that.logIn = function(request, response, username, password){
+    that.logIn = function(request, response, sessionStore, username, password){
         let queryStr = "SELECT * FROM users WHERE username=? AND password=?;";
         that.connection.query(queryStr, [username, password], function(err,rows){
             if(err){
@@ -69,8 +54,9 @@ var dbConnection = function(){
                 if(rows.length != 0){
                     request.session.first_name = rows[0]["first_name"];
                     request.session.username = username;
-                    console.log(request.session.first_name, request.session.username);
-                    response.status(200).send("OK");
+                    sessionStore.set(request.session.id, request.session, function(){
+                        response.status(200).send("OK");
+                    });
                 }
                 else{
                     response.status(400).send({message : "User not found."});

@@ -7,6 +7,10 @@ var ehbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var path = require('path');
 var sharedData = require('../../shared_data').sharedData; //shared preferences
+var session = require('../../Database/sessions').session;
+var sessionConfig = require('../../Database/sessions').sessionConfig;
+var sessionStore = require('../../Database/sessions').sessionStore;
+//Algorithm imports
 var WuLiModule = require("../Algorithms/wu_li_cds");
 var MPR_Module = require("../Algorithms/mpr_set");
 var DCA_Module = require("../Algorithms/dca_clusters");
@@ -32,42 +36,85 @@ var router = express.Router(routerOptions);
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(session(sessionConfig));
 app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/workspace", function(request, response){
-	if(!request.session){
-		response.status(200).render("loggedOut.hbs");
-	}
-	else{
-		console.log(request.session.first_name);
-		console.log(request.session);
-		request.session.reload(function(err) {
-			response.status(200).render("workspace.hbs", request.session.first_name);
-		})
-	}
+	//check if session exists in the store
+	sessionStore.get(request.session.id, (error, session)=>{
+		if(error){ //error in session store
+			reponse.status(500).send("Error when looking for session");
+		}
+		else{
+			if(!session){ //no session exists
+				response.status(200).render("loggedOut.hbs");
+			}
+			else{ //user logged in
+				console.log("Workspace session exists", request.session);
+				response.status(200).render("workspace.hbs", {first_name : request.session.first_name});
+			}
+		}
+	});
+});
+
+router.get("/logOut", function(request, response){
+	//check if session exists in the store
+	sessionStore.get(request.session.id, (error, session)=>{
+		if(error){ //error in session store
+			reponse.status(500).send("Error when looking for session");
+		}
+		else{
+			if(session){ //user logged in
+				console.log(session);
+				sessionStore.destroy(request.session.id, (error)=>{ //kill the session
+					if(!error){
+						request.session.destroy((error)=>{
+							response.status(200).send("Logged Out");
+						})
+					}
+					else{
+						response.status(500).send("Failed to destroy session from store");
+					}
+				});
+			}
+			else{ //no session exists
+				request.session.destroy(()=>{
+					response.status(200).send("Already Out"); 
+				});
+			}
+		}
+	});
 });
 
 router.post("/algorithms", function(request, response){
-	if(!request.session){
-		response.status(400).send({message : "reloggin"});
-	}
-	else{
-		var code = request.body.code;
-		var net = request.body.net;
-		var extras = request.body.extras;
-		switch(code){
-			case 'alg_1': handler["wu_li"](net,response);break;
-			case 'alg_2': handler["mpr"](net,response);break;
-			case 'alg_3': handler["dca"](net,extras,response);break;
-			case 'alg_4': handler["max_min"](net,extras,response);break;
-			case 'alg_5': handler["mis"](net,extras,response);break;
-			case 'alg_6': handler["lmst"](net,response);break;
-			case 'alg_7': handler["rng"](net,response);break;
-			case 'alg_8': handler["gg"](net,response);break;
-			default: handler["default"](response);break;
+	//check if session exists in the store
+	sessionStore.get(request.session.id, (error, session)=>{
+		if(error){ //error in session store
+			reponse.status(500).send("Error when looking for session");
 		}
-	}
+		else{
+			if(!session){
+				response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
+			}
+			else{
+				var code = request.body.code;
+				var net = request.body.net;
+				var extras = request.body.extras;
+				switch(code){
+					case 'alg_1': handler["wu_li"](net,response);break;
+					case 'alg_2': handler["mpr"](net,response);break;
+					case 'alg_3': handler["dca"](net,extras,response);break;
+					case 'alg_4': handler["max_min"](net,extras,response);break;
+					case 'alg_5': handler["mis"](net,extras,response);break;
+					case 'alg_6': handler["lmst"](net,response);break;
+					case 'alg_7': handler["rng"](net,response);break;
+					case 'alg_8': handler["gg"](net,response);break;
+					default: handler["default"](response);break;
+				}
+			}
+		}
+	});
 });
 
 //Algorithm handler ============================================================

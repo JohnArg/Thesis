@@ -29,9 +29,4 @@ CREATE TABLE Nodes(
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
-CREATE TABLE sessions(
-    sid varchar(255) NOT NULL PRIMARY KEY,
-    session varchar(255) NOT NULL,
-    expires datetime NOT NULL
-);
 
