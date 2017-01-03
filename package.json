@@ -1,8 +1,8 @@
 {
   "name": "adhoced",
   "version": "2.0.0",
-  "description": "thesis",
-  "main": "application.js",
+  "description": "Thesis for University of Thessaly, Greece, by John Argyroulis",
+  "main": "adHocEd.js",
   "dependencies": {
     "body-parser": "^1.15.2",
     "connect-mssql": "^1.5.0",

@@ -34,7 +34,7 @@ when they wish.
 
 Technical :
 This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
-The app starts by executing the application.js file with Node's command: nodejs application.js
+The app starts by executing the adHocEd file with Node's command: "node adHocEd" (or "nodejs adHocEd.js" for some systems)
 The server runs on localhost:3000.
 node_modules is a folder used by node js packages.
 The code is divided in the Client code and the Server code, in

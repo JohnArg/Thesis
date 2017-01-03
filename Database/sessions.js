@@ -1,5 +1,6 @@
 /*
-    This module will create a session and a sessionStore object available when 'required'
+    This module will create a sessionStore object available when 'required' along with some configurations.
+    The sessions are store in a MySQL Table. Its best to let the mysql module create that table.
 */
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);

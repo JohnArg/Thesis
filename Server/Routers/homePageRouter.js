@@ -6,7 +6,7 @@ var app = module.exports = express();
 var ehbs = require('express-handlebars');
 var path = require('path');
 var bodyParser = require('body-parser');
-var sharedData = require('../../shared_data').sharedData; //shared preferences
+var appGlobalData = require('../../appGlobalData').appGlobalData; //shared preferences
 var queriesModule = require('../../Database/queries');
 var session = require('../../Database/sessions').session;
 var sessionConfig = require('../../Database/sessions').sessionConfig;
@@ -14,7 +14,7 @@ var sessionStore = require('../../Database/sessions').sessionStore;
 
 //set view engine
 app.engine('hbs', ehbs({extname: 'hbs'}));
-app.set('views', path.join(sharedData.rootDir, '/Client/Views'));
+app.set('views', path.join(appGlobalData.rootDir, '/Client/Views'));
 app.set('view-engine', 'hbs');
 app.enable('view cache');
 
@@ -53,52 +53,62 @@ router.get("/", function(request, response){
 
 //Handles ajax log in request
 router.post("/logIn", function(request, response){
-    //check if session exists in the store
-	sessionStore.get(request.session.id, (error, session)=>{
-		if(error){ //error in session store
-			reponse.status(500).send("Error when looking for session");
-		}
-        else{
-            if(!session){ //No user is logged in
-                console.log("New session to be created");
-                let database = queriesModule.newQueryObject();
-                database.connection.connect();
-                let username = request.body.username;
-                let password = request.body.password;
-                database.logIn(request, response, sessionStore, username, password);
+    if(appGlobalData.env == "DESIGN"){
+        response.status(200).send("OK");  //The message will force a redirect on client to /workspace
+    }
+    else{
+        //check if session exists in the store
+        sessionStore.get(request.session.id, (error, session)=>{
+            if(error){ //error in session store
+                reponse.status(500).send("Error when looking for session");
             }
-            else{ //User already logged in
-                console.log("Log in session exists ", request.session);
-                response.status(200).send("OK");  //The command below will force a redirect on client to /workspace
+            else{
+                if(!session){ //No user is logged in
+                    console.log("New session to be created");
+                    let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+                    let username = request.body.username;
+                    let password = request.body.password;
+                    database.logIn(request, response, sessionStore, username, password);
+                }
+                else{ //User already logged in
+                    console.log("Log in session exists ", request.session);
+                    response.status(200).send("OK");  //The message will force a redirect on client to /workspace
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 //Handles ajax Sign Up request
 router.post("/signUp", function(request, response){
-    //check if session exists in the store
-	sessionStore.get(request.session.id, (error, session)=>{
-		if(error){ //error in session store
-			reponse.status(500).send("Error when looking for session");
-		}
-        else{
-            if(!session){ //no user logged in
-                console.log("New session to be created");
-                let database = queriesModule.newQueryObject();
-                database.connection.connect();
-                let data = {
-                    first_name : request.body.first_name,
-                    last_name : request.body.last_name,
-                    username : request.body.username,
-                    password : request.body.password
+    if(appGlobalData.env == "DESIGN"){
+        response.status(200).send("OK");  //The message will force a redirect on client to /workspace
+    }
+    else{
+        //check if session exists in the store
+        sessionStore.get(request.session.id, (error, session)=>{
+            if(error){ //error in session store
+                reponse.status(500).send("Error when looking for session");
+            }
+            else{
+                if(!session){ //no user logged in
+                    console.log("New session to be created");
+                    let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+                    let data = {
+                        first_name : request.body.first_name,
+                        last_name : request.body.last_name,
+                        username : request.body.username,
+                        password : request.body.password
+                    }
+                    database.signUp(request, response, sessionStore, data);
                 }
-                database.signUp(request, response, sessionStore, data);
+                else{ //A user is already logged in
+                    console.log("Sign up session exists ", request.session);
+                    response.status(200).send("OK");    //The message will force a redirect on client to /workspace
+                }
             }
-            else{ //A user is already logged in
-                console.log("Sign up session exists ", request.session);
-                response.status(200).send("OK");    //The command below will force a redirect on client to /workspace
-            }
-        }
-    });
+        });
+    }
 });
