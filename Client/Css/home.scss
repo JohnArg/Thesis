@@ -1,12 +1,16 @@
-$header_color : #1b8db7;
+$header_color : #21556d;
 $header_dark : #1b5f87;
-$toolbar_color : #2b373a;
-$btn_color : #1ea9db;
-$btn_active : #eaaf31;
-$btn_important: #cc5c16;
-$footer_color: #263238;
-
+$toolbar_color : #22343c;
+$btn_color : #518298;
+$btn_text_color : #ffffff;
+$btn_active : #9adefd;
+$btn_important: #158098;
+$footer_color: #304852;
+$graphView_color : #e5f5ff;
+$subtext_light : #e1f5fe;
+$solution_box_header : #2f7798;
 $footer_height: 90px;
+
 @mixin border_radius(){
 	-webkit-border-radius: 0 !important;
      -moz-border-radius: 0 !important;

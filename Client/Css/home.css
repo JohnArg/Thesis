@@ -61,7 +61,7 @@ article h4 {
   color: #1b5f87; }
 
 footer {
-  background-color: #263238;
+  background-color: #304852;
   color: white;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -130,22 +130,22 @@ footer {
   width: 200px;
   height: 45px;
   padding: 10px;
-  background-color: #1ea9db;
+  background-color: #518298;
   color: white;
   margin-left: auto;
   margin-right: auto;
   display: inline-block; }
 
 .home-btn:hover {
-  background-color: #eaaf31;
+  background-color: #9adefd;
   color: white; }
 
 .home-btn:active {
-  background-color: #cc5c16;
+  background-color: #158098;
   color: white; }
 
 .dialogHeader {
-  background-color: #1b8db7;
+  background-color: #21556d;
   color: white;
   padding: 10px;
   font-size: 13pt;

@@ -121,10 +121,10 @@ function _responsiveSizes(){
 	$("#tools_panel").height($("#main_container").height());
 	$("#solutionBox").height($("#main_container").height());
 	$("#solutionBox").width( Math.floor( $("#main_container").width()/5) );
-	$("#solutionBoxData").height($("#solutionBox").height() - 85);
+	$("#solutionBoxData").height($("#solutionBox").height() - 65);
 	$("#solutionBoxData").width($("#solutionBox").width()-20);
 	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
-	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
+	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
 }
 
@@ -244,6 +244,8 @@ $(document).ready(function() {
 
 	$("#instructions_btn").click(function(){
 		$("#instructions_dialog").modal("show");
+		$("#instructions_btn").removeClass("workspace_btn_clicked");
+		$("#instructions_btn").addClass("workspace_btn");
 	});
 
 	$("#dca_dialog_continue").click(function(){

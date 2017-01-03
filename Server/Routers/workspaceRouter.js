@@ -65,7 +65,7 @@ router.get("/workspace", function(request, response){
 
 router.get("/logOut", function(request, response){
 	if(appGlobalData.env == "DESIGN"){
-        response.status(200).render("workspace.hbs", {first_name : "Design Mode"});
+        response.status(200).render("loggedOut.hbs");
     }
     else{
 		//check if session exists in the store
@@ -99,7 +99,7 @@ router.get("/logOut", function(request, response){
 
 router.post("/algorithms", function(request, response){
 	if(appGlobalData.env == "DESIGN"){
-        handler["routeRequest"](request, respose);
+        handler["routeRequest"](request, response);
     }
     else{
 		//check if session exists in the store
@@ -112,7 +112,7 @@ router.post("/algorithms", function(request, response){
 					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
 				}
 				else{
-					handler["routeRequest"](request, respose);
+					handler["routeRequest"](request, response);
 				}
 			}
 		});
@@ -121,7 +121,7 @@ router.post("/algorithms", function(request, response){
 
 //Algorithm handler ============================================================
 var handler = {
-	"routeRequest" : function(request,respose){
+	"routeRequest" : function(request,response){
 		let code = request.body.code;
 		let net = request.body.net;
 		let extras = request.body.extras;

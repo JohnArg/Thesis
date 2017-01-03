@@ -8,6 +8,7 @@ $btn_color : #03a9f4;
 $btn_active : #ff9800 ;
 $btn_important: #ff5722;
 $footer_color: #263238; */
+/* blue config
 $header_color : #1b8db7;
 $header_dark : #1b5f87;
 $toolbar_color : #2b373a;
@@ -15,7 +16,18 @@ $btn_color : #1ea9db;
 $btn_active : #eaaf31;
 $btn_important: #cc5c16;
 $footer_color: #263238;
-$graphView_color : #f4fcff;
+$graphView_color : #f4fcff; */
+$header_color : #21556d;
+$header_dark : #1b5f87;
+$toolbar_color : #22343c;
+$btn_color : #518298;
+$btn_text_color : #ffffff;
+$btn_active : #9adefd;
+$btn_important: #158098;
+$footer_color: #304852;
+$graphView_color : #e5f5ff;
+$subtext_light : #e1f5fe;
+$solution_box_header : #2f7798;
 /*Mixing */
 @mixin border_radius(){
 	-webkit-border-radius: 0 !important;
@@ -152,6 +164,7 @@ a:hover, a:visited, a:active
 }
 
 #logo{
+	margin-left: 10px;
 	order:1;
 }
 
@@ -159,10 +172,15 @@ a:hover, a:visited, a:active
 	order:2;
 }
 
+#link_log_out{
+	color:$btn_active;
+}
+
 .subHeading{
-	color:#e1f5fe;
-	font-size:13pt;
-	margin-left:10px;
+	color:$subtext_light;
+	font-size:12pt;
+	margin-left:20px;
+	margin-top:5px;
 }
 
 #main_container{
@@ -178,9 +196,9 @@ a:hover, a:visited, a:active
 }
 
 .toolboxHeading{
-	margin-top: 10px;
-	margin-bottom: 10px;
-	color:#dddddd;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color:$subtext_light;
 	padding:10px;
 	font-size:11pt;
 }
@@ -207,15 +225,15 @@ a:hover, a:visited, a:active
 
 /*Solution Box styling =========================== */
 #solutionBox{
-	background-color: $header_dark;
-	padding: 10px;
+	background-color: $toolbar_color;
+	padding: 0px;
 	position:absolute;
 	right:0;
 	top:0;
 }
 
 #solutionBoxHeader{
-	background-color:$btn_color;
+	background-color:$solution_box_header;
 	color:white;
 	padding:10px;
 	font-size:13pt;
@@ -292,16 +310,16 @@ a:hover, a:visited, a:active
 .workspace_btn{
 	@include border_radius();
 	background-color: $btn_color;
-	color:white;
+	color:$btn_text_color;
 	border-style:none;
 	white-space: normal;
-	padding:10px;
+	padding:8px;
 	font-size: 11pt;
 }
 
 .workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
 	background-color: $btn_active;
-	color:white;
+	color:#222222;
 }
 
 .accentColor{
@@ -323,7 +341,7 @@ footer{
 
 /* Dialog Css =========================== */
 .dialogHeader{
-	background-color: $header_color;
+	background-color: $solution_box_header;
 	color:white;
 	padding:10px;
 	font-size: 13pt;
