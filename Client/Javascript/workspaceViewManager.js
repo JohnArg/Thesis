@@ -42,7 +42,9 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						<li>To remove a link, press <b class=\"text-info\">ESC</b> to deselect tools, and then hover the mouse over a link</li>\
 						<li>Press <b class=\"text-info\">ESC</b> to stop the tools</li>\
 						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
-						<li>Moving a node automatically deselects the tools</li>\
+						<li>Moving a node automatically deselects the tools!</li>\
+						<li>Press <b class=\"text-info\">Save</b> to save your graph.</li>\
+						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.</li>\
 						</ul>\
 					</article>\
 				</section>",
@@ -93,14 +95,13 @@ var _sendAlgorithmRequest =function(){
 		success : handleResponse,
 		error: function(jqXHR, status, error){
             if(jqXHR.responseJSON.message){
-				if(qXHR.responseJSON.message == "reloggin"){
+				if(jqXHR.responseJSON.message == "reloggin"){
 					window.location.href = "/workspace";
 				}
             }
 		}
 	});
 }
-
 
 var _sendLogOutRequest = function(){
 	$.ajax({
@@ -111,6 +112,21 @@ var _sendLogOutRequest = function(){
 			alert("Log out failed :-(");
 		},
 		success: function(){
+			window.location.href = "/";
+		}
+	});
+}
+
+var _sendDeleteAccountRequest = function(){
+	$.ajax({
+		url: server_url + "/deleteAcc",
+		type: "GET",
+		error: function(jqXHR, status, error){
+            console.log("Delete Account failed ", error);
+			alert("Delete Account failed :-(");
+		},
+		success: function(){
+			alert("Account sucessfully deleted.");
 			window.location.href = "/";
 		}
 	});
@@ -297,7 +313,11 @@ $(document).ready(function() {
 		$("#dca_dialog_scroll").show();
 	});
 
-	$("#btn_log_out").click(function(){
+	$("#link_log_out").click(function(){
 		_sendLogOutRequest();
+	});
+
+	$("#link_delete_acc").click(function(){
+		_sendDeleteAccountRequest();
 	});
 });

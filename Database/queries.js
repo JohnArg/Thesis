@@ -35,7 +35,7 @@ var dbConnection = function(){
                         else{
                             request.session.first_name = user.first_name;
                             request.session.username = user.username;
-                            sessionStore.set(request.session.id, request.session, function(response){
+                            sessionStore.set(request.session.id, request.session, function(){
                                 response.status(200).send("OK");
                             });
                         }
@@ -61,6 +61,26 @@ var dbConnection = function(){
                 else{
                     response.status(400).send({message : "User not found."});
                 }
+            }
+        });
+    };
+    that.deleteAccount = function(request, response, session, sessionStore){
+        let queryStr = "DELETE FROM users WHERE username=? ;";
+        that.connection.query(queryStr, [request.session.username], function(err,rows){
+            if(err){
+                response.status(500).send({message : "Internal database error."});
+            }
+            else{ //a user has been deleted, let's kill their session too
+                sessionStore.destroy(request.session.id, (error)=>{ //kill the session
+					if(!error){
+						request.session.destroy((error)=>{
+							response.status(200).send("Account deleted and logged out");
+						});
+					}
+					else{
+						response.status(500).send("Failed to destroy session from store");
+					}
+				});
             }
         });
     };

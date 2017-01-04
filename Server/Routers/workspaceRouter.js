@@ -10,6 +10,7 @@ var appGlobalData = require('../../appGlobalData').appGlobalData; //shared prefe
 var session = require('../../Database/sessions').session;
 var sessionConfig = require('../../Database/sessions').sessionConfig;
 var sessionStore = require('../../Database/sessions').sessionStore;
+var queriesModule = require('../../Database/queries');
 //Algorithm imports
 var WuLiModule = require("../Algorithms/wu_li_cds");
 var MPR_Module = require("../Algorithms/mpr_set");
@@ -41,7 +42,7 @@ app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/workspace", function(request, response){
-	if(appGlobalData.env == "DESIGN"){
+	if(!appGlobalData.sessionsEnabled){
         response.status(200).render("workspace.hbs", {first_name : "Design Mode"});
     }
     else{
@@ -64,7 +65,7 @@ router.get("/workspace", function(request, response){
 });
 
 router.get("/logOut", function(request, response){
-	if(appGlobalData.env == "DESIGN"){
+	if(!appGlobalData.sessionsEnabled){
         response.status(200).render("loggedOut.hbs");
     }
     else{
@@ -79,13 +80,42 @@ router.get("/logOut", function(request, response){
 					sessionStore.destroy(request.session.id, (error)=>{ //kill the session
 						if(!error){
 							request.session.destroy((error)=>{
-								response.status(200).send("Logged Out");
-							})
+								console.log("log out complete");
+								response.status(200).render("loggedOut.hbs");
+							});
 						}
 						else{
 							response.status(500).send("Failed to destroy session from store");
 						}
 					});
+				}
+				else{ //no session exists
+					request.session.destroy(()=>{
+						console.log("Already logged out");
+						response.status(200).render("loggedOut.hbs");
+					});
+				}
+			}
+		});
+	}
+});
+
+router.get("/deleteAcc", function(request, response){
+	if(!appGlobalData.sessionsEnabled){
+        response.status(200).render("loggedOut.hbs");
+    }
+    else{
+		//check if session exists in the store
+		sessionStore.get(request.session.id, (error, session)=>{
+			if(error){ //error in session store
+				reponse.status(500).send("Error when looking for session");
+			}
+			else{
+				if(session){ //user logged in
+					console.log(session);
+					let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+					database.deleteAccount(request, response, session, sessionStore);
 				}
 				else{ //no session exists
 					request.session.destroy(()=>{
@@ -98,7 +128,7 @@ router.get("/logOut", function(request, response){
 });
 
 router.post("/algorithms", function(request, response){
-	if(appGlobalData.env == "DESIGN"){
+	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         handler["routeRequest"](request, response);
     }
     else{

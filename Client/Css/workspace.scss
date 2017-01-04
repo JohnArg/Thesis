@@ -1,95 +1,8 @@
-/* Globals ======================= */
-/*Color palette */
-/* Google Colors
-$header_color : #0288d1;
-$header_dark : #01579b;
-$toolbar_color : #37474f;
-$btn_color : #03a9f4;
-$btn_active : #ff9800 ;
-$btn_important: #ff5722;
-$footer_color: #263238; */
-/* blue config
-$header_color : #1b8db7;
-$header_dark : #1b5f87;
-$toolbar_color : #2b373a;
-$btn_color : #1ea9db;
-$btn_active : #eaaf31;
-$btn_important: #cc5c16;
-$footer_color: #263238;
-$graphView_color : #f4fcff; */
-$header_color : #21556d;
-$header_dark : #1b5f87;
-$toolbar_color : #22343c;
-$btn_color : #518298;
-$btn_text_color : #ffffff;
-$btn_active : #9adefd;
-$btn_important: #158098;
-$footer_color: #304852;
-$graphView_color : #e5f5ff;
-$subtext_light : #e1f5fe;
-$solution_box_header : #2f7798;
-/*Mixing */
-@mixin border_radius(){
-	-webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-	 	-ms-border-radius:0 !important;
-          border-radius: 0 !important;
-}
-@mixin table_cell_style(){
-	display: block;
-	width:30px;
-	height:30px;
-	background-color: #f4fcff;
-	border-style: solid;
-	border-color: #444444;
-	text-align: center;
-	border-width: 1px;
-	padding-top:5px;
-}
-/*Other Globals*/
+@import 'common_style';
+/*Globals*/
 $toolbarWidth : 160px;
-$footer_height: 90px;
 $bidirectionalLinkColor : #2fd829;
 $unidirectionalLinkColor : #f4b218;
-/* Initializers ================== */
-html,body,h1,h2,h3,h4,h5,h6,p{
-	margin: 0;
-	padding:0;
-}
-
-h1,h2,h3,h4,h5,h6{
-	display: inline-block;
-}
-
-body{
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	position:relative;
-}
-
-ul{
-	margin-left:10px;
-	padding: 10px;
-}
-
-input{
-	width:50px;
-	height:30px;
-	margin-bottom: 20px;
-	background-color: #eeeeee;
-	border: 1px solid #aaaaaa;
-	border-radius: 5px;
-	margin-right:10px;
-}
-
-a{
-	text-decoration: none !important;
-}
-
-a:hover, a:visited, a:active
-{
-    text-decoration: none !important;
-}
-
 /* Bootstrap override ========= */
 .btn-group-vertical{
 	@include border_radius();
@@ -109,6 +22,17 @@ a:hover, a:visited, a:active
 
 .btn, .btn-primary, .btn-default{
 	@include border_radius();
+}
+
+/*HTML Tags =====*/
+input{
+	width:50px;
+	height:30px;
+	margin-bottom: 20px;
+	background-color: #eeeeee;
+	border: 1px solid #aaaaaa;
+	border-radius: 5px;
+	margin-right:10px;
 }
 
 /* Flexbox ========================================= */
@@ -172,6 +96,32 @@ a:hover, a:visited, a:active
 	order:2;
 }
 
+#accDropDown{
+	order:3;
+}
+
+.dropDown{
+	color:$btn_active !important;
+	border-color: $toolbar_color !important;
+	background-color: $blue_heading !important;
+}
+
+.dropDown {
+	font-size: 11pt !important;
+}
+
+.dropDown a:hover, .dropDown a:active{
+	font-size: 11pt !important;
+	color:$toolbar_color !important;
+	background-color: $btn_active !important;
+}
+
+#accDropDownBtn{
+	font-size: 12pt !important;
+	border-style: none;
+	background-color: $header_color !important;
+}
+
 #link_log_out{
 	color:$btn_active;
 }
@@ -204,17 +154,6 @@ a:hover, a:visited, a:active
 }
 
 /* Draw Area =================================== */
-#drawHeader{
-	background-color: $header_dark;
-	color:#b3e5fc;
-	padding-top:10px;
-	padding-bottom:10px;
-	font-size: 13pt;
-	text-align: center;
-	margin-left:$toolbarWidth;
-	position:relative;
-}
-
 #graph_panel{
 	background-color: $graphView_color;
 	padding: 0;

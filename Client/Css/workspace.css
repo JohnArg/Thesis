@@ -1,6 +1,4 @@
-/* Globals ======================= */
-/*Color palette */
-/* Google Colors
+/* Google Colors =====
 $header_color : #0288d1;
 $header_dark : #01579b;
 $toolbar_color : #37474f;
@@ -8,7 +6,7 @@ $btn_color : #03a9f4;
 $btn_active : #ff9800 ;
 $btn_important: #ff5722;
 $footer_color: #263238; */
-/* blue config
+/* blue config ======
 $header_color : #1b8db7;
 $header_dark : #1b5f87;
 $toolbar_color : #2b373a;
@@ -17,9 +15,10 @@ $btn_active : #eaaf31;
 $btn_important: #cc5c16;
 $footer_color: #263238;
 $graphView_color : #f4fcff; */
-/*Mixing */
-/*Other Globals*/
-/* Initializers ================== */
+/* Ice Theme ===================== */
+/* Global vars ===== */
+/*Mixins =============================== */
+/* HTML tags ================== */
 html, body, h1, h2, h3, h4, h5, h6, p {
   margin: 0;
   padding: 0; }
@@ -35,21 +34,13 @@ ul {
   margin-left: 10px;
   padding: 10px; }
 
-input {
-  width: 50px;
-  height: 30px;
-  margin-bottom: 20px;
-  background-color: #eeeeee;
-  border: 1px solid #aaaaaa;
-  border-radius: 5px;
-  margin-right: 10px; }
-
 a {
   text-decoration: none !important; }
 
 a:hover, a:visited, a:active {
   text-decoration: none !important; }
 
+/*Globals*/
 /* Bootstrap override ========= */
 .btn-group-vertical {
   -webkit-border-radius: 0 !important;
@@ -80,6 +71,16 @@ a:hover, a:visited, a:active {
   -moz-border-radius: 0 !important;
   -ms-border-radius: 0 !important;
   border-radius: 0 !important; }
+
+/*HTML Tags =====*/
+input {
+  width: 50px;
+  height: 30px;
+  margin-bottom: 20px;
+  background-color: #eeeeee;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  margin-right: 10px; }
 
 /* Flexbox ========================================= */
 .flexContainer {
@@ -133,6 +134,27 @@ a:hover, a:visited, a:active {
 #logoSubText {
   order: 2; }
 
+#accDropDown {
+  order: 3; }
+
+.dropDown {
+  color: #9adefd !important;
+  border-color: #22343c !important;
+  background-color: #1b5f87 !important; }
+
+.dropDown {
+  font-size: 11pt !important; }
+
+.dropDown a:hover, .dropDown a:active {
+  font-size: 11pt !important;
+  color: #22343c !important;
+  background-color: #9adefd !important; }
+
+#accDropDownBtn {
+  font-size: 12pt !important;
+  border-style: none;
+  background-color: #21556d !important; }
+
 #link_log_out {
   color: #9adefd; }
 
@@ -160,16 +182,6 @@ a:hover, a:visited, a:active {
   font-size: 11pt; }
 
 /* Draw Area =================================== */
-#drawHeader {
-  background-color: #1b5f87;
-  color: #b3e5fc;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-size: 13pt;
-  text-align: center;
-  margin-left: 160px;
-  position: relative; }
-
 #graph_panel {
   background-color: #e5f5ff;
   padding: 0;

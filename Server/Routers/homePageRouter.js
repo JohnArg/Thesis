@@ -35,7 +35,6 @@ app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/", function(request, response){
-    //which algorithms are supported
     let templateData ={
         algorithms : [
         {name : "Wu & Li Connected Dominating Set"},
@@ -53,7 +52,7 @@ router.get("/", function(request, response){
 
 //Handles ajax log in request
 router.post("/logIn", function(request, response){
-    if(appGlobalData.env == "DESIGN"){
+    if(!appGlobalData.sessionsEnabled){ //if sessions are disabled
         response.status(200).send("OK");  //The message will force a redirect on client to /workspace
     }
     else{
@@ -64,7 +63,7 @@ router.post("/logIn", function(request, response){
             }
             else{
                 if(!session){ //No user is logged in
-                    console.log("New session to be created");
+                    console.log("Log in requested");
                     let database = queriesModule.newQueryObject();
                     database.connection.connect();
                     let username = request.body.username;
@@ -82,7 +81,7 @@ router.post("/logIn", function(request, response){
 
 //Handles ajax Sign Up request
 router.post("/signUp", function(request, response){
-    if(appGlobalData.env == "DESIGN"){
+    if(!appGlobalData.sessionsEnabled){
         response.status(200).send("OK");  //The message will force a redirect on client to /workspace
     }
     else{
