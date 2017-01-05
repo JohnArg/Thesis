@@ -168,6 +168,49 @@ var dbConnection = function(){
             }
         });
     };
+    that.deleteNetwork = function(response, netID){
+        let queryStr = "DELETE FROM Networks WHERE id=?";
+        that.connection.query(queryStr, [netID], (err)=>{
+            if(err){
+                console.log("Error in deleteNetwork");
+                response.status(500).send({message : "Internal Server Error"});
+            }
+            else{
+                response.status(200).send({message : "Delete Complete"});
+            }
+        });
+    };
+    that.loadNetwork = function(response, netID){
+        let queryStr = "SELECT * FROM nodes WHERE network_id=?";
+        that.connection.query(queryStr, [netID], (err, rows)=>{
+            if(err){
+                console.log("Error in loadNetwork");
+                response.status(500).send({message : "Internal Server Error"});
+            }
+            else{
+                var network = { nodes : []};
+                var Node = function (id_in, neighbors, graphic){
+                    this.id = id_in;
+                    this.neighbors = neighbors;
+                    this.graphic = {}; //will be filled on client
+                    this.position = {
+                        x : 0,
+                        y : 0
+                    }
+                }
+                var node;
+                for(var i=0; i< rows.length; i++){
+                    node = new Node(rows[i].);
+                }
+                response.status(200).send({data : network});
+            }
+        });
+    }
+}
+
+//will take a string and parse a list of integers
+var _parseNeighborsString = function(textList){
+    
 }
 
 module.exports.newQueryObject = dbFactory;

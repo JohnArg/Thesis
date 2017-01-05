@@ -123,7 +123,7 @@ router.get("/deleteAcc", function(request, response){
 });
 
 //for saving network data
-router.post("/save", function(request, response){
+router.post("/saveNet", function(request, response){
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         //do nothing
     }
@@ -147,6 +147,57 @@ router.post("/save", function(request, response){
 	}
 });
 
+//for deleting a network
+router.post("/deleteNet", function(request, response){
+	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
+        //do nothing
+    }
+    else{
+		//check if session exists in the store
+		sessionStore.get(request.session.id, (error, session)=>{
+			if(error){ //error in session store
+				reponse.status(500).send("Error when looking for session");
+			}
+			else{
+				if(!session){
+					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
+				}
+				else{
+					let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+					database.deleteNetwork(response, request.body.netID);
+				}
+			}
+		});
+	}
+});
+
+//for loading network data
+router.post("/loadNet", function(request, response){
+	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
+        //do nothing
+    }
+    else{
+		//check if session exists in the store
+		sessionStore.get(request.session.id, (error, session)=>{
+			if(error){ //error in session store
+				reponse.status(500).send("Error when looking for session");
+			}
+			else{
+				if(!session){
+					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
+				}
+				else{
+					let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+					database.loadNetwork(response, request.body.netID);
+				}
+			}
+		});
+	}
+});
+
+//for running the Algorithms
 router.post("/algorithms", function(request, response){
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         handler["routeRequest"](request, response);

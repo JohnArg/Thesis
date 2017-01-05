@@ -109,7 +109,7 @@ var _sendSaveNetwork =function(netName){
 	else{
 		_updateAjaxNet();
 		$.ajax({
-			url: server_url + "/save",
+			url: server_url + "/saveNet",
 			contentType: "application/json",
 			dataType: "json",
 			type: "POST",
@@ -129,7 +129,25 @@ var _sendSaveNetwork =function(netName){
 	}
 }
 
-var _sendAlgorithmRequest =function(){
+var _deleteNetwork = function(networkID){
+	$.ajax({
+		url: server_url + "/deleteNet",
+		contentType: "application/json",
+		dataType: "json",
+		type: "POST",
+		data: JSON.stringify({netID : networkID}),
+		error: function(jqXHR, status, error){
+			if(jqXHR.responseJSON.message){
+				console.log(jqXHR.responseJSON.message);
+				if(jqXHR.responseJSON.message == "reloggin"){
+					window.location.href = "/workspace";
+				}
+			}
+		}
+	});
+}
+
+var _sendAlgorithmRequest = function(){
 	$.ajax({
 		url: server_url + "/algorithms",
 		contentType: "application/json",
@@ -374,5 +392,10 @@ $(document).ready(function() {
 			$("#save_modal").modal('hide');
 			_sendSaveNetwork(name);
 		}
-	})
+	});
+
+	$("#load_btn").click(function(){
+		//make an ajax request first
+		$("load_modal").modal("show");
+	});
 });
