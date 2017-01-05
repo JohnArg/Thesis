@@ -124,7 +124,6 @@ $(document).ready(function(){
 				link.attr(LINK_DEFAULT);
 				//add the edge to the graph
 				graph.addCell(link);
-				console.log("Link ", link);
 				//return funcitonality to selecting the source of a link
 				linkSelect1 = true;
 				console.log(network);

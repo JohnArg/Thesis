@@ -63,7 +63,6 @@ router.post("/logIn", function(request, response){
             }
             else{
                 if(!session){ //No user is logged in
-                    console.log("Log in requested");
                     let database = queriesModule.newQueryObject();
                     database.connection.connect();
                     let username = request.body.username;
@@ -71,7 +70,6 @@ router.post("/logIn", function(request, response){
                     database.logIn(request, response, sessionStore, username, password);
                 }
                 else{ //User already logged in
-                    console.log("Log in session exists ", request.session);
                     response.status(200).send("OK");  //The message will force a redirect on client to /workspace
                 }
             }
@@ -92,7 +90,6 @@ router.post("/signUp", function(request, response){
             }
             else{
                 if(!session){ //no user logged in
-                    console.log("New session to be created");
                     let database = queriesModule.newQueryObject();
                     database.connection.connect();
                     let data = {
@@ -104,7 +101,6 @@ router.post("/signUp", function(request, response){
                     database.signUp(request, response, sessionStore, data);
                 }
                 else{ //A user is already logged in
-                    console.log("Sign up session exists ", request.session);
                     response.status(200).send("OK");    //The message will force a redirect on client to /workspace
                 }
             }

@@ -56,7 +56,6 @@ router.get("/workspace", function(request, response){
 					response.status(200).render("loggedOut.hbs");
 				}
 				else{ //user logged in
-					console.log("Workspace session exists", request.session);
 					response.status(200).render("workspace.hbs", {first_name : request.session.first_name});
 				}
 			}
@@ -76,11 +75,9 @@ router.get("/logOut", function(request, response){
 			}
 			else{
 				if(session){ //user logged in
-					console.log(session);
 					sessionStore.destroy(request.session.id, (error)=>{ //kill the session
 						if(!error){
 							request.session.destroy((error)=>{
-								console.log("log out complete");
 								response.status(200).render("loggedOut.hbs");
 							});
 						}
@@ -91,7 +88,6 @@ router.get("/logOut", function(request, response){
 				}
 				else{ //no session exists
 					request.session.destroy(()=>{
-						console.log("Already logged out");
 						response.status(200).render("loggedOut.hbs");
 					});
 				}
@@ -112,7 +108,6 @@ router.get("/deleteAcc", function(request, response){
 			}
 			else{
 				if(session){ //user logged in
-					console.log(session);
 					let database = queriesModule.newQueryObject();
                     database.connection.connect();
 					database.deleteAccount(request, response, session, sessionStore);
@@ -121,6 +116,31 @@ router.get("/deleteAcc", function(request, response){
 					request.session.destroy(()=>{
 						response.status(200).send("Already Out"); 
 					});
+				}
+			}
+		});
+	}
+});
+
+//for saving network data
+router.post("/save", function(request, response){
+	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
+        //do nothing
+    }
+    else{
+		//check if session exists in the store
+		sessionStore.get(request.session.id, (error, session)=>{
+			if(error){ //error in session store
+				reponse.status(500).send("Error when looking for session");
+			}
+			else{
+				if(!session){
+					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
+				}
+				else{
+					let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+					database.saveNetworkData(response, request.session.username, request.body.name, request.body.data);
 				}
 			}
 		});

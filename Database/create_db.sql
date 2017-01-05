@@ -21,6 +21,7 @@ CREATE TABLE Nodes(
 	id INT unsigned NOT NULL AUTO_INCREMENT,
     network_id INT unsigned NOT NULL,
     node_id INT unsigned NOT NULL,
+    neighbors VARCHAR(250),
     position_x INT unsigned NOT NULL,
     position_y INT unsigned NOT NULL,
     PRIMARY KEY (id),

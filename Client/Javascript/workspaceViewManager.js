@@ -64,6 +64,16 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 					</div>",
 		footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
 				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"dca_dialog_continue\">Continue</button>"
+		},
+		{
+		id: "save_modal",
+		title : "Save Current Graph",
+		body : "<p>Choose a name for the graph.</p>\
+				<form>\
+					<input type=\"text\" id=\"save_input\"> <br/>\
+				</form>",	
+		footer : "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
+			"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"save_continue\">Save</button>"
 		}
     ]
 };
@@ -84,7 +94,41 @@ function _reset(){
 	ajaxObject["net"] = { };		
 }
 
-//Send an Ajax Request to the server
+var _updateAjaxNet = function(){
+	for(var i=0; i<network.nodes.length; i++){
+		network.nodes[i].position.x = network.nodes[i].graphic.attributes.position.x;
+		network.nodes[i].position.y = network.nodes[i].graphic.attributes.position.y;
+	}
+}
+
+//Send an Ajax Request to the server ============================
+var _sendSaveNetwork =function(netName){
+	if(network.nodes.length == 0){
+		alert("No graph to save.");
+	}
+	else{
+		_updateAjaxNet();
+		$.ajax({
+			url: server_url + "/save",
+			contentType: "application/json",
+			dataType: "json",
+			type: "POST",
+			data: JSON.stringify({name : netName, data : network}),
+			success : function(){
+				alert("Data Saved");
+			},
+			error: function(jqXHR, status, error){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
+				}
+			}
+		});
+	}
+}
+
 var _sendAlgorithmRequest =function(){
 	$.ajax({
 		url: server_url + "/algorithms",
@@ -132,7 +176,8 @@ var _sendDeleteAccountRequest = function(){
 	});
 }
 
-function _responsiveSizes(){
+//=======================================================
+var _responsiveSizes = function(){
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
 	$("#solutionBox").height($("#main_container").height());
@@ -144,6 +189,59 @@ function _responsiveSizes(){
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
 }
 
+//Create the dca dialogue's list li elements
+var _dcaDialogCreateInputs = function(){
+	var text = "";
+	for(var i=0; i<network.nodes.length; i++){
+		text +="<li>";
+		text +="<form>Node "+network.nodes[i].id+" <input type=\"number\" id=\"weight_"+i+"\"></form>";
+		text += "</li>";
+	}
+	return text;
+}
+
+//If the dca dialog "OK" was clicked, handle the weight data to be sent to the server
+var _dcaDialogWeightsHandler = function(){
+	weightMap = [];
+	dialogError = false;
+	var difference = 0;
+	if(randomWeights){
+		//use the ids as weights
+		for(var i=0; i<network.nodes.length; i++){
+			weightMap.push(network.nodes[i].id);
+		}
+		//then randomly suffle the weights
+		weightMap = _.shuffle(weightMap);
+		ajaxObject["extras"]["weights"] = weightMap;
+		_sendAlgorithmRequest();
+		$("#dca_dialog").modal("hide");
+	}
+	else{
+		$("#dca_dialog_list").children().each(function(){
+			var weightTxt = $(this).find("input").val();
+			var number = parseInt(weightTxt);
+			if(isNaN(number)){
+				dialogError = true;
+				weightMap = [];
+				alert("Weights must be integer inputs");
+			}
+			else{
+				weightMap.push(number);
+			}
+		});
+		if(!dialogError){
+			difference = weightMap.length - _.uniq(weightMap).length;
+			if(difference == 0){
+				ajaxObject["extras"]["weights"] = weightMap;
+				_sendAlgorithmRequest();
+				$("#dca_dialog").modal("hide");
+			}else{
+				alert("Please don't insert duplicate weights.");
+			}
+		}
+	}
+}
+//After loading doc ==========================================
 $(document).ready(function() {	
 	//add the modals to our html
     var modalsTemplate = Handlebars.templates['modals.hbs'];
@@ -156,64 +254,6 @@ $(document).ready(function() {
     	_responsiveSizes();
     	paper.scaleContentToFit({ "minScaleX" : 0.5, "minScaleY" : 0.5, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
-	//Create the dca dialogue's list li elements
-	function _dcaDialogCreateInputs(){
-		var text = "";
-		for(var i=0; i<network.nodes.length; i++){
-			text +="<li>";
-			text +="<form>Node "+network.nodes[i].id+" <input type=\"number\" id=\"weight_"+i+"\"></form>";
-			text += "</li>";
-		}
-		return text;
-	}
-	//If the dca dialog "OK" was clicked, handle the weight data to be sent to the server
-	function _dcaDialogWeightsHandler(){
-		weightMap = [];
-		dialogError = false;
-		var difference = 0;
-		if(randomWeights){
-			//use the ids as weights
-			for(var i=0; i<network.nodes.length; i++){
-				weightMap.push(network.nodes[i].id);
-			}
-			//then randomly suffle the weights
-			weightMap = _.shuffle(weightMap);
-			ajaxObject["extras"]["weights"] = weightMap;
-			_sendAlgorithmRequest();
-			$("#dca_dialog").modal("hide");
-		}
-		else{
-			$("#dca_dialog_list").children().each(function(){
-				var weightTxt = $(this).find("input").val();
-				var number = parseInt(weightTxt);
-				if(isNaN(number)){
-					dialogError = true;
-					weightMap = [];
-					alert("Weights must be integer inputs");
-				}
-				else{
-					weightMap.push(number);
-				}
-			});
-			if(!dialogError){
-				difference = weightMap.length - _.uniq(weightMap).length;
-				if(difference == 0){
-					ajaxObject["extras"]["weights"] = weightMap;
-					_sendAlgorithmRequest();
-					$("#dca_dialog").modal("hide");
-				}else{
-					alert("Please don't insert duplicate weights.");
-				}
-			}
-		}
-	}
-	
-	function _updateAjaxNet(){
-		for(var i=0; i<network.nodes.length; i++){
-			network.nodes[i].position.x = network.nodes[i].graphic.attributes.position.x;
-			network.nodes[i].position.y = network.nodes[i].graphic.attributes.position.y;
-		}
-	}
 
 	//Buttons Reactions ===========================================================
 	$("#execute_btn").click(function() {
@@ -320,4 +360,19 @@ $(document).ready(function() {
 	$("#link_delete_acc").click(function(){
 		_sendDeleteAccountRequest();
 	});
+
+	$("#save_btn").click(function(){
+		$("#save_modal").modal('show');
+	});
+
+	$("#save_continue").click(function(){
+		let name  = $("#save_input").val();
+		if(name == ""){
+			alert("Please type in a name for this graph");
+		}
+		else{
+			$("#save_modal").modal('hide');
+			_sendSaveNetwork(name);
+		}
+	})
 });
