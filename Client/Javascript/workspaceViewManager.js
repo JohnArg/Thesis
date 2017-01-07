@@ -105,10 +105,11 @@ function _reset(){
 }
 
 //update the position data of the network nodes before sending an ajax call
+//We change negative values to positive or errors will occur
 var _updateAjaxNet = function(){
 	for(var i=0; i<network.nodes.length; i++){
-		network.nodes[i].position.x = network.nodes[i].graphic.attributes.position.x;
-		network.nodes[i].position.y = network.nodes[i].graphic.attributes.position.y;
+		network.nodes[i].position.x = Math.abs(network.nodes[i].graphic.attributes.position.x);
+		network.nodes[i].position.y = Math.abs(network.nodes[i].graphic.attributes.position.y);
 	}
 }
 
@@ -131,6 +132,7 @@ var _fillLoadScrollView = function(data){
 		}
 		$("#load_modal_txt").text("Choose a previously saved graph to load.");
 		$("#load_scroll").html(text);
+		$("#load_scroll").show();
 	}
 }
 
@@ -140,7 +142,7 @@ var _repaintGraph = function(newNetwork){
 		let newNode = newNetwork.nodes[i];
 		//create the graphics shape at the position clicked
 		let circleShape = new joint.shapes.basic.Circle({
-			position: { x: newNode.position.x - 20, y: newNode.position.y - 20},
+			position: { x: newNode.position.x, y: newNode.position.y},
 			size:{ width:35, height:35},
 			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { text : newNode.id, fill : 'white'}},
 			prop:{ node_id : newNode.id}

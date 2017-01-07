@@ -203,7 +203,7 @@ var dbConnection = function(){
                 var node;
                 for(var i=0; i< rows.length; i++){
                     node = new Node();
-                    node.id = rows[i].id;
+                    node.id = rows[i].node_id;
                     let result = _parseNeighborsString(rows[i].neighbors);
                     if(result.state =="error"){
                         console.log("Load Network : Error in parsing neighbor data");

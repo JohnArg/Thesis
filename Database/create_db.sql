@@ -22,8 +22,8 @@ CREATE TABLE Nodes(
     network_id INT unsigned NOT NULL,
     node_id INT unsigned NOT NULL,
     neighbors VARCHAR(250),
-    position_x INT unsigned NOT NULL,
-    position_y INT unsigned NOT NULL,
+    position_x DOUBLE unsigned NOT NULL,
+    position_y DOUBLE unsigned NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY fk_network(network_id)
     REFERENCES Networks(id)
