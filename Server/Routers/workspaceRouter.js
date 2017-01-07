@@ -49,7 +49,7 @@ router.get("/workspace", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){ //no session exists
@@ -71,7 +71,7 @@ router.get("/logOut", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(session){ //user logged in
@@ -104,7 +104,7 @@ router.get("/deleteAcc", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(session){ //user logged in
@@ -131,7 +131,7 @@ router.post("/saveNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -140,7 +140,12 @@ router.post("/saveNet", function(request, response){
 				else{
 					let database = queriesModule.newQueryObject();
                     database.connection.connect();
-					database.saveNetworkData(response, request.session.username, request.body.name, request.body.data);
+					let callbackParams = {
+						responseObj : response,
+						netName : request.body.name,
+						network : request.body.data
+					};
+					database.retrieveUserIdAndCallNext(database.saveNetwork, callbackParams, request.session.username);
 				}
 			}
 		});
@@ -156,7 +161,7 @@ router.post("/deleteNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -181,7 +186,7 @@ router.post("/loadNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -197,6 +202,34 @@ router.post("/loadNet", function(request, response){
 	}
 });
 
+//Retrieve user's saved networks
+router.get("/getGraphs", function(request, response){
+	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
+        //do nothing
+    }
+    else{
+		//check if session exists in the store
+		sessionStore.get(request.session.id, (error, session)=>{
+			if(error){ //error in session store
+				reponse.status(500).send({message : "Error when looking for session"});
+			}
+			else{
+				if(!session){
+					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
+				}
+				else{
+					let database = queriesModule.newQueryObject();
+                    database.connection.connect();
+					let callbackParams = {
+						responseObj : response
+					};
+					database.retrieveUserIdAndCallNext(database.retrieveUserNetworks, callbackParams, request.session.username);
+				}
+			}
+		});
+	}
+});
+
 //for running the Algorithms
 router.post("/algorithms", function(request, response){
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
@@ -206,7 +239,7 @@ router.post("/algorithms", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send("Error when looking for session");
+				reponse.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){

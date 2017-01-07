@@ -40,6 +40,46 @@ a {
 a:hover, a:visited, a:active {
   text-decoration: none !important; }
 
+.btn-group {
+  margin-top: 5px; }
+
+.btn_danger {
+  background-color: #9e4c2c !important;
+  color: white !important; }
+
+.btn_custom {
+  background-color: #158098 !important;
+  color: white !important; }
+
+.btn_custom:active {
+  background-color: #9adefd !important;
+  color: #22343c !important; }
+
+.btn_custom:hover {
+  background-color: #9adefd !important;
+  color: #22343c !important; }
+
+.small_well {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important;
+  background-color: #d9eaf4;
+  color: #22343c;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  padding: 2px;
+  padding-left: 5px;
+  padding-right: 5px; }
+
+.small_btn {
+  border-style: none;
+  margin-right: 5px;
+  padding: 2px;
+  width: 60px;
+  height: 30px;
+  font-size: 10pt; }
+
 /*Globals*/
 /* Bootstrap override ========= */
 .btn-group-vertical {

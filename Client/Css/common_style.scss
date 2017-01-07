@@ -25,10 +25,12 @@ $btn_color : #518298;
 $btn_text_color : #ffffff;
 $btn_active : #9adefd;
 $btn_important: #158098;
+$btn_danger: #9e4c2c;
 $footer_color: #304852;
 $graphView_color : #e5f5ff;
 $subtext_light : #e1f5fe;
 $solution_box_header : #2f7798;
+$very_light_blue : #d9eaf4;
 
 /* Global vars ===== */
 $footer_height: 90px;
@@ -78,4 +80,47 @@ a{
 a:hover, a:visited, a:active
 {
     text-decoration: none !important;
+}
+
+.btn-group{
+	margin-top: 5px;
+}
+
+.btn_danger{
+	background-color: $btn_danger !important;
+	color: white !important;
+}
+
+.btn_custom{
+	background-color : $btn_important !important;
+	color : white !important;
+}
+
+.btn_custom:active{
+	background-color :$btn_active !important;
+	color : $toolbar_color !important;
+}
+
+.btn_custom:hover{
+	background-color :$btn_active !important;
+	color : $toolbar_color !important;
+}
+
+.small_well{
+	@include border_radius();
+	background-color: $very_light_blue;
+	color: $toolbar_color;
+	margin-top: 10px;
+	margin-bottom: 0px;
+	padding : 2px;
+	padding-left:5px;
+	padding-right:5px;
+}
+.small_btn{
+	border-style :none;
+	margin-right: 5px;
+	padding:2px;
+	width:60px;
+	height:30px;
+	font-size:10pt;
 }

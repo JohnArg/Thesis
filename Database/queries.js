@@ -84,8 +84,9 @@ var dbConnection = function(){
             }
         });
     };
-    //Use this to save the network data of a user.
-    that.saveNetworkData = function(response, username, netName, network){
+    //Retrieve the user's id and call the callback function when you are done,
+    //inserting the result to a callbackParams object
+    that.retrieveUserIdAndCallNext = function(callback, callbackParams, username){
         //first get the id of the user
         let queryStr = "SELECT id FROM users WHERE username=?";
         that.connection.query(queryStr, [username], function(err,rows){
@@ -100,17 +101,18 @@ var dbConnection = function(){
                 }
                 else{
                     //now call the next function
-                    console.log("User id : ", rows[0]);
-                    that.saveNetwork(response, rows[0].id, netName, network);
+                    callbackParams.userID  = rows[0].id;    //add this parameter before calling the callback
+                    callback(callbackParams);
                 }
             }
         });
     };
     //Saves only the network without the nodes
-    that.saveNetwork = function(response, userID, netName, network){    
+    that.saveNetwork = function(params){    
         let queryStr = "INSERT INTO Networks (user_id, name) VALUES (?,?);";
-        console.log("User id : "+ userID+" netName : "+netName);
-        that.connection.query(queryStr, [userID, netName], function(err){
+        let response = params.responseObj;
+        console.log("User id : "+ params.userID+" netName : "+params.netName);
+        that.connection.query(queryStr, [params.userID, params.netName], function(err){
             if(err){
                 console.log("Save network error1 : ", err.code);
                 console.log(err.code);
@@ -131,7 +133,7 @@ var dbConnection = function(){
                         else{
                             console.log(rows[0]);
                             //Use the new network's id to call the next function
-                            that.saveNetworkNodes(response, rows[0].netID, network);
+                            that.saveNetworkNodes(response, rows[0].netID, params.network);
                         }
                     }
                 });
@@ -189,28 +191,105 @@ var dbConnection = function(){
             }
             else{
                 var network = { nodes : []};
-                var Node = function (id_in, neighbors, graphic){
-                    this.id = id_in;
-                    this.neighbors = neighbors;
+                var Node = function(){
+                    this.id = -1;
+                    this.neighbors = [];
                     this.graphic = {}; //will be filled on client
                     this.position = {
                         x : 0,
                         y : 0
-                    }
-                }
+                    };
+                };
                 var node;
                 for(var i=0; i< rows.length; i++){
-                    node = new Node(rows[i].);
+                    node = new Node();
+                    node.id = rows[i].id;
+                    let result = _parseNeighborsString(rows[i].neighbors);
+                    if(result.state =="error"){
+                        console.log("Load Network : Error in parsing neighbor data");
+                        response.status(500).send({message : "Internal Server Error"});
+                    }
+                    else{
+                        node.neighbors = result.list;
+                        node.position.x = rows[i].position_x;
+                        node.position.y = rows[i].position_y;
+                    }
+                    network.nodes.push(node);
                 }
                 response.status(200).send({data : network});
             }
         });
-    }
+    };
+    that.retrieveUserNetworks = function(params){
+        let queryStr = "SELECT id, name FROM Networks WHERE user_id=?;";
+        let response = params.responseObj;
+        that.connection.query(queryStr, [params.userID], (err, rows)=>{
+            if(err){
+                console.log("Error in retrieve networks ", err.code);
+                response.status(500).send({message : "Internal Server Error"});
+            }
+            else{
+                let nets = [];
+                for(var i=0; i<rows.length; i++){
+                    nets.push({id : rows[i].id, name : rows[i].name});
+                }
+                response.status(200).send({data : nets});
+            }
+        });
+    };
 }
 
 //will take a string and parse a list of integers
+//The neighbor list of a node is stored as a string
 var _parseNeighborsString = function(textList){
-    
+    var result = {
+        state : "begin",
+        list : []
+    };
+    var numberTxt;
+    for(var i=0; i<textList.length; i++){
+        switch(textList[i]){
+            case "[" : 
+                if(result.state == "begin"){
+                    result.state = "started";
+                    numberTxt = "";
+                }
+                else{ 
+                    result.state = "error";
+                    return result;
+                };
+                break;
+            case "]":
+                if(result.state == "reading"){
+                    result.state = "end";
+                }
+                else{
+                    result.state = "error";
+                }
+                return result;
+            default :
+                if(result.state == "started"){
+                    result.state = "reading";
+                }
+                if(textList[i] != ","){
+                    numberTxt += textList[i];
+                }
+                else{
+                    let number = parseInt(numberTxt, 10);
+                    if(isNaN(number)){
+                        result.state = "error";
+                        return result;
+                    }
+                    else{
+                        numberTxt = ""; //reset
+                        result.list.push(number);
+                    }
+                }
+                break;
+        }
+    }
+    console.log(result.list);
+    return result;
 }
 
 module.exports.newQueryObject = dbFactory;

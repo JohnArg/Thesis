@@ -13,7 +13,7 @@ var sessionStoreConfig={
     password : 'adhoced@!0091$',
     database : 'sessions',
     createDatabaseTable: true,  //let the app create the table,
-    expiration: 180000,
+    expiration: 18000000,
     checkExpirationInterval: 300000,    //frequency of checking for expired sessions
     schema: {
         tableName: 'sessions_store',
@@ -32,7 +32,7 @@ var sessionConfig ={
     store : sessionStore,
     secret: secret, 
     cookie : {
-        MaxAge : 180000
+        MaxAge : 18000000
     },
     resave:false, 
     saveUninitialized:false

@@ -19,15 +19,15 @@ var modalsData = {	//content to fill out modals rendered by handlebars
          id : "mis_dialog",
         title : "Maximal Independent Set",
         body : "<form>Select a root for the spanning tree <input type=\"number\" id=\"mis_input\"></form>",
-        footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
-				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"mis_continue\">Continue</button>"
+        footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"mis_continue\">Continue</button>"
         },
 		 {
         id : "max_min_dialog",
         title : "Max Min D-Cluster",
         body : "<form>Select a positive integer value for d <input type=\"number\" id=\"max_min_input\"></form>",
-        footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
-				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"max_min_continue\">Continue</button>"
+        footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"max_min_continue\">Continue</button>"
         },
 		{
         id : "instructions_dialog",
@@ -48,32 +48,42 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						</ul>\
 					</article>\
 				</section>",
-    	footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"
+    	footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
         },
 		{
 		id: "dca_dialog",
 		title: "DCA Weights",
 		body: "<p id=\"dca_dialog_heading\">Specify the weights of the nodes before execution. Each node must have a different weight.</p>\
 					<form>\
-						<input type=\"radio\" name=\"random\" checked id=\"weights_randomBtn\"> Random Weights <br/>\
-						<input type=\"radio\" name=\"random\" id=\"weights_customBtn\"> Insert weights manually <br/>\
+						<input type=\"radio\" name=\"random\" checked id=\"weights_randomBtn\"> Random Weights </br>\
+						<input type=\"radio\" name=\"random\" id=\"weights_customBtn\"> Insert weights manually </br>\
 					</form>\
 					<div id=\"dca_dialog_scroll\" class=\"scrollView\">\
 						<ul id=\"dca_dialog_list\" class=\"ul_no_numbering ul_child\">\
 						</ul>\
 					</div>",
-		footer: "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
-				"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"dca_dialog_continue\">Continue</button>"
+		footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
+				"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"dca_dialog_continue\">Continue</button>"
 		},
 		{
 		id: "save_modal",
 		title : "Save Current Graph",
 		body : "<p>Choose a name for the graph.</p>\
 				<form>\
-					<input type=\"text\" id=\"save_input\"> <br/>\
+					<input type=\"text\" id=\"save_input\"> </br>\
 				</form>",	
-		footer : "<button type=\"button\" class=\"btn btn-default btn-primary\" data-dismiss=\"modal\">Close</button>"+
-			"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"save_continue\">Save</button>"
+		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
+			"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"save_continue\">Save</button>"
+		},
+		{
+		id: "load_modal",
+		title : "Load Graph",
+		body : "<p id='load_modal_txt'>Choose a previously saved graph to load.</p>\
+				<div id=\"load_scroll\" class=\"scrollView\">\
+					<ul id=\"load_list\" class=\"ul_no_numbering ul_child\">\
+					</ul>\
+				</div>",	
+		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
 		}
     ]
 };
@@ -94,6 +104,7 @@ function _reset(){
 	ajaxObject["net"] = { };		
 }
 
+//update the position data of the network nodes before sending an ajax call
 var _updateAjaxNet = function(){
 	for(var i=0; i<network.nodes.length; i++){
 		network.nodes[i].position.x = network.nodes[i].graphic.attributes.position.x;
@@ -101,7 +112,146 @@ var _updateAjaxNet = function(){
 	}
 }
 
+//Fill the scroll view of the load modal with the data retrieved from _sendRetrieveNetworks
+var _fillLoadScrollView = function(data){
+	if(data.length == 0){
+		$("#load_modal_txt").text("No graphs saved.");
+		$("#load_scroll").hide();
+	}
+	else{
+		var text="";
+		for(var i=0; i<data.length; i++){
+			text += "<div id='"+data[i].id+"' class='well small_well'>\
+						<p>"+data[i].name+"</p>\
+						<div class='btn-group' role='group' aria-label='...'>\
+						<button type='button' class='btn btn-default btn_danger small_btn delete_net'>Delete</button>\
+						<button type='button' class='btn btn-default btn_custom small_btn confirm_load'>Load</button>\
+						</div>\
+					</div>";
+		}
+		$("#load_modal_txt").text("Choose a previously saved graph to load.");
+		$("#load_scroll").html(text);
+	}
+}
+
+var _repaintGraph = function(newNetwork){
+	_reset(); //reset everything
+	for(var i=0; i<newNetwork.nodes.length; i++){
+		let newNode = newNetwork.nodes[i];
+		//create the graphics shape at the position clicked
+		let circleShape = new joint.shapes.basic.Circle({
+			position: { x: newNode.position.x - 20, y: newNode.position.y - 20},
+			size:{ width:35, height:35},
+			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { text : newNode.id, fill : 'white'}},
+			prop:{ node_id : newNode.id}
+		});
+		//stop adding/removing nodes if you moved one
+		circleShape.on("change:position",function(){
+			stopFunctionality("all");
+		});
+		//add the new shape to the graph
+		graph.addCell(circleShape);
+		//create the node in the network
+		let node = new Node( newNode.id, newNode.neighbors , circleShape);
+		node.position.x = newNode.position.x;
+		node.position.y = newNode.position.y;
+		network.nodes.push(node);
+		usedIds.push(node.id);
+	}
+	//we create the links after all the previous cells are included in the graph
+	for(var i=0; i<network.nodes.length; i++){
+		let node = network.nodes[i];
+		//now add the links in the graph
+		for(var j=0; j<node.neighbors.length; j++){
+			if(node.id < node.neighbors[j]){ //to avoid duplicate edges, connect only with those with bigger ids
+				var link = new joint.dia.Link({
+			        source: { id: node.graphic.id }, // graph model ids
+					target: { id: returnNodeById(node.neighbors[j]).graphic.id },
+			        prop:{ node1: node.id, node2: node.neighbors[j] } //network ids
+			    });
+				link.attr(LINK_DEFAULT);
+				//add the edge to the graph
+				graph.addCell(link);
+			}
+		}
+	}
+	$("#load_modal").modal('hide');
+}
+
 //Send an Ajax Request to the server ============================
+var _sendLoadNetwork = function(id){
+	$.ajax({
+		url : server_url + "/loadNet",
+		contentType: "application/json",
+		method : "POST",
+		dataType : "json",
+		data: JSON.stringify({netID : id}),
+		error: function(jqXHR, status, error){
+			console.log(error);
+			if(jqXHR.responseJSON){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
+				}
+			}
+		},
+		success : function(response, status, XMLHttpRequest){
+			_repaintGraph(response.data);
+		}
+	});
+}
+
+var _sendDeleteNetwork = function(id){
+	$.ajax({
+		url : server_url + "/deleteNet",
+		contentType: "application/json",
+		method : "POST",
+		dataType : "json",
+		data: JSON.stringify({netID : id}),
+		error: function(jqXHR, status, error){
+			console.log(error);
+			if(jqXHR.responseJSON){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
+				}
+			}
+		},
+		success : function(response, status, XMLHttpRequest){
+			$("#load_modal").modal('hide');
+		}
+	});
+}
+
+var _sendRetrieveNetworks = function(){
+	$.ajax({
+		url : server_url + "/getGraphs",
+		contentType: "application/json",
+		method : "GET",
+		dataType : "json",
+		success: function(response, status, XMLHttpRequest){
+			console.log(response.data)
+			_fillLoadScrollView(response.data);
+			$("#load_modal").modal("show");
+		},
+		error: function(jqXHR, status, error){
+			console.log(error);
+			if(jqXHR.responseJSON){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
+				}
+			}
+		}	
+	});
+}
+
 var _sendSaveNetwork =function(netName){
 	if(network.nodes.length == 0){
 		alert("No graph to save.");
@@ -118,10 +268,13 @@ var _sendSaveNetwork =function(netName){
 				alert("Data Saved");
 			},
 			error: function(jqXHR, status, error){
-				if(jqXHR.responseJSON.message){
-					console.log(jqXHR.responseJSON.message);
-					if(jqXHR.responseJSON.message == "reloggin"){
-						window.location.href = "/workspace";
+				console.log(error);
+				if(jqXHR.responseJSON){
+					if(jqXHR.responseJSON.message){
+						console.log(jqXHR.responseJSON.message);
+						if(jqXHR.responseJSON.message == "reloggin"){
+							window.location.href = "/workspace";
+						}
 					}
 				}
 			}
@@ -137,10 +290,13 @@ var _deleteNetwork = function(networkID){
 		type: "POST",
 		data: JSON.stringify({netID : networkID}),
 		error: function(jqXHR, status, error){
-			if(jqXHR.responseJSON.message){
-				console.log(jqXHR.responseJSON.message);
-				if(jqXHR.responseJSON.message == "reloggin"){
-					window.location.href = "/workspace";
+			console.log(error);
+			if(jqXHR.responseJSON){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
 				}
 			}
 		}
@@ -156,11 +312,15 @@ var _sendAlgorithmRequest = function(){
 		data: JSON.stringify(ajaxObject),
 		success : handleResponse,
 		error: function(jqXHR, status, error){
-            if(jqXHR.responseJSON.message){
-				if(jqXHR.responseJSON.message == "reloggin"){
-					window.location.href = "/workspace";
+           	console.log(error);
+			if(jqXHR.responseJSON){
+				if(jqXHR.responseJSON.message){
+					console.log(jqXHR.responseJSON.message);
+					if(jqXHR.responseJSON.message == "reloggin"){
+						window.location.href = "/workspace";
+					}
 				}
-            }
+			}
 		}
 	});
 }
@@ -395,7 +555,16 @@ $(document).ready(function() {
 	});
 
 	$("#load_btn").click(function(){
-		//make an ajax request first
-		$("load_modal").modal("show");
+		_sendRetrieveNetworks();
+	});
+
+	$(document).on("click",".delete_net",function(){
+		let id = $(this).parent().parent().attr("id");
+		_sendDeleteNetwork(id);
+	});
+
+	$(document).on("click",".confirm_load",function(){
+		let id = $(this).parent().parent().attr("id");
+		_sendLoadNetwork(id);
 	});
 });

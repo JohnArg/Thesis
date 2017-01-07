@@ -165,6 +165,7 @@ function _paintClusters(clusterList){
 //Paint the edges of a list, use the global graph object to get the link graphics
 //areUnidirectional is boolean
 function _paintEdgesFromList(edgeList, areUnidirectional){
+	var link;
 	var node;
 	var links;
 	var source;
@@ -489,8 +490,10 @@ var _misAnalysis = function(response){
 	misRootIndex = solution["cdsRootIndex"];
 	misPaintRootStepIndex = stepThreshold + solution["cdsRootColoringStep"];
 	_paintMIS(finalMisColors);
+	console.log(bidirectionalEdgeList);
 	_paintEdgesFromList(bidirectionalEdgeList, false);
 	_paintMisRoot();
+	console.log(unidirectionalEdgeList);
 	_paintEdgesFromList(unidirectionalEdgeList, true);
 }
 
