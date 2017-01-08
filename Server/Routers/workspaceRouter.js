@@ -49,7 +49,7 @@ router.get("/workspace", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){ //no session exists
@@ -71,7 +71,7 @@ router.get("/logOut", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(session){ //user logged in
@@ -104,7 +104,7 @@ router.get("/deleteAcc", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(session){ //user logged in
@@ -131,7 +131,7 @@ router.post("/saveNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -161,7 +161,7 @@ router.post("/deleteNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -186,7 +186,7 @@ router.post("/loadNet", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -211,7 +211,7 @@ router.get("/getGraphs", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){
@@ -239,7 +239,7 @@ router.post("/algorithms", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				reponse.status(500).send({message : "Error when looking for session"});
+				response.status(500).send({message : "Error when looking for session"});
 			}
 			else{
 				if(!session){

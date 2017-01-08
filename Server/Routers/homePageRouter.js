@@ -59,7 +59,7 @@ router.post("/logIn", function(request, response){
         //check if session exists in the store
         sessionStore.get(request.session.id, (error, session)=>{
             if(error){ //error in session store
-                reponse.status(500).send("Error when looking for session");
+                response.status(500).send("Error when looking for session");
             }
             else{
                 if(!session){ //No user is logged in
@@ -86,7 +86,7 @@ router.post("/signUp", function(request, response){
         //check if session exists in the store
         sessionStore.get(request.session.id, (error, session)=>{
             if(error){ //error in session store
-                reponse.status(500).send("Error when looking for session");
+                response.status(500).send("Error when looking for session");
             }
             else{
                 if(!session){ //no user logged in

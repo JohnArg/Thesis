@@ -4,6 +4,18 @@ $toolbarWidth : 160px;
 $bidirectionalLinkColor : #2fd829;
 $unidirectionalLinkColor : #f4b218;
 /* Bootstrap override ========= */
+@mixin table_cell_style(){
+	display: block;
+	width:30px;
+	height:30px;
+	background-color: #f4fcff;
+	border-style: solid;
+	border-color: $toolbar_color;
+	text-align: center;
+	border-width: 1px;
+	padding-top:5px;
+}
+
 .btn-group-vertical{
 	@include border_radius();
 }
@@ -309,7 +321,7 @@ input[type="radio"] {
 .max_min_col_heading{
 	@include table_cell_style();
 	font-weight: bold;
-	background-color:#0dbcae;
+	background-color:$solution_box_header;
 	color:white;
 }
 
@@ -319,8 +331,8 @@ input[type="radio"] {
 
 .max_min_col_divider{
 	display:block;
-	height:5px;
-	background-color: #04a071;
+	height:10px;
+	background-color: $btn_color;
 }
 
 /* joint js disable link tools ====================== */

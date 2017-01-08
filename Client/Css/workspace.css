@@ -363,12 +363,12 @@ input[type="radio"] {
   height: 30px;
   background-color: #f4fcff;
   border-style: solid;
-  border-color: #444444;
+  border-color: #22343c;
   text-align: center;
   border-width: 1px;
   padding-top: 5px;
   font-weight: bold;
-  background-color: #0dbcae;
+  background-color: #2f7798;
   color: white; }
 
 .max_min_col_data {
@@ -377,15 +377,15 @@ input[type="radio"] {
   height: 30px;
   background-color: #f4fcff;
   border-style: solid;
-  border-color: #444444;
+  border-color: #22343c;
   text-align: center;
   border-width: 1px;
   padding-top: 5px; }
 
 .max_min_col_divider {
   display: block;
-  height: 5px;
-  background-color: #04a071; }
+  height: 10px;
+  background-color: #518298; }
 
 /* joint js disable link tools ====================== */
 .link-tool .tool-remove {

@@ -58,7 +58,8 @@ by Jie Wu and Hailan Li
 Laurent Viennot
 * DCA clusters : "On the Complexity of Clustering Multi-Hop Wireless Networks" by Stefano Basagni
 * Max-Min D-Cluster : "Max-Min D-Cluster Formation in Wireless Ad Hoc Networks" by Alan D. Amis, Ravi Prakash, 
-Thai H.P. Vuong, Dung T. Huynh
+Thai H.P. Vuong, Dung T. Huynh 
+and "On multihop clusters in wireless sensor networks" by Alexandre Delye, Michel Marot and Monique Becker
 * Maximal Independent Set : "Distributed Construction of Connected Dominating Set in Wireless Ad Hoc Networks" by
 Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder
 and "Propagation and Leader Election in a Multihop Broadcast Environment" by Israel Cidon and Osnat Mokryn

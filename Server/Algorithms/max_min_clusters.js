@@ -15,7 +15,8 @@ var MaxMinClusters = function(){
     that.solution = {
         "floodmax" : [],
         "floodmin" : [],
-        "clusters" : [],
+        "clusters" : [], //will have the clusters formed after floodmax/floodmin
+        "clusters2" : [], //will have the clusters formed after the messaging process
         "extra_notes" : ""
     };
     that.calculateMaxMixClusters = function(network, d){

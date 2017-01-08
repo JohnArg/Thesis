@@ -42,17 +42,7 @@ $footer_height: 90px;
 	 	-ms-border-radius:0 !important;
           border-radius: 0 !important;
 }
-@mixin table_cell_style(){
-	display: block;
-	width:30px;
-	height:30px;
-	background-color: #f4fcff;
-	border-style: solid;
-	border-color: #444444;
-	text-align: center;
-	border-width: 1px;
-	padding-top:5px;
-}
+
 /* HTML tags ================== */
 html,body,h1,h2,h3,h4,h5,h6,p{
 	margin: 0;
