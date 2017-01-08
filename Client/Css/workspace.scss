@@ -198,16 +198,17 @@ input{
 }
 
 .colored-text{
-	color:$btn_color;
+	color:$blue_heading;
+	font-weight: bold;
 }
 
 .colored-text2{
-	color:$footer_color;
+	color:$header_color;
 	font-weight: bold;
 }
 
 .colored-text3{
-	color:#444444;
+	color:#718792;
 	font-weight: bold;
 }
 
@@ -230,7 +231,7 @@ input{
 }
 
 .step {
-	color:#000000;
+	color:$toolbar_color;
 	display:block;
 	background-color: #ffffff;
 	margin-bottom: 5px;
@@ -239,8 +240,7 @@ input{
 }
 
 .step-selected{
-	background-color: $btn_color;
-	color:white !important;
+	background-color: #b2d7e8;
 }
 
 .small-line-color1{
@@ -335,6 +335,10 @@ input[type="radio"] {
 	background-color: $btn_color;
 }
 
+#max_min_table_container{
+	float:left;
+	margin-bottom : 10px;
+}
 /* joint js disable link tools ====================== */
 .link-tool .tool-remove { display: none; }
 .link-tool .link-options { display: none; }

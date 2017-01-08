@@ -250,14 +250,15 @@ input {
   background-color: #d9eaf4; }
 
 .colored-text {
-  color: #518298; }
+  color: #1b5f87;
+  font-weight: bold; }
 
 .colored-text2 {
-  color: #304852;
+  color: #21556d;
   font-weight: bold; }
 
 .colored-text3 {
-  color: #444444;
+  color: #718792;
   font-weight: bold; }
 
 .btn-margins {
@@ -275,7 +276,7 @@ input {
   margin-bottom: 10px; }
 
 .step {
-  color: #000000;
+  color: #22343c;
   display: block;
   background-color: #ffffff;
   margin-bottom: 5px;
@@ -286,8 +287,7 @@ input {
   border-radius: 0 !important; }
 
 .step-selected {
-  background-color: #518298;
-  color: white !important; }
+  background-color: #b2d7e8; }
 
 .small-line-color1 {
   width: 120px;
@@ -386,6 +386,10 @@ input[type="radio"] {
   display: block;
   height: 10px;
   background-color: #518298; }
+
+#max_min_table_container {
+  float: left;
+  margin-bottom: 10px; }
 
 /* joint js disable link tools ====================== */
 .link-tool .tool-remove {

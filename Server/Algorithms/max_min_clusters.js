@@ -25,6 +25,7 @@ var MaxMinClusters = function(){
         _roundSimulator(network , d);
         _finalWinners(network, d, that.solution);
         _constructSolution(network, that.solution, d);
+        _clustersAfterMessaging(network, that.solution, d);
         return that.solution;
     };
 }
@@ -229,6 +230,21 @@ var _finalWinners = function(network, d, solution){
             }
         }
     }
+}
+
+//It will form the clusters after the messages from the cluster heads are sent
+//Replaces convergecast solution which suffers from infinite loops in some occasions
+var _clustersAfterMessaging = function(network, solution, d){
+    let messageList = []; //the first message each node receives. Every other message is dropped
+    let toSend = []; //a list with the nodes to send and what to send
+    for(var i=0; i<network.nodes.length; i++){
+        messageList[i].push({});
+    }
+    toSend.push({ sender : clusterhead , hop : 1 });
+    while(toSend.length > 0){
+        
+    }
+
 }
 
 module.exports.newMaxMinObject = MaxMinFactory;

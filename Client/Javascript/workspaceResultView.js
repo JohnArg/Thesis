@@ -33,7 +33,7 @@ var CLUSTER_COLORS = [
 
 //Max Min Table Object
 var max_min_table = function(solution){
-	this.text = "";
+	this.text = "<div id='max_min_table_container'>";
 	for(var i=0; i<network.nodes.length; i++){
 		this.text += "<div class=\"max_min_col_container\">";
 		this.text += "<div class=\"max_min_col_heading\"><p>"+network.nodes[i].id+"</p></div>";
@@ -50,6 +50,7 @@ var max_min_table = function(solution){
 		}
 		this.text += "</div>";
 	}
+	this.text += "</div>";
 }
 
 
@@ -375,8 +376,12 @@ function _dcaAnalysis(response){
 var _maxMinAnalysis = function(response){
 	var solution = response["solution"];
 	var table = new max_min_table(solution);
-	var text = "<p class=\"solution-result colored-text\">The result of the floodmax and floodmin stages are shown in the table below.</p>";
+	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong>. First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below.</p>";
 	text += table.text; 
+	text += "<div><p class=\"solution-result colored-text2\"><strong>Part 2 : </strong>After the floodmax and floodmin stages, the clusterheads broadcast a message to notify the other nodes to join their cluster.\
+	 These messages are rebroadcasted by the receiving nodes, for a maximum of d-hops away from the clusterhead. The receiving nodes also \
+	 choose as clusterhead, the one whose message reached them first. This process replaces the \
+	 convergecast solution originally proposed, because the latter leads to infinite loops in some occassions.</p></div>";
 	$("#solutionBoxData").html(text);
 	_paintClusters(solution["clusters"], network);	
 }
