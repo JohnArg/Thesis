@@ -3,6 +3,7 @@ This module will handle the execution of the Max-Mix D-Cluster algorithm.
 */
 var _ = require('underscore');
 var netOperator = require("./networkOperations").netOperator;
+var solutionFactory = require("./steps");
 
 //Object factory
 var MaxMinFactory = function(){
@@ -17,7 +18,9 @@ var MaxMinClusters = function(){
         "floodmin" : [],
         "clusters" : [], //will have the clusters formed after floodmax/floodmin
         "clusters2" : [], //will have the clusters formed after the messaging process
-        "extra_notes" : ""
+        "messages_solution" : solutionFactory.newSolution(),
+        "extra_notes" : "",
+
     };
     that.calculateMaxMixClusters = function(network, d){
         //the d value is assosiated with the hops in the algorithm
@@ -232,19 +235,63 @@ var _finalWinners = function(network, d, solution){
     }
 }
 
-//It will form the clusters after the messages from the cluster heads are sent
-//Replaces convergecast solution which suffers from infinite loops in some occasions
-var _clustersAfterMessaging = function(network, solution, d){
-    let messageList = []; //the first message each node receives. Every other message is dropped
-    let toSend = []; //a list with the nodes to send and what to send
-    for(var i=0; i<network.nodes.length; i++){
-        messageList[i].push({});
-    }
-    toSend.push({ sender : clusterhead , hop : 1 });
-    while(toSend.length > 0){
-        
-    }
+//Retrieves a copy of an object list containing clusters
 
+//Used by the _clustersAfterMessaging only.
+var _joinClusterhead = function(joiner, clusterhead, solution){
+    for(var i=0; i<solution.clusters2.length; i++){
+        if(solution.clusters2[i].clusterhead == clusterhead){
+            solution.clusters2[i].group.push(joiner);
+            break;
+        }
+    }
+}
+
+/*
+After the floodmax and floodmin stages, the clusterheads broadcast a message to notify the other nodes to join their cluster.
+These messages are rebroadcasted by the receiving nodes, for a maximum of d-hops away from the clusterhead. The receiving nodes also 
+choose as clusterhead, the one whose message reached them first. This process replaces the 
+convergecast solution originally proposed, because the latter leads to infinite loops in some occassions.
+The following function implements the process.
+*/
+var _clustersAfterMessaging = function(network, solution, d){
+    let toSend = []; //a list with the nodes to send and what to send
+    var clusters = solution.clusters;
+  //  var newClusters = solution.clusters2;
+    var messageSol = solution.messages_solution;
+    for(var i=0; i<network.nodes.length; i++){
+        network.nodes[i].message = { sender : -1, hop : -1, clusterhead: -1}; //keeps the first message each node receives. Every other message is dropped
+    }
+    for(var i=0; i<clusters.length; i++){
+        let node = netOperator.returnNodeById(clusters[i].clusterhead, network);
+        node.message = { sender : 0, hop : 0, clusterhead : node.id};
+        toSend.push(node.id); //the clusterheads will begin broadcasting
+       solution.clusters2.push({clusterhead : node.id, group:[node.id]});
+    }
+    while(toSend.length > 0){
+        let toSendNew = [];
+        for(var i=0; i<toSend.length; i++){
+            let node = netOperator.returnNodeById(toSend[i], network);
+            if(node.message.hop < d){ //broadcast only if the message doesn't reach beyond the d-hops
+                messageSol.createStep();
+                messageSol.steps[messageSol.steps.length - 1].text = "Node "+node.id+" broadcasts a 'Join Clusterhead's "+node.message.clusterhead+" Cluster' message.";
+                messageSol.steps[messageSol.steps.length - 1].data =solution.clusters2.slice();
+                for( var j=0; j<node.neighbors.length; j++){ //broadcast to the neighbors 
+                    let neighID = node.neighbors[j];
+                    let neighbor = netOperator.returnNodeById(neighID, network);
+                    if(neighbor.message.sender == -1){ //nobody sent me a message so far
+                        neighbor.message = {sender : node.id, hop : node.message.hop+1, clusterhead : node.message.clusterhead};
+                        toSendNew.push(neighID);    //he has to broadcast on the next round       
+                        _joinClusterhead(neighID, node.message.clusterhead, solution);   //and join the cluster by the way
+                        messageSol.createStep();
+                        messageSol.steps[messageSol.steps.length - 1].text = "Node "+neighID+" accepts and joins Clusterhead "+node.message.clusterhead+".";
+                        messageSol.steps[messageSol.steps.length - 1].data =solution.clusters2.slice();
+                    }
+                }
+            }
+        }
+        toSend = toSendNew;
+    }
 }
 
 module.exports.newMaxMinObject = MaxMinFactory;

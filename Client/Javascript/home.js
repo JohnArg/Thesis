@@ -75,9 +75,12 @@ $(document).ready(function(){
                 type: "POST",
                 data: JSON.stringify(ajaxObject),
                 error : function(jqXHR, status, error){
-                    if(jqXHR.responseJSON.message !== undefined){
-                        $(".err_message").text(jqXHR.responseJSON.message);
+                    if(jqXHR.responseJSON){
+                        if(jqXHR.responseJSON.message){
+                            $(".err_message").text(jqXHR.responseJSON.message);
+                        }
                     }
+                    else {$("#logInModal").modal("hide");}
                 },
                 success : function(response, status, XMLHttpRequest){
                     $("#logInModal").modal("hide");
@@ -109,9 +112,12 @@ $(document).ready(function(){
                 type: "POST",
                 data: JSON.stringify(ajaxObject),
                 error : function(jqXHR, status, error){
-                    if(jqXHR.responseJSON.message !== undefined){
-                        $(".err_message").text(jqXHR.responseJSON.message);
+                    if(jqXHR.responseJSON){
+                        if(jqXHR.responseJSON.message){
+                            $(".err_message").text(jqXHR.responseJSON.message);
+                        }
                     }
+                    else{$("#signUpModal").modal("hide");}
                 },
                 success : function(response, status, XMLHttpRequest){
                     $("#signUpModal").modal("hide");

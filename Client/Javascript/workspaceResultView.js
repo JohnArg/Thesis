@@ -10,6 +10,8 @@ var finalMisColors = []; //it will hold the final result of MIS coloring for rep
 var misRootIndex = -1;
 var misPaintRootStepIndex = -1;	//from which step to start painting the MIS cds root 
 var stepThreshold = -1; //it will be used with misPaintRootStepIndex
+var max_min_clustersOrig = [];	//clusters after floodmax/min
+var max_min_clustersAfter = []; //clusters after messaging
 //Some color-styling globals used in our graph
 var NODE_DEF_STYLE =  { circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { fill : 'white'}};
 var NODE_DOM_STYLE = {circle : {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
@@ -87,6 +89,8 @@ function _clearViewAndData(){
 	misRootIndex = -1;
 	misPaintRootStepIndex = -1;
 	stepThreshold = -1;
+	max_min_clustersOrig = [];
+	max_min_clustersAfter = [];
 	_clearView();
 }
 
@@ -369,21 +373,39 @@ function _dcaAnalysis(response){
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
-	_paintClusters(response["solution"].final_result, network);
+	_paintClusters(response["solution"].final_result);
 }
 
 //Show steps of Max Min D-Cluster algorithm
 var _maxMinAnalysis = function(response){
+	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var table = new max_min_table(solution);
-	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong>. First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below.</p>";
+	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong> First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below. Use the buttons to show the result of each part of the algorithm. By default the floodmin/floodmax result is shown.</p>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"max_min_btn_orig\">Floodmax/Floodmin Result</button>";
 	text += table.text; 
+	text += "<div><p class=\"solution-result colored-text4\">The clusterheads are : </p><p class=\"solution-result colored-text4\">";
+	for(var i=0; i<solution.clusters.length; i++){
+		text += " "+solution.clusters[i].clusterhead;
+	}
+	text +="</p></div>";
 	text += "<div><p class=\"solution-result colored-text2\"><strong>Part 2 : </strong>After the floodmax and floodmin stages, the clusterheads broadcast a message to notify the other nodes to join their cluster.\
 	 These messages are rebroadcasted by the receiving nodes, for a maximum of d-hops away from the clusterhead. The receiving nodes also \
 	 choose as clusterhead, the one whose message reached them first. This process replaces the \
-	 convergecast solution originally proposed, because the latter leads to infinite loops in some occassions.</p></div>";
+	 convergecast solution originally proposed, because the latter leads to infinite loops in some occassions.</p></div>"
+	 +"<button class=\"btn btn_custom btn-default btn-margins\" id=\"max_min_btn_after\">Messaging Result</button>";
+	for(var i=0; i<solution.messages_solution.steps.length; i++){
+		text += "<a href=\"#\" class=\"max-min-step step\" id=\""+stepId+"\">";
+		text += solution.messages_solution.steps[i].text;
+		text += "</a>";
+		stepDataArray.push(solution.messages_solution.steps[i].data);
+		console.log(solution.messages_solution.steps[i].data);
+		stepId++;
+	}
 	$("#solutionBoxData").html(text);
-	_paintClusters(solution["clusters"], network);	
+	max_min_clustersOrig = solution.clusters;
+	max_min_clustersAfter = solution.clusters2;
+	_paintClusters(max_min_clustersOrig);	
 }
 
 //Show steps of LMST algorithm
@@ -394,9 +416,9 @@ var _lmstAnalysis = function(response){
 	" to see the LMST for a specific node. Press the buttons below to show the whole tree again.</p>"
 	+"<p class=\"small-line-color1 text-center\">bi-directional link</p>"
 	+"<p class=\"small-line-color2 text-center\">uni-directional link</p>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";	
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"lmst_btn_orig\">Original Tree</button>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"lmst_btn_g0plus\">G0+</button>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"lmst_btn_g0minus\">G0-</button>"+"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";	
 	for(var i=0; i<solution["step_data"].steps.length; i++){
 		text += "<a href=\"#\" class=\"lmst-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
@@ -416,7 +438,7 @@ var _rngAnalysis = function(response){
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of RNG algorithm on given network. Click on each step"+
 	" to see the selected edges of a specific node. Press the button below to show the whole tree again.</p>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"rng_btn_orig\">Original Tree</button>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"rng_btn_orig\">Original Tree</button>"
 	+"<p class=\"solution-result2 text-warning\">The algorithm uses ONLY the edges of the graph to construct the topology tree. Even if a node"
 	+" is inside the checked region between 2 other nodes, it will not be taken into account if there are no edges connecting him"+ 
 	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
@@ -438,7 +460,7 @@ var _ggAnalysis = function(response){
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of GG (Gabriel Graph) algorithm on given network. Click on each step"+
 	" to see the selected edges of a specific node. Press the button below to show the whole tree again.</p>"
-	+"<button class=\"btn btn-primary btn-default btn-margins\" id=\"gg_btn_orig\">Original Tree</button>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"gg_btn_orig\">Original Tree</button>"
 	+"<p class=\"solution-result2 text-warning\">The algorithm uses ONLY the edges of the graph to construct the topology tree. Even if a node"
 	+" is inside the checked region between 2 other nodes, it will not be taken into account if there are no edges connecting him"+ 
 	" with both of the 2 other nodes. Only an edge between 2 nodes denotes that one can reach the other.</p>"
@@ -584,4 +606,18 @@ $(document).ready(function(){
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")], true);
 	});
 
+	$(document).on("click","#max_min_btn_orig", function(){
+		_clearView();
+		_paintClusters(max_min_clustersOrig);
+	});
+
+	$(document).on("click","#max_min_btn_after", function(){
+		_clearView();
+		_paintClusters(max_min_clustersAfter);
+	});
+
+	$(document).on("click",".max-min-step",function(){
+		_clearView();
+		_paintClusters(stepDataArray[$(this).attr("id")]);
+	});
 });
