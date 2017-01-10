@@ -61,6 +61,22 @@ var returnNodeIndexById = function(search_id){
 	}
 }
 
+var stopFunctionality = function(options){
+	switch(options){
+		case "all" :
+			addingNode = false;
+			removingNode = false;
+			linkSelect1 = false;
+			linkSelect2 = false;
+			removingLink = false;
+			moveCells = false;
+			$(".tool-remove").show();
+			$(".workspace_btn").removeClass("workspace_btn_clicked");
+			break;
+		default: break;
+	}
+}
+
 $(document).ready(function(){
 	//Graphics Management (with Joint Js) ================================================
     //Click on blank space of view callback (used for adding nodes to the point clicked)
@@ -131,7 +147,7 @@ $(document).ready(function(){
 			else{
 				linkSelect1 = true;
 			}
-		}    
+		}   
 	});
  
  	//Callback to react to removing a link(edge) from the interface
@@ -238,22 +254,7 @@ $(document).ready(function(){
     $(".btn").click(function(){
     	$(".btn").removeClass("btn_clicked");
     	$(this).addClass("btn_clicked");
-    })
-
-    function stopFunctionality(options){
-    	switch(options){
-    		case "all" :
-		    	addingNode = false;
-		    	removingNode = false;
-		    	linkSelect1 = false;
-				linkSelect2 = false;
-		    	removingLink = false;
-				$(".tool-remove").show();
-		    	$(".workspace_btn").removeClass("workspace_btn_clicked");
-		    	break;
-		    default: break;
-		}
-    }
+    });
 
  	//keyboard events ===================================================================
    	document.addEventListener("keydown", function(event) {

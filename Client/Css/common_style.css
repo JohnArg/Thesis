@@ -81,6 +81,6 @@ a:hover, a:visited, a:active {
   font-size: 10pt; }
 
 .word-break {
-  word-break: break-all; }
+  word-break: normal; }
 
 /*# sourceMappingURL=common_style.css.map */

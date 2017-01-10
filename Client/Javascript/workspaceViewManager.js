@@ -11,6 +11,7 @@ var ajaxObject = {
 };
 var randomWeights = true;
 var weightMap = [];
+var weightMapTxt = "";
 var dialogError = false;
 var footerHeight = 90;
 var modalsData = {	//content to fill out modals rendered by handlebars
@@ -53,7 +54,7 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 		{
 		id: "dca_dialog",
 		title: "DCA Weights",
-		body: "<p id=\"dca_dialog_heading\">Specify the weights of the nodes before execution. Each node must have a different weight.</p>\
+		body: "<p id=\"dca_dialog_heading\">Specify the weights of the nodes before execution. Each node must have a different weight. Only accepts positive numbers.</p>\
 					<form>\
 						<input type=\"radio\" name=\"random\" checked id=\"weights_randomBtn\"> Random Weights </br>\
 						<input type=\"radio\" name=\"random\" id=\"weights_customBtn\"> Insert weights manually </br>\
@@ -139,9 +140,9 @@ var _fillLoadScrollView = function(data){
 var _repaintGraph = function(newNetwork){
 	_reset(); //reset everything
 	for(var i=0; i<newNetwork.nodes.length; i++){
-		let newNode = newNetwork.nodes[i];
+		var newNode = newNetwork.nodes[i];
 		//create the graphics shape at the position clicked
-		let circleShape = new joint.shapes.basic.Circle({
+		var circleShape = new joint.shapes.basic.Circle({
 			position: { x: newNode.position.x, y: newNode.position.y},
 			size:{ width:35, height:35},
 			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { text : newNode.id, fill : 'white'}},
@@ -154,7 +155,7 @@ var _repaintGraph = function(newNetwork){
 		//add the new shape to the graph
 		graph.addCell(circleShape);
 		//create the node in the network
-		let node = new Node( newNode.id, newNode.neighbors , circleShape);
+		var node = new Node( newNode.id, newNode.neighbors , circleShape);
 		node.position.x = newNode.position.x;
 		node.position.y = newNode.position.y;
 		network.nodes.push(node);
@@ -162,7 +163,7 @@ var _repaintGraph = function(newNetwork){
 	}
 	//we create the links after all the previous cells are included in the graph
 	for(var i=0; i<network.nodes.length; i++){
-		let node = network.nodes[i];
+		var node = network.nodes[i];
 		//now add the links in the graph
 		for(var j=0; j<node.neighbors.length; j++){
 			if(node.id < node.neighbors[j]){ //to avoid duplicate edges, connect only with those with bigger ids
@@ -374,15 +375,29 @@ var _dcaDialogCreateInputs = function(){
 	var text = "";
 	for(var i=0; i<network.nodes.length; i++){
 		text +="<li>";
-		text +="<form>Node "+network.nodes[i].id+" <input type=\"number\" id=\"weight_"+i+"\"></form>";
+		text +="<form>Node "+network.nodes[i].id+" <input type=\"number\" id=\"w_"+network.nodes[i].id+"\"></form>";
 		text += "</li>";
 	}
+	return text;
+}
+
+//returns the weights of the nodes as a string
+function _stringifyWeights(){
+	var text = "[";
+	for(var i=0; i<weightMap.length; i++){
+		text += "Node " + network.nodes[i].id + " : " + weightMap[i];
+		if(i != (weightMap.length-1)){
+			text += ", "
+		}
+	}
+	text += "]";
 	return text;
 }
 
 //If the dca dialog "OK" was clicked, handle the weight data to be sent to the server
 var _dcaDialogWeightsHandler = function(){
 	weightMap = [];
+	weightMapTxt = "";
 	dialogError = false;
 	var difference = 0;
 	if(randomWeights){
@@ -404,8 +419,11 @@ var _dcaDialogWeightsHandler = function(){
 				dialogError = true;
 				weightMap = [];
 				alert("Weights must be integer inputs");
+				return false;
 			}
 			else{
+				var textID = $(this).attr('id');
+				textID = textID.slice(2);
 				weightMap.push(number);
 			}
 		});

@@ -365,8 +365,8 @@ function _dcaAnalysis(response){
 	}
 	text += "</p></div>";
 	text += 	"<p class=\"solution-result colored-text2\"> [ "+_stringifyDcaResult(solution.final_result) +" ].</p>\
-				<p class=\"solution-result colored-text\">The weights given for each node by id order were : </p>\
-				<p class='word-break colored-text2'>["+ajaxObject["extras"]["weights"]+"].</p>\
+				<p class=\"solution-result colored-text4\">The weights given for each node : </p>\
+				<p class='word-break colored-text4'>"+_stringifyWeights()+".</p>\
 				<p class=\"solution-result colored-text\">Execution Analysis :</p>";		
 	for(var i=0; i< solution["DCA_timesteps"].length; i++){
 		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
