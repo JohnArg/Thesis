@@ -218,7 +218,7 @@ var _returnListWinner = function(comparisonType, list){
 //Will decide the final winners of the execution
 var _finalWinners = function(network, d, solution){
     //Use rule 1,2 and 3 to define th winners 
-    for(var i=0; i<network.nodes[i].length; i++){
+    for(var i=0; i<network.nodes.length; i++){
         //if i have my id as winner in floodmin end
         if(network.nodes[i].id == network.nodes[i].floodmin[d-1]["winner"]){
             network.nodes[i].finalWinner = network.nodes[i].floodmin[d-1];
@@ -236,7 +236,13 @@ var _finalWinners = function(network, d, solution){
 }
 
 //Retrieves a copy of an object list containing clusters
-
+var _deepCopyClusters = function(clusters){
+    var newClusters = [];
+    for(var i=0; i<clusters.length; i++){
+        newClusters.push({clusterhead : clusters[i].clusterhead, group : clusters[i].group.slice()});
+    }
+    return newClusters;
+}
 //Used by the _clustersAfterMessaging only.
 var _joinClusterhead = function(joiner, clusterhead, solution){
     for(var i=0; i<solution.clusters2.length; i++){
@@ -275,7 +281,7 @@ var _clustersAfterMessaging = function(network, solution, d){
             if(node.message.hop < d){ //broadcast only if the message doesn't reach beyond the d-hops
                 messageSol.createStep();
                 messageSol.steps[messageSol.steps.length - 1].text = "Node "+node.id+" broadcasts a 'Join Clusterhead's "+node.message.clusterhead+" Cluster' message.";
-                messageSol.steps[messageSol.steps.length - 1].data =solution.clusters2.slice();
+                messageSol.steps[messageSol.steps.length - 1].data = _deepCopyClusters(solution.clusters2);
                 for( var j=0; j<node.neighbors.length; j++){ //broadcast to the neighbors 
                     let neighID = node.neighbors[j];
                     let neighbor = netOperator.returnNodeById(neighID, network);
@@ -285,7 +291,7 @@ var _clustersAfterMessaging = function(network, solution, d){
                         _joinClusterhead(neighID, node.message.clusterhead, solution);   //and join the cluster by the way
                         messageSol.createStep();
                         messageSol.steps[messageSol.steps.length - 1].text = "Node "+neighID+" accepts and joins Clusterhead "+node.message.clusterhead+".";
-                        messageSol.steps[messageSol.steps.length - 1].data =solution.clusters2.slice();
+                        messageSol.steps[messageSol.steps.length - 1].data = _deepCopyClusters(solution.clusters2);
                     }
                 }
             }

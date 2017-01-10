@@ -111,11 +111,9 @@ var dbConnection = function(){
     that.saveNetwork = function(params){    
         let queryStr = "INSERT INTO Networks (user_id, name) VALUES (?,?);";
         let response = params.responseObj;
-        console.log("User id : "+ params.userID+" netName : "+params.netName);
         that.connection.query(queryStr, [params.userID, params.netName], function(err){
             if(err){
                 console.log("Save network error1 : ", err.code);
-                console.log(err.code);
                 response.status(500).send({message : "Internal Server Error"});
             }
             else{
@@ -131,7 +129,6 @@ var dbConnection = function(){
                             response.status(500).send({message : "Internal Server Error"});
                         }
                         else{
-                            console.log(rows[0]);
                             //Use the new network's id to call the next function
                             that.saveNetworkNodes(response, rows[0].netID, params.network);
                         }
@@ -157,7 +154,6 @@ var dbConnection = function(){
             row.push(neighborsList);
             row.push(network.nodes[i].position.x);
             row.push(network.nodes[i].position.y);
-            console.log(row);
             values.push(row);
         }
         that.connection.query(queryStr, [values], (err)=>{
@@ -288,7 +284,6 @@ var _parseNeighborsString = function(textList){
                 break;
         }
     }
-    console.log(result.list);
     return result;
 }
 

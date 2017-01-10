@@ -44,9 +44,16 @@ input{
 	background-color: #eeeeee;
 	border: 1px solid #aaaaaa;
 	border-radius: 5px;
+	margin-left : 10px;
 	margin-right:10px;
 }
 
+.input-large{
+	width:200px;
+	height : 30px;
+	margin-right: auto;
+	margin-left: auto;
+}
 /* Flexbox ========================================= */
 .flexContainer{
 	display: -webkit-flex;

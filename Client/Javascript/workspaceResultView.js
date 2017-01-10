@@ -358,9 +358,16 @@ function _mprCdsAnalysis(response){
 function _dcaAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
-	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+_stringifyDcaResult(solution.final_result)
-				+" ].</br>The weights given for each node by id order were : ["+ ajaxObject["extras"]["weights"] 
-				+"].</br>Execution Analysis :</p>";		
+	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : </p>"
+	text += "<div><p class=\"solution-result colored-text4\">The clusterheads are : </p><p class=\"solution-result colored-text4\">";
+	for(var i=0; i<solution.final_result.length; i++){
+		text += "("+solution.final_result[i].clusterhead+") ";
+	}
+	text += "</p></div>";
+	text += 	"<p class=\"solution-result colored-text2\"> [ "+_stringifyDcaResult(solution.final_result) +" ].</p>\
+				<p class=\"solution-result colored-text\">The weights given for each node by id order were : </p>\
+				<p class='word-break colored-text2'>["+ajaxObject["extras"]["weights"]+"].</p>\
+				<p class=\"solution-result colored-text\">Execution Analysis :</p>";		
 	for(var i=0; i< solution["DCA_timesteps"].length; i++){
 		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
 		for(var j=0; j<solution["DCA_timesteps"][i].steps.length; j++){
@@ -373,7 +380,7 @@ function _dcaAnalysis(response){
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
-	_paintClusters(response["solution"].final_result);
+	_paintClusters(solution.final_result);
 }
 
 //Show steps of Max Min D-Cluster algorithm
@@ -381,12 +388,13 @@ var _maxMinAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var table = new max_min_table(solution);
-	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong> First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below. Use the buttons to show the result of each part of the algorithm. By default the floodmin/floodmax result is shown.</p>"
+	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong> First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below. Use the buttons to show the result of each part of the algorithm. By default the floodmin/floodmax result is shown.</p>" +
+	"<p class=\"solution-result colored-text4\"> [ "+_stringifyDcaResult(solution.clusters) +" ].</p>"
 	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"max_min_btn_orig\">Floodmax/Floodmin Result</button>";
 	text += table.text; 
 	text += "<div><p class=\"solution-result colored-text4\">The clusterheads are : </p><p class=\"solution-result colored-text4\">";
 	for(var i=0; i<solution.clusters.length; i++){
-		text += " "+solution.clusters[i].clusterhead;
+		text += "("+solution.clusters[i].clusterhead+") ";
 	}
 	text +="</p></div>";
 	text += "<div><p class=\"solution-result colored-text2\"><strong>Part 2 : </strong>After the floodmax and floodmin stages, the clusterheads broadcast a message to notify the other nodes to join their cluster.\

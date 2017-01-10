@@ -70,7 +70,7 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 		title : "Save Current Graph",
 		body : "<p>Choose a name for the graph.</p>\
 				<form>\
-					<input type=\"text\" id=\"save_input\"> </br>\
+					<input class ='input-large' type=\"text\" id=\"save_input\"> </br>\
 				</form>",	
 		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
 			"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"save_continue\">Save</button>"
