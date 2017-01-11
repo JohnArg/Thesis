@@ -116,6 +116,21 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 	return allMPRs;
 }
 
+//Integer list to string appropriate for word-break
+var _strigifyIntList = function(list){
+	var text = "[";
+	for(var i=0; i<list.length; i++){
+		text += list[i];
+		if(i == (list.length-1)){
+			text += " ]";
+		}
+		else{
+			text += ", "
+		}
+	}
+	return text;
+}
+
 //The main function called to construct the MPR set of each node
 var _constructMPR = function(network, solution){
 	var twoHopNeighbors;
@@ -131,7 +146,7 @@ var _constructMPR = function(network, solution){
 		mpr_set = [];
 		oneHopNeighbors = network.nodes[i].neighbors.slice();
 		twoHopNeighbors = _return2HopNeighbors(i, network);
-		solution["MPR_set"].steps[i].text += "2-Hop Neighbors : [ "+twoHopNeighbors.slice()+" ].</br>";
+		solution["MPR_set"].steps[i].text += "2-Hop Neighbors : "+ _strigifyIntList(twoHopNeighbors)+".</br>";
 		if(twoHopNeighbors.length == 0){
 			solution["MPR_set"].steps[i].text += "There isn't a 2-hop neighborhood to cover.</br>";
 			solution["MPR_set"].steps[i].data = {"mpr_set" : []};
@@ -143,7 +158,7 @@ var _constructMPR = function(network, solution){
 		twoHopNeighbors = step1Result["twoHop"];
 		mpr_set = step1Result["mpr"];
 		if(twoHopNeighbors.length > 0){
-			solution["MPR_set"].steps[i].text += "2-hop neighbors remaining to cover: [ "+twoHopNeighbors+" ].</br>";
+			solution["MPR_set"].steps[i].text += "2-hop neighbors remaining to cover: "+_strigifyIntList(twoHopNeighbors)+".</br>";
 			solution["MPR_set"].steps[i].text += "Now, each time we will add to the MPR set the node who connects to the most 2-hop neighbors,\
 			 until all 2-hop neighborhood is covered.</br>";
 		}

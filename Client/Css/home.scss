@@ -18,9 +18,16 @@ form {
   	position: relative; }
 
 img{
-	float:right;
-	width:300px;
-	height:300px;
+	width:350px;
+	height:280px;
+	margin-bottom: 20px;
+	border-style: solid;
+    border-width: 4px;
+	border-color:$btn_color;
+}
+
+p{
+	margin-bottom: 20px;
 }
 
 canvas{
@@ -33,13 +40,12 @@ canvas{
 
 section{
 	margin-top:40px;
-	height:800px;
 }
 article{
-    padding: 20px;
+    padding: 10px;
 }
 article h4{
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	color:$blue_heading;
 }
 
@@ -51,8 +57,18 @@ footer{
 	font-size: 12pt;
 	text-align: center;
 	height: $footer_height;
+	z-index: 3;
+}
+
+footer p{
+	margin : 0;
 }
 /*bootstrap overrides =============== */
+.colored-text{
+	color:#555555;
+	font-weight: bold;
+}
+
 .jumbotron h1{
     font-weight: bold;
 	margin-bottom: 40px;
@@ -88,7 +104,7 @@ footer{
 }
 
 #main_panel{
-    width:800px;
+    width:780px;
     margin-left:auto;
     margin-right:auto;
 }
@@ -101,8 +117,10 @@ footer{
 
 .left_floater{
 	float: left;
-	width:460px;
-	height:300px;
+}
+
+.right_floater{
+	float: right;
 }
 
 .home-btn{

@@ -36,6 +36,17 @@ var modalsData = {
                     +"<button type=\"button\" class=\"btn btn-default btn-primary accentColor\" id=\"btn_commit_signUp\">Sign Up</button>" 
             }
         ]
+};
+var footerHeight = 90;
+
+//Changes the size of some stuff when the window is resized
+var _responsiveSizes = function(){
+    if($(window).height() <= 1720){
+        $("#main_panel").height(1720);    
+    }
+    else{
+        $("#main_panel").height($(window).height() -footerHeight - $("#particles-js").height());
+    }
 }
 
 $(document).ready(function(){
@@ -45,8 +56,13 @@ $(document).ready(function(){
     $("#modals_container").html(modalsHtml);
     //load the particles effect
     particlesJS.load('particles-js','/js/particlesjs-config.json', function() {
-    console.log('callback - particles.js config loaded');
     });
+    //Initialize on ready
+	_responsiveSizes();
+	//Capture Window events
+	$(window).on('resize', function(){
+    	_responsiveSizes();
+	});
     //Button listeners ==================
     $("#btn_logIn").click(function(){
         $(".err_message").text("");

@@ -43,9 +43,10 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						<li>To remove a link, press <b class=\"text-info\">ESC</b> to deselect tools, and then hover the mouse over a link</li>\
 						<li>Press <b class=\"text-info\">ESC</b> to stop the tools</li>\
 						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
-						<li>Moving a node automatically deselects the tools!</li>\
+						<li><span class='colored-text4'>Moving a node automatically deselects the tools!</span></li>\
 						<li>Press <b class=\"text-info\">Save</b> to save your graph.</li>\
-						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.</li>\
+						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.<span class='colored-text4'> If you resize \
+						the window, remember to refresh the page before loading a graph.</span></li>\
 						</ul>\
 					</article>\
 				</section>",
@@ -359,6 +360,12 @@ var _sendDeleteAccountRequest = function(){
 
 //=======================================================
 var _responsiveSizes = function(){
+	if($(window).height() <= 1000){
+        $("#main_container").height(1000);    
+    }
+    else{
+        $("#main_container").height($(window).height() -footerHeight - $("#pageHeader").height());
+    }
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
 	$("#solutionBox").height($("#main_container").height());
@@ -367,6 +374,7 @@ var _responsiveSizes = function(){
 	$("#solutionBoxData").width($("#solutionBox").width()-20);
 	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
 	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
+	$("#graph_panel").height( $("#main_container").height() );
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
 }
 

@@ -283,11 +283,26 @@ function _paintMisRoot(){
 	network.nodes[misRootIndex].graphic.attr(NODE_DOM_STYLE);
 }
 
+//Integer list to string appropriate for word-break
+function _strigifyIntList(list){
+	var text = "[";
+	for(var i=0; i<list.length; i++){
+		text += list[i];
+		if(i == (list.length-1)){
+			text += " ]";
+		}
+		else{
+			text += ", "
+		}
+	}
+	return text;
+}
+
 //Show the steps from th Wu Li CDS algorithm
 function _wuLiDominatorsAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
-	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
-				+" ]<br> Execution Analysis :</p>";
+	var text = "<p class=\"solution-result colored-text word-break\">The algorithm's result is : "+ _strigifyIntList(response["solution"].final_result)
+				+"<br> Execution Analysis :</p>";
 	//for each part of the solution
 	for(var property in response["solution"]){
 		if(response["solution"].hasOwnProperty(property) && property != "final_result"){
@@ -296,12 +311,12 @@ function _wuLiDominatorsAnalysis(response){
 			for(var j=0; j<response["solution"][property].steps.length; j++){
 				text += "<a href=\"#\" class=\"dom-step step\" id=\""+stepId+"\">";
 				text += response["solution"][property].steps[j].text;
-				text += "<br/>Dominators [ " + response["solution"][property].steps[j].data["dominators"] +" ]";
+				text += "<br/>Dominators " + _strigifyIntList(response["solution"][property].steps[j].data["dominators"]);
 				text += "</a>";
 				stepDataArray.push(response["solution"][property].steps[j].data["dominators"]);
 				stepId ++;
 			}
-			text += "<p class=\"colored-text\">Results so far : [ " + response["solution"][property].result["dominators"]+" ]</p>";
+			text += "<p class=\"colored-text\">Results so far : " + _strigifyIntList(response["solution"][property].result["dominators"])+"</p>";
 		}
 	}
 	$("#solutionBoxData").html(text);
@@ -320,21 +335,21 @@ function _stringifyDcaResult(clusters){
 //Show the steps of the Multipoint Relay CDS algorithm
 function _mprCdsAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
-	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : [ "+response["solution"].final_result
-				+" ]<br> Execution Analysis :</p>";
+	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : "+ _strigifyIntList(response["solution"].final_result)
+				+" <br> Execution Analysis :</p>";
 	if(response["solution"].hasOwnProperty("MPR_set")){
 		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_set"].text + "</p>";
 		for(var j=0; j<response["solution"]["MPR_set"].steps.length; j++){
 			text += "<a href=\"#\" class=\"mpr-step step\" id=\""+stepId+"\">";
 			text += response["solution"]["MPR_set"].steps[j].text;
-			text += "<br/>MPR set [ " + response["solution"]["MPR_set"].steps[j].data["mpr_set"] +" ]";
+			text += "<br/>MPR set : " + _strigifyIntList(response["solution"]["MPR_set"].steps[j].data["mpr_set"]);
 			text += "</a>";
 			stepDataArray.push(response["solution"]["MPR_set"].steps[j].data["mpr_set"]);
 			stepId ++;
 		}
 		text += "<p class=\"colored-text\">MPR sets per node : [ ";
 		for(var k=0; k<response["solution"]["MPR_set"].result["All_MPR_sets"].length; k++){
-			text += "{ Node " + network.nodes[k].id + " : " +response["solution"]["MPR_set"].result["All_MPR_sets"][k] + " } ";
+			text += "{ Node " + network.nodes[k].id + " : " + _strigifyIntList(response["solution"]["MPR_set"].result["All_MPR_sets"][k]) + " } ";
 		}
 		text += " ]</p>";
 	}
@@ -343,12 +358,12 @@ function _mprCdsAnalysis(response){
 		for(var j=0; j<response["solution"]["MPR_cds"].steps.length; j++){
 			text += "<a href=\"#\" class=\"mpr-step step\" id=\""+stepId+"\">";
 			text += response["solution"]["MPR_cds"].steps[j].text;
-			text += "<br/>Dominators [ " + response["solution"]["MPR_cds"].steps[j].data["dominators"] +" ]";
+			text += "<br/>Dominators : " + _strigifyIntList(response["solution"]["MPR_cds"].steps[j].data["dominators"]);
 			text += "</a>";
 			stepDataArray.push(response["solution"]["MPR_cds"].steps[j].data["dominators"]);
 			stepId ++;
 		}
-		text += "<p class=\"colored-text\">Results so far : [ " + response["solution"]["MPR_cds"].result["MPR_cds"]+" ]</p>";
+		text += "<p class=\"colored-text\">Results so far : " + _strigifyIntList(response["solution"]["MPR_cds"].result["MPR_cds"])+"</p>";
 	}
 	$("#solutionBoxData").html(text);
 	_paintDominators(response["solution"].final_result);
