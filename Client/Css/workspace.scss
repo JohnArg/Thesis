@@ -1,0 +1,368 @@
+@import 'common_style';
+/*Globals*/
+$toolbarWidth : 160px;
+$bidirectionalLinkColor : #2fd829;
+$unidirectionalLinkColor : #f4b218;
+/* Bootstrap override ========= */
+@mixin table_cell_style(){
+	display: block;
+	width:30px;
+	height:30px;
+	background-color: #f4fcff;
+	border-style: solid;
+	border-color: $toolbar_color;
+	text-align: center;
+	border-width: 1px;
+	padding-top:5px;
+}
+
+.btn-group-vertical{
+	@include border_radius();
+}
+
+.btn:first-child:not(:last-child){
+	@include border_radius();
+}
+
+.btn:last-child:not(:first-child){
+	@include border_radius();
+}
+
+.modal-content{
+	@include border_radius();
+}
+
+.btn, .btn-primary, .btn-default{
+	@include border_radius();
+}
+
+/*HTML Tags =====*/
+input{
+	width:50px;
+	height:30px;
+	margin-bottom: 20px;
+	background-color: #eeeeee;
+	border: 1px solid #aaaaaa;
+	border-radius: 5px;
+	margin-left : 10px;
+	margin-right:10px;
+}
+
+.input-large{
+	width:200px;
+	height : 30px;
+	margin-right: auto;
+	margin-left: auto;
+}
+/* Flexbox ========================================= */
+.flexContainer{
+	display: -webkit-flex;
+	display:flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.flexContainerNW{
+	display: -webkit-flex;
+	display:flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.flexContainerVrt{
+	display: -webkit-flex;
+	display:flex;
+	flex-wrap: nowrap;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+/* Layers (biggest on top - level 0 = ground) ================================== */
+.layer1Right{
+	position: relative;
+	z-index: 2;
+	box-shadow: 1px 1px 2px 0px #222222;
+}
+
+.layer2Bot{
+	position: relative;
+	z-index: 3;
+	box-shadow: 0px 3px 4px 0px #222222;
+}
+
+.layer2Up{
+	position: relative;
+	z-index: 3;
+	box-shadow: 0px -2px 3px 0px #222222;
+}
+
+/* Header =================================== */
+#pageHeader{
+	padding:10px;
+	background-color: $header_color;
+	color:white;
+	height:50px;
+}
+
+#logo{
+	margin-left: 10px;
+	order:1;
+}
+
+#logoSubText{
+	order:2;
+}
+
+#accDropDown{
+	order:3;
+}
+
+.dropDown{
+	color:$btn_active !important;
+	border-color: $toolbar_color !important;
+	background-color: $blue_heading !important;
+}
+
+.dropDown {
+	font-size: 11pt !important;
+}
+
+.dropDown a:hover, .dropDown a:active{
+	font-size: 11pt !important;
+	color:$toolbar_color !important;
+	background-color: $btn_active !important;
+}
+
+#accDropDownBtn{
+	font-size: 12pt !important;
+	border-style: none;
+	background-color: $header_color !important;
+}
+
+#link_log_out{
+	color:$btn_active;
+}
+
+.subHeading{
+	color:$subtext_light;
+	font-size:12pt;
+	margin-left:20px;
+	margin-top:5px;
+}
+
+#main_container{
+	position: relative;
+}
+
+/* Tools panel ============================ */
+#tools_panel{
+	width: $toolbarWidth;
+	min-width: 160px;
+	background-color: $toolbar_color;
+	position:absolute;
+}
+
+.toolboxHeading{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color:$subtext_light;
+	padding:10px;
+	font-size:11pt;
+}
+
+/* Draw Area =================================== */
+#graph_panel{
+	background-color: $graphView_color;
+	padding: 0;
+	margin-left:$toolbarWidth;
+	position:relative;
+}
+
+/*Solution Box styling =========================== */
+#solutionBox{
+	background-color: $toolbar_color;
+	padding: 0px;
+	position:absolute;
+	right:0;
+	top:0;
+}
+
+#solutionBoxHeader{
+	background-color:$solution_box_header;
+	color:white;
+	padding:10px;
+	font-size:13pt;
+	text-align: center;
+}
+
+#solutionBoxData{
+	padding:10px;
+	overflow-y: scroll;
+	background-color: $very_light_blue;
+}
+
+.colored-text{
+	color:$blue_heading;
+	font-weight: bold;
+}
+
+.colored-text2{
+	color:$header_color;
+	font-weight: bold;
+}
+
+.colored-text3{
+	color:#718792;
+	font-weight: bold;
+}
+
+.colored-text4{
+	color:#a37930;
+	font-weight: bold;
+}
+
+.btn-margins{
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.solution-result{
+	font-size: 11pt;
+}
+
+.solution-result2{
+	font-size: 10pt;
+}
+
+.solution-heading{
+	margin-top:  10px;
+	margin-bottom: 10px;
+}
+
+.step {
+	color:$toolbar_color;
+	display:block;
+	background-color: #ffffff;
+	margin-bottom: 5px;
+	padding: 5px;
+	@include border_radius();
+}
+
+.step-selected{
+	background-color: #b2d7e8;
+}
+
+.small-line-color1{
+	width:120px;
+	padding:1px;
+	background-color: $bidirectionalLinkColor;
+	color:white;
+}
+
+.small-line-color2{
+	width:120px;
+	padding:1px;
+	background-color: $unidirectionalLinkColor;
+	color:white;
+}
+
+/* Buttons ============================================ */
+.workspace_btn{
+	@include border_radius();
+	background-color: $btn_color;
+	color:$btn_text_color;
+	border-style:none;
+	white-space: normal;
+	padding:8px;
+	font-size: 11pt;
+}
+
+.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
+	background-color: $btn_active;
+	color:#222222;
+}
+
+.accentColor{
+	background-color: $btn_important;
+	color:white;
+	border-color: $btn_important;
+}
+
+/* Footer =========================== */
+footer{
+	background-color: $footer_color;
+	color: white;
+	padding-top:20px;
+	padding-bottom: 20px;
+	font-size: 12pt;
+	text-align: center;
+	height: $footer_height;
+}
+
+/* Dialog Css =========================== */
+.dialogHeader{
+	background-color: $solution_box_header;
+	color:white;
+	padding:10px;
+	font-size: 13pt;
+	border-radius:0px;
+}
+
+.scrollView{
+	overflow-y: scroll;
+	height:200px;
+}
+
+input[type="radio"] {
+    line-height: normal;
+    margin: 10px 0 0;
+    position: relative;
+	width:20px;
+	height: 20px;
+}
+
+/* custom table ======================================== */
+.max_min_col_container{
+	float:left;
+	margin-top:10px;
+}
+
+.max_min_col_heading{
+	@include table_cell_style();
+	font-weight: bold;
+	background-color:$solution_box_header;
+	color:white;
+}
+
+.max_min_col_data{
+	@include table_cell_style();
+}
+
+.max_min_col_divider{
+	display:block;
+	height:10px;
+	background-color: $btn_color;
+}
+
+#max_min_table_container{
+	float:left;
+	margin-bottom : 10px;
+}
+/* joint js disable link tools ====================== */
+.link-tool .tool-remove { display: none; }
+.link-tool .link-options { display: none; }
+.joint-link .mark-errors { display: none; }
+.joint-link .marker-vertices{display: none;}
+.joint-link .connection-wrap{display: none;}
+.joint-link.joint-theme-default .marker-arrowhead {
+    fill: $unidirectionalLinkColor;
+}
+.joint-link.joint-theme-default .marker-arrowhead:hover {
+    fill: $unidirectionalLinkColor;
+    stroke: none;
+}
+.joint-link .marker-arrowheads{ opacity : 1};
+.joint-link .marker-arrowhead-group-source{ opacity: 0}
+.joint-link .marker-arrowhead-group-target{ opacity: 0}

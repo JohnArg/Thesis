@@ -1,0 +1,162 @@
+@import 'common_style';
+/*HTML tags ===== */
+input {
+  	@include border-radius();
+	margin-top: 10px;
+  	width: 250px;
+  	height: 30px;
+  	margin-bottom: 10px;
+  	background-color: #eeeeee;
+  	border: 1px solid #aaaaaa;
+  	border-radius: 5px;
+ 	margin-right: auto;
+	margin-left: auto; 
+}
+
+form {
+	padding: 20px;
+  	position: relative; }
+
+img{
+	width:350px;
+	height:280px;
+	margin-bottom: 20px;
+	border-style: solid;
+    border-width: 4px;
+	border-color:$btn_color;
+}
+
+p{
+	margin-bottom: 20px;
+}
+
+canvas{
+	position:absolute !important;
+	top:0px !important;
+	left : 0px !important;
+	height:300px !important;
+	width:100% !important;
+}
+
+section{
+	margin-top:40px;
+}
+article{
+    padding: 10px;
+}
+article h4{
+	margin-bottom: 10px;
+	color:$blue_heading;
+}
+
+footer{
+	background-color: $footer_color;
+	color: white;
+	padding-top:20px;
+	padding-bottom: 20px;
+	font-size: 12pt;
+	text-align: center;
+	height: $footer_height;
+	z-index: 3;
+}
+
+footer p{
+	margin : 0;
+}
+/*bootstrap overrides =============== */
+.colored-text{
+	color:#555555;
+	font-weight: bold;
+}
+
+.jumbotron h1{
+    font-weight: bold;
+	margin-bottom: 40px;
+	position:relative;
+	z-index:1;
+}
+.jumbotron p{
+	position:relative;
+	z-index:1;
+    font-size: 14pt;
+    width:700px;
+	margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-content{
+	@include border_radius();
+}
+
+.btn, .btn-primary, .btn-default{
+	@include border_radius();
+}
+
+/* main css =============================== */
+#particles-js{
+	height:300px;
+    background-color: $header_color;
+    color: white;
+    padding:30px;
+	margin-bottom:0px !important;
+	position:relative;
+}
+
+#main_panel{
+    width:780px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#repeat_bg{
+	height:150px;
+	background-image: url("../imgs/home_page_repeat.png");
+	background-repeat: repeat-x;
+}
+
+.left_floater{
+	float: left;
+}
+
+.right_floater{
+	float: right;
+}
+
+.home-btn{
+	margin-top:0px !important;
+	position:relative;
+	z-index:1;
+	border-style: none;
+	font-size: 12pt;
+	width:200px;
+	height:45px;
+	padding:10px;
+	background-color: $btn_color;
+	color: white;
+	margin-left:auto;
+	margin-right:auto;
+	display: inline-block;
+}
+
+.home-btn:hover {
+	background-color: $btn_active;
+	color: white;
+}
+
+.home-btn:active{
+	background-color: $btn_important;
+	color: white;
+}
+
+.dialogHeader{
+	background-color: $solution_box_header;
+	color:white;
+	padding:10px;
+	font-size: 13pt;
+	border-radius:0px;
+}
+
+.err_message{
+	color:#bc0d0d;
+}

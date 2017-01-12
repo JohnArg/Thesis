@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/application.js",
+            "program": "${workspaceRoot}/adHocEd.js",
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "node"
         },

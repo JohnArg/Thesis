@@ -33,8 +33,8 @@ have the ability to save the created network and load it again
 when they wish. 
 
 Technical :
-This is a Node.js Web App. 
-The app starts by executing the application.js file with Node's command: nodejs application.js
+This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
+The app starts by executing the adHocEd file with Node's command: "node adHocEd" (or "nodejs adHocEd.js" for some systems)
 The server runs on localhost:3000.
 node_modules is a folder used by node js packages.
 The code is divided in the Client code and the Server code, in
@@ -58,7 +58,8 @@ by Jie Wu and Hailan Li
 Laurent Viennot
 * DCA clusters : "On the Complexity of Clustering Multi-Hop Wireless Networks" by Stefano Basagni
 * Max-Min D-Cluster : "Max-Min D-Cluster Formation in Wireless Ad Hoc Networks" by Alan D. Amis, Ravi Prakash, 
-Thai H.P. Vuong, Dung T. Huynh
+Thai H.P. Vuong, Dung T. Huynh 
+and "On multihop clusters in wireless sensor networks" by Alexandre Delye, Michel Marot and Monique Becker
 * Maximal Independent Set : "Distributed Construction of Connected Dominating Set in Wireless Ad Hoc Networks" by
 Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder
 and "Propagation and Leader Election in a Multihop Broadcast Environment" by Israel Cidon and Osnat Mokryn
