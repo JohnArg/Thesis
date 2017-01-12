@@ -1,7 +1,7 @@
 {
   "name": "adhoced",
-  "version": "2.0.0",
-  "description": "Thesis for University of Thessaly, Greece, by John Argyroulis",
+  "version": "1.0.0",
+  "description": "Thesis for University of Thessaly, Department of Electrical And Computer Enineering, Volos , Greece, by John Argyroulis",
   "main": "adHocEd.js",
   "dependencies": {
     "body-parser": "^1.15.2",
