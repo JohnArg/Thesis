@@ -99,6 +99,10 @@ input {
   margin-right: auto;
   margin-left: auto; }
 
+.input-small {
+  width: 150px;
+  height: 30px; }
+
 form {
   padding: 20px;
   position: relative; }
@@ -111,14 +115,18 @@ img {
   border-width: 4px;
   border-color: #518298; }
 
+.img-small {
+  width: 300px;
+  height: 240px; }
+
 p {
   margin-bottom: 20px; }
 
 canvas {
   position: absolute !important;
+  height: 320px !important;
   top: 0px !important;
   left: 0px !important;
-  height: 300px !important;
   width: 100% !important; }
 
 section {
@@ -178,8 +186,8 @@ footer p {
 
 /* main css =============================== */
 #particles-js {
-  height: 300px;
   background-color: #21556d;
+  height: 320px;
   color: white;
   padding: 30px;
   margin-bottom: 0px !important;
@@ -201,6 +209,9 @@ footer p {
 .right_floater {
   float: right; }
 
+.non-floater {
+  float: none; }
+
 .home-btn {
   margin-top: 0px !important;
   position: relative;
@@ -215,6 +226,12 @@ footer p {
   margin-left: auto;
   margin-right: auto;
   display: inline-block; }
+
+.home-btn-small {
+  padding: 8px;
+  width: 100px;
+  height: 40px;
+  font-size: 11pt; }
 
 .home-btn:hover {
   background-color: #9adefd;

@@ -1,1 +1,1 @@
-var server_url = "http://178.128.74.145:3000"; //"http://localhost:3000";
+var server_url = "http://192.168.1.182:3000"; //"http://localhost:3000";
