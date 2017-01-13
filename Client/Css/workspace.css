@@ -336,6 +336,21 @@ input {
   color: white;
   border-color: #158098; }
 
+#toggle_tb_btn {
+  margin-top: -4px;
+  margin-right: 2px;
+  margin-left: 20px;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important;
+  padding: 4px;
+  font-size: 12pt;
+  border-style: solid;
+  border-color: #21556d;
+  color: #9adefd;
+  background-color: #21556d; }
+
 /* Footer =========================== */
 footer {
   background-color: #304852;

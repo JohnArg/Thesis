@@ -290,6 +290,19 @@ input{
 	border-color: $btn_important;
 }
 
+#toggle_tb_btn{
+	margin-top:-4px;
+	margin-right:2px;
+	margin-left: 20px;
+	@include border_radius();
+	padding:4px;
+	font-size: 12pt;
+	border-style:solid;
+	border-color:$header_color;
+	color:$btn_active;
+	background-color: $header_color;
+}
+
 /* Footer =========================== */
 footer{
 	background-color: $footer_color;

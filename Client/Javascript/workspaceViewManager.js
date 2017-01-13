@@ -14,6 +14,7 @@ var weightMap = [];
 var weightMapTxt = "";
 var dialogError = false;
 var footerHeight = 90;
+var showToolbar = false; //next time you hit toggle, hide the toolbar
 var modalsData = {	//content to fill out modals rendered by handlebars
      modals : [
         {
@@ -103,7 +104,7 @@ function _reset(){
 	linkStart = null;										
 	linkEnd = null; 	 
 	ajaxObject["extras"] = {};
-	ajaxObject["net"] = { };		
+	ajaxObject["net"] = { };	
 }
 
 //update the position data of the network nodes before sending an ajax call
@@ -179,6 +180,7 @@ var _repaintGraph = function(newNetwork){
 			}
 		}
 	}
+	paper.scaleContentToFit({ "minScaleX" : 0.5, "minScaleY" : 0.5, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	$("#load_modal").modal('hide');
 }
 
@@ -368,14 +370,35 @@ var _responsiveSizes = function(){
     }
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
+	$("#graph_panel").width(Math.floor($("#main_container").width()*3/5));
+	$("#graph_panel").height( $("#main_container").height() );
 	$("#solutionBox").height($("#main_container").height());
-	$("#solutionBox").width( Math.floor( $("#main_container").width()/5) );
+	if(showToolbar){ //it actually means that now it's hidden
+		$("#solutionBox").width($("#main_container").width() - $("#graph_panel").width());		
+	}
+	else{
+		$("#solutionBox").width($("#main_container").width() - $("#graph_panel").width() -$("#tools_panel").width());		
+	}
 	$("#solutionBoxData").height($("#solutionBox").height() - 65);
 	$("#solutionBoxData").width($("#solutionBox").width()-20);
-	$("#drawHeader").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width() -20);
-	$("#graph_panel").width($("#main_container").width() - $("#solutionBox").width() - $("#tools_panel").width());
-	$("#graph_panel").height( $("#main_container").height() );
 	paper.setDimensions($("#graph_panel").width(), $("#graph_panel").height());
+}
+
+var _toogleToolbar = function(){
+	if(showToolbar){
+		$("#tools_panel").show();
+		$("#graph_panel").css("margin-left", $("#tools_panel").width()+"px");
+		$("#solutionBox").width($("#main_container").width() - $("#graph_panel").width() -$("#tools_panel").width());
+		$("#solutionBoxData").width($("#solutionBox").width()-20);
+		showToolbar = false; //next time hide it
+	}
+	else{
+		$("#tools_panel").hide();
+		$("#graph_panel").css("margin-left", "0px");
+		$("#solutionBox").width($("#main_container").width() - $("#graph_panel").width());
+		$("#solutionBoxData").width($("#solutionBox").width()-20);
+		showToolbar = true; //next time show it
+	}
 }
 
 //Create the dca dialogue's list li elements
@@ -595,4 +618,9 @@ $(document).ready(function() {
 		let id = $(this).parent().parent().attr("id");
 		_sendLoadNetwork(id);
 	});
+
+	$("#toggle_tb_btn").click(function(){
+		_toogleToolbar();
+	});
+
 });
