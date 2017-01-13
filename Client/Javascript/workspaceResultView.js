@@ -508,9 +508,9 @@ var _misAnalysis = function(response){
 	text += solution["levels"].text;
 	//No need to push these steps in the stepDataArray
 	for(var i=0; i<solution["levels"].steps.length; i++){
-		text += "<div class=\"well mis-step step\" >";	//we don't need ids for these
+		text += "<a href=\"#\" class=\"mis-step step mis-default\" >";	//we don't need ids for these
 		text += solution["levels"].steps[i].text;
-		text += "</div>";
+		text += "</a>";
 	}
 	text += solution["colors"].text;
 	var oldData = [];	//show the data of the last changes
@@ -642,5 +642,10 @@ $(document).ready(function(){
 	$(document).on("click",".max-min-step",function(){
 		_clearView();
 		_paintClusters(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click", ".mis-default", function(){
+		_clearView();
+		_paintEdgesFromList(bidirectionalEdgeList, false);
 	});
 });

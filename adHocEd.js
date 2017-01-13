@@ -20,8 +20,8 @@ app.use('/fonts', express.static(path.join(__dirname,'/Client/Fonts')));
 app.use('/imgs',express.static(path.join(__dirname,'/Client/Images')));
 app.use('/css',express.static(path.join(__dirname,'/Client/Css')));
 app.use('/css',express.static(path.join(__dirname,'/Client/Css/External')));
-app.use('/js',express.static(path.join(__dirname,'/Client/Javascript')));
-app.use('/js',express.static(path.join(__dirname,'/Client/Javascript/External')));
+app.use('/js',express.static(path.join(__dirname,'/Client/JavaScript')));
+app.use('/js',express.static(path.join(__dirname,'/Client/JavaScript/External')));
 
 //mount routers
 app.use(homePageRouter);
