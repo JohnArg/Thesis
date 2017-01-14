@@ -90,6 +90,8 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 		}
     ]
 };
+const nodeMinScale = 0.50;
+var biggerNodeSize = true;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
@@ -105,6 +107,27 @@ function _reset(){
 	linkEnd = null; 	 
 	ajaxObject["extras"] = {};
 	ajaxObject["net"] = { };	
+}
+
+//will be used by a button to set the size of the nodes to the original one
+function _toggleNodeSize(){
+	for(var i=0; i<network.nodes.length; i++){
+		if(biggerNodeSize){	
+			network.nodes[i].graphic.resize(45,45);
+			network.nodes[i].graphic.attr("text/font-size", "16pt");
+		}
+		else{
+			network.nodes[i].graphic.resize(35,35);
+			network.nodes[i].graphic.attr("text/font-size", "12pt");
+		}
+	}
+	if(biggerNodeSize){
+		biggerNodeSize = false;
+	}
+	else{
+		biggerNodeSize = true;
+	}
+	paper.scaleContentToFit({ "minScaleX" : nodeMinScale , "minScaleY" : nodeMinScale , "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 }
 
 //update the position data of the network nodes before sending an ajax call
@@ -147,7 +170,8 @@ var _repaintGraph = function(newNetwork){
 		var circleShape = new joint.shapes.basic.Circle({
 			position: { x: newNode.position.x, y: newNode.position.y},
 			size:{ width:35, height:35},
-			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { text : newNode.id, fill : 'white'}},
+			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"},
+				text: { text : newNode.id, fill : 'white', "font-size" : "12pt"}},
 			prop:{ node_id : newNode.id}
 		});
 		//stop adding/removing nodes if you moved one
@@ -180,7 +204,7 @@ var _repaintGraph = function(newNetwork){
 			}
 		}
 	}
-	paper.scaleContentToFit({ "minScaleX" : 0.5, "minScaleY" : 0.5, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
+	paper.scaleContentToFit({ "minScaleX" : nodeMinScale , "minScaleY" : nodeMinScale , "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	$("#load_modal").modal('hide');
 }
 
@@ -481,7 +505,7 @@ $(document).ready(function() {
 	//Capture Window events
 	$(window).on('resize', function(){
     	_responsiveSizes();
-    	paper.scaleContentToFit({ "minScaleX" : 0.5, "minScaleY" : 0.5, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
+    	paper.scaleContentToFit({ "minScaleX" : nodeMinScale, "minScaleY" : nodeMinScale, "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 	});
 
 	//Buttons Reactions ===========================================================
@@ -621,6 +645,10 @@ $(document).ready(function() {
 
 	$("#toggle_tb_btn").click(function(){
 		_toogleToolbar();
+	});
+
+	$("#toggle_node_size").click(function(){
+		_toggleNodeSize();
 	});
 
 });

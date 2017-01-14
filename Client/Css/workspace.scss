@@ -1,8 +1,8 @@
 @import 'common_style';
 /*Globals*/
 $toolbarWidth : 160px;
-$bidirectionalLinkColor : #2fd829;
-$unidirectionalLinkColor : #f4b218;
+$bidirectionalLinkColor : #51af1a;
+$unidirectionalLinkColor : #d69c15;
 /* Bootstrap override ========= */
 @mixin table_cell_style(){
 	display: block;
@@ -290,7 +290,7 @@ input{
 	border-color: $btn_important;
 }
 
-#toggle_tb_btn{
+.header_btn{
 	margin-top:-4px;
 	margin-right:2px;
 	margin-left: 20px;
@@ -303,6 +303,9 @@ input{
 	background-color: $header_color;
 }
 
+#toggle_node_size{
+	margin-left: 0px;
+}
 /* Footer =========================== */
 footer{
 	background-color: $footer_color;

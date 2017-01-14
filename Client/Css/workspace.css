@@ -305,13 +305,13 @@ input {
 .small-line-color1 {
   width: 120px;
   padding: 1px;
-  background-color: #2fd829;
+  background-color: #51af1a;
   color: white; }
 
 .small-line-color2 {
   width: 120px;
   padding: 1px;
-  background-color: #f4b218;
+  background-color: #d69c15;
   color: white; }
 
 /* Buttons ============================================ */
@@ -336,7 +336,7 @@ input {
   color: white;
   border-color: #158098; }
 
-#toggle_tb_btn {
+.header_btn {
   margin-top: -4px;
   margin-right: 2px;
   margin-left: 20px;
@@ -350,6 +350,9 @@ input {
   border-color: #21556d;
   color: #9adefd;
   background-color: #21556d; }
+
+#toggle_node_size {
+  margin-left: 0px; }
 
 /* Footer =========================== */
 footer {
@@ -436,10 +439,10 @@ input[type="radio"] {
   display: none; }
 
 .joint-link.joint-theme-default .marker-arrowhead {
-  fill: #f4b218; }
+  fill: #d69c15; }
 
 .joint-link.joint-theme-default .marker-arrowhead:hover {
-  fill: #f4b218;
+  fill: #d69c15;
   stroke: none; }
 
 .joint-link .marker-arrowheads {

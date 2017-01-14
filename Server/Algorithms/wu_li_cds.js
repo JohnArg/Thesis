@@ -16,10 +16,9 @@ var Wu_Li_CDS = function(){
 	that.step1Solution = solutionFactory.newSolution();
 	that.rule1Solution = solutionFactory.newSolution();
 	that.rule2Solution = solutionFactory.newSolution();
-	that.solution = { //This object will contain a solution object for each of the 3 parts of the algorithm
-		"final_result" : [], //--> Although "rule2" has the final result, the viewManager.js response handler in the Client  
-		"step1" : that.step1Solution, // is written to work with many algorithms and it doesn't know where else and how the final
-		"rule1" : that.rule1Solution, // result is stored
+	that.solution = { //This object will contain a solution object for each of the 3 parts of the algorithm 
+		"step1" : that.step1Solution, 
+		"rule1" : that.rule1Solution,
 		"rule2" : that.rule2Solution
 	};
 
@@ -28,7 +27,6 @@ var Wu_Li_CDS = function(){
 		that.solution["step1"].result["dominators"] = _implementWLStep1(network, that.solution);
 		that.solution["rule1"].result["dominators"] = _implementWLRule1(network, that.solution["step1"].result["dominators"], that.solution);
 		that.solution["rule2"].result["dominators"] = _implementWLRule2(network, that.solution["rule1"].result["dominators"], that.solution);
-		that.solution["final_result"] = that.solution["rule2"].result["dominators"];
 		return that.solution;
 	};
 }
@@ -75,7 +73,7 @@ var _isDominator = function(node, dominatorList){
 var _implementWLStep1 = function(network, solution){
 	var neighborsConnected;
 	var tempNode;
-	dominatorList = [];
+	var dominatorList = [];
 	solution["step1"].text = "Constructing minimum Connected Dominating Set with Jie Wu and Hailan Li's algorithm.<br/>\
 	<strong>Part 1 :</strong> We use a marking process. Initially all nodes are marked as F (dominatees).\
 	All nodes exchange their open neighbor sets with their neighbors. In this step, if a node has 2 unconnected neighbors,\

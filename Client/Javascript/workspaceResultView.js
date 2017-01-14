@@ -14,7 +14,7 @@ var max_min_clustersOrig = [];	//clusters after floodmax/min
 var max_min_clustersAfter = []; //clusters after messaging
 //Some color-styling globals used in our graph
 var NODE_DEF_STYLE =  { circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { fill : 'white'}};
-var NODE_DOM_STYLE = {circle : {fill: "#59cc16", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
+var NODE_DOM_STYLE = {circle : {fill: "#51af1a", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
 var NODE_MIS_STYLE = {
 	"white" : {circle : {fill: "#efefef", stroke: "#444444", "stroke-width" : "2"}, text: { fill : '#444444'}},
 	"gray" : { circle : {fill: "#777777", stroke: "#444444", "stroke-width" : "2"}, text: { fill : 'white'}},
@@ -285,27 +285,25 @@ function _paintMisRoot(){
 
 //Integer list to string appropriate for word-break
 function _strigifyIntList(list){
-	var text = "[";
+	var text = "[ ";
 	for(var i=0; i<list.length; i++){
 		text += list[i];
-		if(i == (list.length-1)){
-			text += " ]";
-		}
-		else{
+		if(i != (list.length-1)){
 			text += ", "
 		}
 	}
+	text += " ]";
 	return text;
 }
 
 //Show the steps from th Wu Li CDS algorithm
 function _wuLiDominatorsAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
-	var text = "<p class=\"solution-result colored-text word-break\">The algorithm's result is : "+ _strigifyIntList(response["solution"].final_result)
+	var text = "<p class=\"solution-result colored-text word-break\">The algorithm's result is : "+ _strigifyIntList(response["solution"]["rule2"].result["dominators"])
 				+"<br> Execution Analysis :</p>";
 	//for each part of the solution
 	for(var property in response["solution"]){
-		if(response["solution"].hasOwnProperty(property) && property != "final_result"){
+		if(response["solution"].hasOwnProperty(property)){
 			//for each step of that part
 			text += "<p class=\"solution-heading\">"+ response["solution"][property].text + "</p>"; 
 			for(var j=0; j<response["solution"][property].steps.length; j++){
@@ -320,7 +318,7 @@ function _wuLiDominatorsAnalysis(response){
 		}
 	}
 	$("#solutionBoxData").html(text);
-	_paintDominators(response["solution"].final_result);
+	_paintDominators(response["solution"]["rule2"].result["dominators"]);
 }
 
 //Converts the result of the DCA algorithm to string 
