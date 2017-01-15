@@ -71,8 +71,6 @@ var _isDominator = function(node, dominatorList){
 
 //Implements first step of the Wu&Li algorithm
 var _implementWLStep1 = function(network, solution){
-	var neighborsConnected;
-	var tempNode;
 	var dominatorList = [];
 	solution["step1"].text = "Constructing minimum Connected Dominating Set with Jie Wu and Hailan Li's algorithm.<br/>\
 	<strong>Part 1 :</strong> We use a marking process. Initially all nodes are marked as F (dominatees).\
@@ -81,19 +79,15 @@ var _implementWLStep1 = function(network, solution){
 	//Initial decision without Rule1 && Rule 2 ========
 	//for every node
 	for(var i=0; i<network.nodes.length; i++){
-		neighborsConnected = true;
+		let neighborsConnected = true;
 		//for every neighbor of that node
 		solution["step1"].createStep();
 		solution["step1"].steps[i].text = "Checking Node " + network.nodes[i].id + ".";
 		for(var j=0; j<network.nodes[i].neighbors.length; j++){
-			//get a list of all the other neighbors than the current one
-			neighborCheckList = network.nodes[i].neighbors.filter(function(el){
-				return el != network.nodes[i].neighbors[j]; 
-			});
-			if(neighborCheckList.length > 0){
-				//Is j connected to all the other neighbor nodes?
-				tempNode = network.nodes[netOperator.returnNodeIndexById(network.nodes[i].neighbors[j], network)];
-				for(var k=0; k<neighborCheckList.length; k++){
+			let tempNode = network.nodes[netOperator.returnNodeIndexById(network.nodes[i].neighbors[j], network)];
+			let neighborCheckList = network.nodes[i].neighbors;
+			for(var k=0; k<neighborCheckList.length; k++){
+				if(neighborCheckList[k] != tempNode.id){	//skip checking my own id
 					if(!_hasNeighbor(tempNode, neighborCheckList[k])){
 						neighborsConnected = false;
 						solution["step1"].steps[i].text += " Neighbors "+tempNode.id+" and "+neighborCheckList[k]+" are unconnected.</br>";
