@@ -1,5 +1,0 @@
-#!/bin/bash
-echo "Compiling Sass"
-sass "/media/john/LNX_EXTRA/Programming/0)Thesis/Client/Templates/Css/workspaceV2.scss" "/media/john/LNX_EXTRA/Programming/0)Thesis/Client/Templates/Css/workspaceV2.css"
-echo "Deploying AdHocEd App"
-nodejs application.js
