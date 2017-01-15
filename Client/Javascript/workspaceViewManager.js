@@ -90,12 +90,13 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 		}
     ]
 };
-const nodeMinScale = 0.50;
+const nodeMinScale = 0.35;
 var biggerNodeSize = true;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
 	graph.clear();
+	biggerNodeSize = true;
 	network.nodes = [];
 	usedIds = []; 
 	panelOffset = $("#graph_panel").offset();
@@ -164,6 +165,7 @@ var _fillLoadScrollView = function(data){
 
 var _repaintGraph = function(newNetwork){
 	_reset(); //reset everything
+	$("#solutionBoxData").html("");
 	for(var i=0; i<newNetwork.nodes.length; i++){
 		var newNode = newNetwork.nodes[i];
 		//create the graphics shape at the position clicked

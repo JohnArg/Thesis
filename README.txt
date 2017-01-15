@@ -11,8 +11,7 @@ in wireless ad hoc networks
 
 Software Purpose :
 Visually aid the professor's teaching and students' studying of 
-the Ad Hoc networking algorithms assosiated with "Mobile 
-and Ad Hoc Computing". The algorithms supported are:
+the Ad Hoc Wireless Networks algorithms. The algorithms supported are:
 * Wu & Li
 * Multipoint Relays
 * DCA clusters
@@ -36,20 +35,13 @@ Technical :
 This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
 The app starts by executing the adHocEd file with Node's command: "node adHocEd" (or "nodejs adHocEd.js" for some systems)
 The server runs on localhost:3000.
-node_modules is a folder used by node js packages.
 The code is divided in the Client code and the Server code, in
 their respective folders.
 The Client code has the html templates with their Css and the
-Model folder which contains js files that handle user interaction
+JavaScript folder which contains .js files that handle user interaction
 with the web page.
 The Server code has the Algorithm related files in a corresponding
-folder, to separate them from its core files. The server.js file
-creats an Http server which sends the GET requests to the router.js
-module and the POST requests to the ajaxHandler.js. The router module
-uses requestHandler.js's functions to respond, and the ajaxHandler 
-takes the network info and which algorithm was selected and calls
-the appropriate algorithm passing the network info. Then it sends
-the response back to the client.
+folder, to separate them from its core files. 
 
 Algorithm References :
 * Wu & Li algorithm : "On Calculating Connected Dominating Set for Efficient Routing in Ad Hoc Wireless Networks"
