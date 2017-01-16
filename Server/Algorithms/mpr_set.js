@@ -48,6 +48,27 @@ var _return2HopNeighbors = function(index, network){
 	return twoHopNeighbors;
 }
 
+/*Used by _calculateTheFirstMprNodes to detect the two hop neighbors that connect with only
+one 1-hop. Implements the intersection between the two-hop node's neighbors and the one-hop
+neighborhood of the main node we check, to see how many one-hop neighbors cover this two-hop
+neighbor. Stops the search when a second 1-hop neighbor is found, since at that point
+it is known that the two-hop neighbor is covered by more than 1 one-hop.
+*/
+ var _intersectionOptimized = function(neighbor_list, one_hop_list){
+	 let intersect = [];
+	 for(var i=0; i<neighbor_list.length; i++){
+		 for(var j=0; j< one_hop_list.length; j++){
+			 if(neighbor_list[i] == one_hop_list[j]){
+				 intersect.push(neighbor_list[i]);
+				 if(intersect.length == 2){
+					 return intersect;
+				 }
+			 }
+		 }
+	 }
+	 return intersect;
+ }
+
 //From all the 2-hop neighbors check with how many of the 1-hop they are connected to. 
 //If it's only with 1, add this one to the MPR set.
 var _calculateTheFirstMprNodes = function(solution, index, network, mpr_set, twoHopNeighbors, oneHopNeighbors){
@@ -61,12 +82,12 @@ var _calculateTheFirstMprNodes = function(solution, index, network, mpr_set, two
 	will add their 1-hop neighbors to the MPR set of the node.</br>";
 	for(var g=0; g<twoHopNeighbors.length; g++){
 		tempNode = netOperator.returnNodeById(twoHopNeighbors[g], network);
-		intersect = _.intersection(tempNode.neighbors, oneHopNeighbors);
+		intersect = _intersectionOptimized(tempNode.neighbors, oneHopNeighbors);
 		if((intersect.length == 1) && (_.indexOf(mpr_set, intersect[0]) == -1)){
 				change = true;
 				mpr_set.push(intersect[0]);
 				tempNode2 = netOperator.returnNodeById(intersect[0], network);
-				twoHopCovered = _.intersection(tempNode2.neighbors, twoHopNeighbors);
+				twoHopCovered = _.intersection(tempNode2.neighbors, twoHopNeighbors); //how much 2-hop neighborhood  does that 1-hop cover?
 				temp2hop = _.difference(temp2hop, twoHopCovered); //the remaining uncovered 2-hop neighbors
 				solution["MPR_set"].steps[index].text += "Added node "+intersect[0]+" .</br>";
 		} 
@@ -91,16 +112,16 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 		for(var t=0; t<oneHopNeighbors.length; t++){
 			tempNode = netOperator.returnNodeById(oneHopNeighbors[t], network);
 			intersect = _.intersection(tempNode.neighbors, twoHopNeighbors);
-			coverageList.push({"coverage" : intersect.length, "nodes" : intersect.slice()});
+			coverageList.push({ "nodes" : intersect.slice()});
 		}
 		//Add the node with the maximum coverage to the MPR set
 		var max = 0;
 		for(var e=0; e<coverageList.length; e++){
-			if(coverageList[e]["coverage"] > coverageList[max]["coverage"]){
+			if(coverageList[e]["nodes"].length > coverageList[max]["nodes"].length){
 				max = e;
 			}
 		}
-		if(coverageList[max]["coverage"] > 0){
+		if(coverageList[max]["nodes"].length > 0){
 			mpr_set.push(oneHopNeighbors[max]);
 			solution["MPR_set"].steps[step_index].text += "Added node "+oneHopNeighbors[max]+" .<br/>";
 			//remove from the 2-hop neighborhood all those who were covered by this node
@@ -116,16 +137,16 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 
 //Integer list to string appropriate for word-break
 var _strigifyIntList = function(list){
-	var text = "[";
-	for(var i=0; i<list.length; i++){
-		text += list[i];
-		if(i == (list.length-1)){
-			text += " ]";
-		}
-		else{
-			text += ", "
+	var text = "[ ";
+	if(list){
+		for(var i=0; i<list.length; i++){
+			text += list[i];
+			if(i != (list.length-1)){
+				text += ", "
+			}
 		}
 	}
+	text += " ]";
 	return text;
 }
 
@@ -180,6 +201,10 @@ var _mprCdsOptimized = function(solution, network, allMPRs){
 		solution["MPR_cds"].createStep();
 		solution["MPR_cds"].steps[i].text = "Checking node "+network.nodes[i].id+" .</br>";
 		smallest = true;
+		//skip checking if the node is unconnected
+		if(network.nodes[i].neighbors.length == 0){
+			continue;
+		}
 		//Rule 1
 		for(var j=0; j<network.nodes[i].neighbors.length; j++){
 			if(network.nodes[i].id > network.nodes[i].neighbors[j]){

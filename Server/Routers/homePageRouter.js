@@ -48,7 +48,6 @@ router.get("/", function(request, response){
         ],
     };
     if(!appGlobalData.sessionsEnabled){ //if sessions are disabled
-        console.log("No session home");
         response.render("homeNoSession.hbs");
     }
     else{

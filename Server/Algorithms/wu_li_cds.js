@@ -194,7 +194,7 @@ var _implementWLRule1 = function(network, dominatorList, solution){
 	}
 	else{
 		solution["rule1"].createStep();
-		solution["rule1"].steps[0].text = "No need to check only one dominator.";
+		solution["rule1"].steps[0].text = "No further computations needed.";
 		solution["rule1"].steps[0].data = { "dominators" : newDominatorList.slice()};
 	}
 	return newDominatorList;
@@ -252,7 +252,7 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 	}
 	else{
 		solution["rule2"].createStep();
-		solution["rule2"].steps[0].text = "No need to check only one dominator.";
+		solution["rule2"].steps[0].text = "No further computations needed.";
 		solution["rule2"].steps[0].data = { "dominators" : newDominatorList.slice()};
 	}
 	return newDominatorList;

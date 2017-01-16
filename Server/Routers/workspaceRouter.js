@@ -43,7 +43,6 @@ app.use(router);//mount the router to the app
 //Route the requests =======================================
 router.get("/workspace", function(request, response){
 	if(!appGlobalData.sessionsEnabled){
-		console.log("No session workspace");
         response.status(200).render("workspaceNoSession.hbs");
     }
     else{

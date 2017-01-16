@@ -67,26 +67,6 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 					</div>",
 		footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
 				"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"dca_dialog_continue\">Continue</button>"
-		},
-		{
-		id: "save_modal",
-		title : "Save Current Graph",
-		body : "<p>Choose a name for the graph.</p>\
-				<form>\
-					<input class ='input-large' type=\"text\" id=\"save_input\"> </br>\
-				</form>",	
-		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
-			"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"save_continue\">Save</button>"
-		},
-		{
-		id: "load_modal",
-		title : "Load Graph",
-		body : "<p id='load_modal_txt'>Choose a previously saved graph to load.</p>\
-				<div id=\"load_scroll\" class=\"scrollView\">\
-					<ul id=\"load_list\" class=\"ul_no_numbering ul_child\">\
-					</ul>\
-				</div>",	
-		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
 		}
     ]
 };
