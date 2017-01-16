@@ -233,7 +233,7 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 						solution["rule2"].steps[g].text += "Node's "+dominatorList[g]+" neighborhood is covered by\
 						 nodes "+domNeighbors[n]+" and "+domNeighbors[t]+".";
 						success = true;
-						currNode.dominator = false;
+						curDom.dominator = false;
 						newDominatorList = newDominatorList.filter(function(index) {
 							return index != curDom.id;
 						});

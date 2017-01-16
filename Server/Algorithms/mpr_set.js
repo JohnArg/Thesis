@@ -17,7 +17,6 @@ var MPR_cds = function(){
 	that.solutionMPR = solutionFactory.newSolution();
 	that.solutionCDS = solutionFactory.newSolution();
 	that.solution = {
-		"final_result" : [],
 		"MPR_set" : that.solutionMPR, 
 		"MPR_cds" : that.solutionCDS
 	};
@@ -25,7 +24,6 @@ var MPR_cds = function(){
 		that.solution["MPR_set"].result["All_MPR_sets"] = _constructMPR(network, that.solution);
 		var allMPRs = that.solution["MPR_set"].result["All_MPR_sets"];
 		that.solution["MPR_cds"].result["MPR_cds"] = _mprCdsOptimized(that.solution, network, allMPRs);
-		that.solution["final_result"] = that.solution["MPR_cds"].result["MPR_cds"];
 		return that.solution;
 	}
 }

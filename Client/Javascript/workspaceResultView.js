@@ -333,7 +333,7 @@ function _stringifyDcaResult(clusters){
 //Show the steps of the Multipoint Relay CDS algorithm
 function _mprCdsAnalysis(response){
 	var stepId = 0; //will be used for indexing a global array of step data
-	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : "+ _strigifyIntList(response["solution"].final_result)
+	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : "+ _strigifyIntList(response["solution"]["MPR_cds"].result["MPR_cds"])
 				+" <br> Execution Analysis :</p>";
 	if(response["solution"].hasOwnProperty("MPR_set")){
 		text += "<p class=\"solution-heading\">"+ response["solution"]["MPR_set"].text + "</p>";
@@ -364,7 +364,7 @@ function _mprCdsAnalysis(response){
 		text += "<p class=\"colored-text\">Results so far : " + _strigifyIntList(response["solution"]["MPR_cds"].result["MPR_cds"])+"</p>";
 	}
 	$("#solutionBoxData").html(text);
-	_paintDominators(response["solution"].final_result);
+	_paintDominators(response["solution"]["MPR_cds"].result["MPR_cds"]);
 }
 
 //Show steps of the DCA algorithm

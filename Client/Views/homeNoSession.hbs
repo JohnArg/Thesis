@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="eng">
+	<head>
+		<title>AdHocEd</title>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/jquery-ui.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href ="css/home.css">
+	</head>
+	<body>
+        <div class="jumbotron text-center" id="particles-js">
+            <h1>AdHocEd</h1>
+            <p>Welcome to AdHocEd, an educational application for students and teachers
+                 with graphical representation of basic algorithms for Ad Hoc Wireless networks.
+                Create a free account to be able to save the graphs you design in the editor.</p>
+            <div class="btn btn-default btn-block home-btn text-center" id="enter_btn">Enter</div>
+        </div>
+        <div id="main_panel">
+            <section>
+                <article>
+                    <h4>Overview</h4>
+                    <p>Visually aid the professor's teaching and students' studying of 
+                        basic Ad Hoc Wireless Networks algorithms. Design a network graph with the editor tools and choose 
+                        from a list of algorithms to run. The results and the steps 
+                        of the execution will be presented both in the graph and as text. 
+                        Made as a practise tool for students who take Ad Hoc Wireless Networks classes and as a presentation
+                         tool for teachers, replacing the blackboard.</p>
+                </article>
+                <article>
+                    <h4>Editor Features</h4>
+                    <p>Use the editor tools to construct a network graph. 
+                        You can add, remove and link nodes, as well as save and load your graphs, 
+                        instead of drawing them from the beginning every time. Use the instructions button on the top left 
+                        to get information about the tools. 
+                    </p>
+                    <img src='imgs/home_page_img1.png'></img>
+                    <img src='imgs/home_page_img2.png' class="right_floater"></img>
+                </article>
+                <article>
+                    <h4>Algorithm Analysis</h4>
+                    <p>Select one of the supported algorithms and press the execute button to see the results.
+                        The "Algorithm Analysis" panel will show you the steps of the 
+                        execution in clickable "step boxes". When you click a "step box" you can 
+                        see the result of the current execution step in the graph.
+                    </p>
+                    <img src='imgs/home_page_img3.png'></img>
+                    <img src='imgs/home_page_img4.png' class="right_floater"></img>
+                </article>
+                <article>
+                    <h4>Supported Algorithms</h4>
+                        <ul>
+                        {{#each algorithms}}
+                            <li>{{name}}</li>
+                        {{/each}}
+                        </ul>
+                    <p>These algorithms are based on the papers mentioned in <span class="colored-text">References</span> below.</p>
+                </article>
+                <article>
+                    <h4>References</h4>
+                    <ul>
+                        <li>Wu & Li algorithm : <span class="colored-text">"On Calculating Connected Dominating Set for Efficient Routing in 
+                            Ad Hoc Wireless Networks"</span> by Jie Wu and Hailan Li</li>
+                        <li>Multipoint Relays : <span class="colored-text">"Computing connected dominated sets with multipoint relays"</span> 
+                            by Cedric Adjih, Philippe Jacquet, Laurent Viennot</li>
+                        <li>DCA clusters : <span class="colored-text">"On the Complexity of Clustering Multi-Hop Wireless Networks"</span>
+                             by Stefano Basagni</li>
+                        <li>Max-Min D-Cluster : <span class="colored-text">"Max-Min D-Cluster Formation in Wireless Ad Hoc Networks"</span> 
+                            by Alan D. Amis, Ravi Prakash, Thai H.P. Vuong, Dung T. Huynh and <span class="colored-text">"On multihop 
+                            clusters in wireless sensor networks"</span> by Alexandre Delye, Michel Marot and Monique Becker</li>
+                        <li>Maximal Independent Set : <span class="colored-text">"Distributed Construction of Connected Dominating Set 
+                            in Wireless Ad Hoc Networks"</span> by Peng-Jun Wan, Khaled M. Alzoubi, Ophir Frieder and
+                             <span class="colored-text">"Propagation and Leader Election in a Multihop Broadcast Environment"</span> by Israel 
+                                 Cidon and Osnat Mokryn</li>
+                        <li>LMST : <span class="colored-text">"Design and Analysis of an MST-Based Topology Control Algorithm"</span> 
+                            by Ning Li, Jennifer C. Hou, Lui Sha</li>
+                        <li>RNG : <span class="colored-text">"Localized LMST and RNG based minimum-energy broadcast protocols in ad hoc
+                             networks"</span> by Julien Cartigny, Francois Ingelrest, David Simplot-Ryl, Ivan Stojmenovic</li>
+                        <li>GG : <span class="colored-text">"Distributed Topology Control in Wireless Ad Hoc Networks using β-Skeletons"</span> 
+                            by Manvendu Bhardwaj, Satyajayant Misra and Guoliang Xue</li>
+                    </ul>
+                </article>
+            </section>
+        </div>
+        <footer>
+            <p>Created by John Argyroulis</p>
+            <p>Thesis for University of Thessaly (Electrical And Computer Engineering)</p>
+        </footer>
+    </body>
+    <script src ="js/handlebars-v4.0.5.js"></script>
+    <script src ="js/modals.js"></script>
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/particles.min.js"></script>
+    <script src="js/server_url.js"></script>
+    <script src="js/homeNoSession.js"></script>
+</html>

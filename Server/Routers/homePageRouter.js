@@ -47,7 +47,13 @@ router.get("/", function(request, response){
         {name : "GG (Gabriel Graph) topology graph"}
         ],
     };
-    response.render("home.hbs", templateData);
+    if(!appGlobalData.sessionsEnabled){ //if sessions are disabled
+        console.log("No session home");
+        response.render("homeNoSession.hbs");
+    }
+    else{
+        response.render("home.hbs", templateData);
+    }
 });
 
 //Handles ajax log in request
