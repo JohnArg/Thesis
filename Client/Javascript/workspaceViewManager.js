@@ -464,6 +464,9 @@ var _dcaDialogWeightsHandler = function(){
 		}
 		//then randomly suffle the weights
 		weightMap = _.shuffle(weightMap);
+		//debug
+		weightMap = [76, 30, 84, 67, 95, 87, 64, 66, 60, 28, 94, 89, 33, 15, 63, 77, 72, 54, 102, 10, 86, 56, 101, 50, 92, 44, 32, 73, 85, 75, 21, 11, 57, 48, 43, 58, 55, 41, 35, 29, 69, 9, 97, 91, 3, 99, 71, 34, 104, 61, 83, 42, 17, 51, 27, 40, 45, 62, 79, 20, 26, 53, 39, 70, 19, 78, 16, 103, 13, 68, 18, 88, 47, 37, 100, 1, 36, 82, 12, 52, 49, 24, 65, 7, 2, 4, 6, 31, 22, 8, 74, 38, 5, 46, 25, 81, 14, 93, 23, 80, 90, 59, 96,98];
+		console.log(network);
 		ajaxObject["extras"]["weights"] = weightMap;
 		_sendAlgorithmRequest();
 		$("#dca_dialog").modal("hide");
@@ -479,8 +482,6 @@ var _dcaDialogWeightsHandler = function(){
 				return false;
 			}
 			else{
-				var textID = $(this).attr('id');
-				textID = textID.slice(2);
 				weightMap.push(number);
 			}
 		});
@@ -495,6 +496,7 @@ var _dcaDialogWeightsHandler = function(){
 			}
 		}
 	}
+	console.log(weightMap);
 }
 //After loading doc ==========================================
 $(document).ready(function() {	

@@ -30,7 +30,11 @@ var CLUSTER_COLORS = [
 	{"head_color" : "#d8d817", "group_color" : "#adad05", "stroke": "#adad05" },
 	{"head_color" : "#3ed817", "group_color" : "#26a008", "stroke": "#26a008" },
 	{"head_color" : "#6b17d8", "group_color" : "#4d119b", "stroke": "#4d119b" },
-	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" }
+	{"head_color" : "#17d89e", "group_color" : "#04a071", "stroke": "#04a071" },
+	{"head_color" : "#888888", "group_color" : "#666666", "stroke": "#444444" },
+	{"head_color" : "#3a3a3a", "group_color" : "#1e1e1e", "stroke": "#444444" },
+	{"head_color" : "#b623c4", "group_color" : "#891193", "stroke": "#4f0556" },
+	{"head_color" : "#684b22", "group_color" : "#4f381a", "stroke": "#3a2b16" }
 ];
 
 //Max Min Table Object
@@ -383,15 +387,13 @@ function _dcaAnalysis(response){
 				<p class=\"solution-result colored-text4\">The weights given for each node : </p>\
 				<p class='word-break colored-text4'>"+_stringifyWeights()+".</p>\
 				<p class=\"solution-result colored-text\">Execution Analysis :</p>";		
-	for(var i=0; i< solution["DCA_timesteps"].length; i++){
-		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
-		for(var j=0; j<solution["DCA_timesteps"][i].steps.length; j++){
-			text += "<a href=\"#\" class=\"dca-step step\" id=\""+stepId+"\">";
-			text += solution["DCA_timesteps"][i].steps[j].text;
-			text += "</a>";
-			stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
-			stepId++;
-		}
+	text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"].text + "</p>";
+	for(var j=0; j<solution["DCA_timesteps"].steps.length; j++){
+		text += "<a href=\"#\" class=\"dca-step step\" id=\""+stepId+"\">";
+		text += solution["DCA_timesteps"][i].steps[j].text;
+		text += "</a>";
+		stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
+		stepId++;
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
