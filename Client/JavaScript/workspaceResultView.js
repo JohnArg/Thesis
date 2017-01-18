@@ -387,13 +387,15 @@ function _dcaAnalysis(response){
 				<p class=\"solution-result colored-text4\">The weights given for each node : </p>\
 				<p class='word-break colored-text4'>"+_stringifyWeights()+".</p>\
 				<p class=\"solution-result colored-text\">Execution Analysis :</p>";		
-	text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"].text + "</p>";
-	for(var j=0; j<solution["DCA_timesteps"].steps.length; j++){
-		text += "<a href=\"#\" class=\"dca-step step\" id=\""+stepId+"\">";
-		text += solution["DCA_timesteps"][i].steps[j].text;
-		text += "</a>";
-		stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
-		stepId++;
+	for(var i=0; i< solution["DCA_timesteps"].length; i++){
+		text += "<p class=\"solution-heading\">"+ solution["DCA_timesteps"][i].text + "</p>";
+		for(var j=0; j<solution["DCA_timesteps"][i].steps.length; j++){
+			text += "<a href=\"#\" class=\"dca-step step\" id=\""+stepId+"\">";
+			text += solution["DCA_timesteps"][i].steps[j].text;
+			text += "</a>";
+			stepDataArray.push(solution["DCA_timesteps"][i].steps[j].data["clusters"]);
+			stepId++;
+		}
 	}
 	ajaxObject["extras"] = {};
 	$("#solutionBoxData").html(text);
