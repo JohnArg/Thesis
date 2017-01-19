@@ -263,7 +263,6 @@ The following function implements the process.
 var _clustersAfterMessaging = function(network, solution, d){
     let toSend = []; //a list with the nodes to send and what to send
     var clusters = solution.clusters;
-  //  var newClusters = solution.clusters2;
     var messageSol = solution.messages_solution;
     for(var i=0; i<network.nodes.length; i++){
         network.nodes[i].message = { sender : -1, hop : -1, clusterhead: -1}; //keeps the first message each node receives. Every other message is dropped

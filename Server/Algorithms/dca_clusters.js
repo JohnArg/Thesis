@@ -64,13 +64,12 @@ var _checkIfNodeSent = function(type, me, node){
 	return false;
 }
 
-//Simulates sending a CH message to the neighborhood
+//Called when sending a CH message to the neighborhood
 var _sendCH = function(node, network, timestepSolution){
 	var stepIndex;
 	timestepSolution.createStep();
 	stepIndex = timestepSolution.steps.length - 1;
 	timestepSolution.steps[stepIndex].text = "Node "+node.id+" broadcasted CH.";
-	//send a CH message
 	if(node.clusterhead != node.id){
 		node.clusterhead = node.id;
 		node.cluster.push(node.id);
@@ -78,7 +77,7 @@ var _sendCH = function(node, network, timestepSolution){
 	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
 
-//Simulates sending a JOIN message to the neighborhood
+//Called when sending a JOIN message to the neighborhood
 var _sendJOIN = function(node, clusterhead, network, timestepSolution){
 	var stepIndex;
 	timestepSolution.createStep();
