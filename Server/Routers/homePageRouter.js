@@ -1,6 +1,7 @@
 /*
 This module routes requests that have to do with the homepage
 */
+const cluster = require('cluster');
 var express = require('express');
 var app = module.exports = express();
 var ehbs = require('express-handlebars');
@@ -35,6 +36,7 @@ app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/", function(request, response){
+    console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
     let templateData ={
         algorithms : [
         {name : "Wu & Li Connected Dominating Set"},
@@ -57,6 +59,7 @@ router.get("/", function(request, response){
 
 //Handles ajax log in request
 router.post("/logIn", function(request, response){
+    console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
     if(!appGlobalData.sessionsEnabled){ //if sessions are disabled
         response.status(200).send("OK");  //The message will force a redirect on client to /workspace
     }
@@ -84,6 +87,7 @@ router.post("/logIn", function(request, response){
 
 //Handles ajax Sign Up request
 router.post("/signUp", function(request, response){
+    console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
     if(!appGlobalData.sessionsEnabled){
         response.status(200).send("OK");  //The message will force a redirect on client to /workspace
     }

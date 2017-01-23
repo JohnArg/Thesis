@@ -27,7 +27,7 @@ var _calculateLocalGG = function(node, network, solution){
     var neighbors = netOperator.returnNeighborObjects(node, network);
     var distance;
     var centers = []; //center point of the distance between node and each neighbor
-    var radii = []; //radius of circle with diameter the line between node's position and each neighbor's position
+    var radii = []; //radius of circle with diameter the line between node's position and a neighbor's position
     var x_diff;
     var y_diff;
     solution.createStep();

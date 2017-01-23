@@ -1,6 +1,7 @@
 /*
 This module handles requests that have to do with the workspace
 */
+const cluster = require('cluster');
 var express = require('express');
 var app = module.exports = express();
 var ehbs = require('express-handlebars');
@@ -42,6 +43,7 @@ app.use(router);//mount the router to the app
 
 //Route the requests =======================================
 router.get("/workspace", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){
         response.status(200).render("workspaceNoSession.hbs");
     }
@@ -64,6 +66,7 @@ router.get("/workspace", function(request, response){
 });
 
 router.get("/logOut", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){
         response.status(200).render("loggedOut.hbs");
     }
@@ -97,6 +100,7 @@ router.get("/logOut", function(request, response){
 });
 
 router.get("/deleteAcc", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){
         response.status(200).render("loggedOut.hbs");
     }
@@ -124,6 +128,7 @@ router.get("/deleteAcc", function(request, response){
 
 //for saving network data
 router.post("/saveNet", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         //do nothing
     }
@@ -154,6 +159,7 @@ router.post("/saveNet", function(request, response){
 
 //for deleting a network
 router.post("/deleteNet", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         //do nothing
     }
@@ -179,6 +185,7 @@ router.post("/deleteNet", function(request, response){
 
 //for loading network data
 router.post("/loadNet", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         //do nothing
     }
@@ -204,6 +211,7 @@ router.post("/loadNet", function(request, response){
 
 //Retrieve user's saved networks
 router.get("/getGraphs", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         //do nothing
     }
@@ -232,6 +240,7 @@ router.get("/getGraphs", function(request, response){
 
 //for running the Algorithms
 router.post("/algorithms", function(request, response){
+	console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
 	if(!appGlobalData.sessionsEnabled){ //when no sessions are used
         handler["routeRequest"](request, response);
     }

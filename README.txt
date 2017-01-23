@@ -33,15 +33,22 @@ when they wish.
 
 Technical :
 This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
-The app starts by executing the adHocEd file with Node's command: "node adHocEd" (or "nodejs adHocEd.js" for some systems)
-The server runs on localhost:3000.
-The code is divided in the Client code and the Server code, in
-their respective folders.
-The Client code has the html templates with their Css and the
-JavaScript folder which contains .js files that handle user interaction
-with the web page.
-The Server code has the Algorithm related files in a corresponding
-folder, to separate them from its core files. 
+The app starts by executing the adHocEd.js file with Node's command: "node adHocEd.js" (or "nodejs adHocEd.js" for some systems)
+The server runs on localhost:3000. For setup, appropriate changes should be made in the /Client/JavaScript/server_url.js file
+Use the "npm install" command to automatically install the dependencies
+    - Code Structure : The code is divided in the Client code and the Server code, in
+        their respective folders.
+        The Client code has the html templates with their Css, the
+        JavaScript folder which contains .js files that handle user interaction
+        with the web page and the Images and Fonts folders.
+        The Server code has the Algorithm related files in a corresponding
+        folder, to separate them from its core files. 
+    - Databases : 
+        There are two databases, one for the app and one for sessions, that can be recreated by
+        simply running the /Database/create_db.sql script. The table where the sessions are stored is automatically 
+        created when the application starts from within the app, if it doesn’t already exist. To change the settings 
+        of the connection to these two databases, edit the dbConfig object in /Database/queries.js for the users and 
+        the sessionStoreConfig object in /Database/sessions.js for the sessions.
 
 Algorithm References :
 * Wu & Li algorithm : "On Calculating Connected Dominating Set for Efficient Routing in Ad Hoc Wireless Networks"

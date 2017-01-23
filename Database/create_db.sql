@@ -1,3 +1,5 @@
+CREATE DATABASE adhoced;
+CREATE DATABASE sessions;
 USE	adhoced;
 CREATE TABLE Users (
 	id	INT unsigned NOT NULL AUTO_INCREMENT,

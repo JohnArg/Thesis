@@ -129,7 +129,7 @@ var _minimumDistanceEdges = function(edges){
     return minDistanceEdges;
 }
 
-//Find the maximum value of each edge's (source_id, target_id) and return all those edges with that max value
+//Find the maximum value of each edge's (source_id, target_id) and return all those edges with the smallest such value
 var _maxVertexIdEdges = function(edges){
     var maxIds = [];
     //calculate max(source_id, target_id) for all given edges
@@ -141,21 +141,21 @@ var _maxVertexIdEdges = function(edges){
             maxIds.push(edges[i]["target"]);
         }
     }
-    //find the maximum/minimum of maxIds
-    var max = maxIds[0];
+    //find the minimum of maxIds
+    var minimum = maxIds[0];
     for(var i=1; i<maxIds.length; i++){
-        if(maxIds[i] > max){
-            max = maxIds[i];
+        if(maxIds[i] < minimum){
+            minimum = maxIds[i];
         }
     }
-    //get only the edges with the maximum value from maxIds
-    var maxEdges = [];
+    //get only the edges with the minimum value from maxIds
+    var minEdges = [];
     for(var i=0; i<maxIds.length; i++){
-        if(maxIds[i] == max){
-             maxEdges.push(edges[i]);
+        if(maxIds[i] == minimum){
+             minEdges.push(edges[i]);
         }
     }
-    return maxEdges;
+    return minEdges;
 }
 
 //Return the edge with the minimum vertex id 
@@ -172,9 +172,9 @@ var _minVertexIdEdges = function(edges){
     }
     var min = minIds[0];
     var minEdge = edges[0];
-    //get only the edge with the maximum of the minimum values
+    //get only the edge with the minimum of the minIds
     for(var i=1; i<edges.length; i++){
-        if(minIds[i] > min){
+        if(minIds[i] < min){
             min = minIds[i];
             minEdge = edges[i];
         }
@@ -192,16 +192,17 @@ var _chooseEdgeFunction = function(edges, step_data){
     else{ //more than one edges have the minimum distance
         //get the ones with max(vertex id)
         step_data.steps[step_data.steps.length - 1].text += "<p>Multiple edges have the same minimum distance :</br>"+_stringifyEdgeList(minDistanceEdges)
-        +"We calculate the value of max(source_id, target_id) for all of them. Then we keep the one (or those) with the maximum such value.</p>";
+        +"We calculate the value of max(source_id, target_id) as the 'weight' for all of them. Then we keep the one\
+         (or those) with the minimum such value.</p>";
         var maxEdges = _maxVertexIdEdges(minDistanceEdges);
-        if(maxEdges.length == 1){   //only one edge with the maximum value, i'm done
+        if(maxEdges.length == 1){   //only one edge with the minimum value, i'm done
             result = maxEdges[0];
         }
-        else{   //still more than one edges have the maximum value
+        else{   //still more than one edges have the minimum value
             //from the edges with the same max values get the one with the minimum(source_id, target_id)
-            step_data.steps[step_data.steps.length - 1].text += "<p>Still more than one edges with the previous maximum value :</br>"
+            step_data.steps[step_data.steps.length - 1].text += "<p>Still more than one edges with the previous minimum value :</br>"
             +_stringifyEdgeList(maxEdges) + "Now for these ones we"+
-            " calculate the minimum(source_id, target_id) and get the unique one with the maximum such value.</p>";
+            " calculate the minimum(source_id, target_id) and get the unique one with the smallest such value.</p>";
             result = _minVertexIdEdges(maxEdges);
         }
     }
