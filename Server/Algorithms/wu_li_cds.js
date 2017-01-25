@@ -127,9 +127,9 @@ var _implementWLRule1 = function(network, dominatorList, solution){
 			let index = netOperator.returnNodeIndexById(dominatorList[p], network);
 			curNode = network.nodes[index];
 			solution["rule1"].steps[p].text = "Checking node "+dominatorList[p]+".</br>"; 
-			//Rule 1 canditates are only the 1-hop dominator neighbors
+			//Rule 1 canditates are only the 1-hop dominator neighbors with higher ids
 			checkNodeList = curNode.neighbors.filter(function(elem) {
-				return network.nodes[netOperator.returnNodeIndexById(elem, network)].dominator;
+				return (network.nodes[netOperator.returnNodeIndexById(elem, network)].dominator)&&(elem>curNode.id);
 			});
 			if(checkNodeList.length == 0){
 				solution["rule1"].steps[p].text = "No other dominator covers the neighborhood of "+curNode.id+".</br>";
