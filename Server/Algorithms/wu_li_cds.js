@@ -109,27 +109,6 @@ var _implementWLStep1 = function(network, solution){
 	return dominatorList;
 }
 
-//Return the 2-hop neighbor candidates for Rule 1
-var _returnRule1Candidates = function(index, network){
-	var twoHopNeighbors = [];
-	var oneHopNeighbors = network.nodes[index].neighbors;
-	//take all the 2-hop neighbors
-	for(var j=0; j<oneHopNeighbors.length; j++){
-		let tempNode = netOperator.returnNodeById(oneHopNeighbors[j], network);
-		for(var k=0; k<tempNode.neighbors.length; k++){
-			let tempNode2Hop = netOperator.returnNodeById(tempNode.neighbors[k], network);
-			if((tempNode2Hop.dominator)	//if it is a dominator
-			&& (tempNode2Hop.id > network.nodes[index].id) //it has bigger id than the original node
-			&&(_.indexOf(oneHopNeighbors, tempNode2Hop) == -1)){ //it's not a 1-hop neighbor
-				twoHopNeighbors.push(tempNode.neighbors[k]);
-			}
-		}
-	}
-	//delete possible duplicate ids
-	twoHopNeighbors = _.uniq(twoHopNeighbors);
-	return twoHopNeighbors;
-}
-
 //Implements the Rule 1 of the algorithm
 var _implementWLRule1 = function(network, dominatorList, solution){
 	var curNode;
@@ -139,7 +118,7 @@ var _implementWLRule1 = function(network, dominatorList, solution){
 	var newDominatorList = dominatorList;
 	solution["rule1"].text = "<strong>Rule 1 :</strong> Consider 2 dominator nodes <strong>a</strong> and <strong>b</strong>. \
 	If the neighborhood of <strong>a</strong> is a subset of the neighborhood of <strong>b</strong>\
-	and id of node <strong>a</strong> < id of <strong>b</strong>, mark <strong>a</strong> as F (dominatee).";
+	and id of node <strong>a</strong> < id of <strong>b</strong>, mark <strong>a</strong> as F (dominatee). It is implied that a and b are connected.";
 	//Traverse the list of the dominators
 	if(dominatorList.length > 1){
 		for( var p=0; p<dominatorList.length; p++){
@@ -148,10 +127,10 @@ var _implementWLRule1 = function(network, dominatorList, solution){
 			let index = netOperator.returnNodeIndexById(dominatorList[p], network);
 			curNode = network.nodes[index];
 			solution["rule1"].steps[p].text = "Checking node "+dominatorList[p]+".</br>"; 
-			//get the 2-hop neighbors that are dominators with bigger ids
-			//Only they are candidates for Rule 1
-			checkNodeList = _returnRule1Candidates(index, network);
-			//this is needed for the dominator with the highest id
+			//Rule 1 canditates are only the 1-hop dominator neighbors
+			checkNodeList = curNode.neighbors.filter(function(elem) {
+				return network.nodes[netOperator.returnNodeIndexById(elem, network)].dominator;
+			});
 			if(checkNodeList.length == 0){
 				solution["rule1"].steps[p].text = "No other dominator covers the neighborhood of "+curNode.id+".</br>";
 				solution["rule1"].steps[p].text += "Node "+curNode.id+" remains a dominator.";	
