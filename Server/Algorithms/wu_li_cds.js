@@ -118,7 +118,8 @@ var _implementWLRule1 = function(network, dominatorList, solution){
 	var newDominatorList = dominatorList;
 	solution["rule1"].text = "<strong>Rule 1 :</strong> Consider 2 dominator nodes <strong>a</strong> and <strong>b</strong>. \
 	If the neighborhood of <strong>a</strong> is a subset of the neighborhood of <strong>b</strong>\
-	and id of node <strong>a</strong> < id of <strong>b</strong>, mark <strong>a</strong> as F (dominatee). It is implied that a and b are connected.";
+	and id of node <strong>a</strong> < id of <strong>b</strong>, mark <strong>a</strong> as F (dominatee). It is implied that <strong>a</strong>\
+	 and <strong>b</strong> are connected.";
 	//Traverse the list of the dominators
 	if(dominatorList.length > 1){
 		for( var p=0; p<dominatorList.length; p++){
@@ -188,7 +189,8 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 	var newDominatorList = dominatorList;
 	solution["rule2"].text = "<strong>Rule 2 :</strong> Consider 2 dominator nodes <strong>a</strong> and <strong>b</strong> that are both neighbors\
 	 of another dominator <strong>w</strong>. If the neihborhood of <strong>w</strong> is a subset of the union of the neighborhoods of <strong>a</strong>\
-	  and <strong>b</strong> and id of w = min{id of w, id of a, if of b}, then mark w as F (dominatee)."; 
+	  and <strong>b</strong> and id of w = min{id of w, id of a, if of b}, then mark w as F (dominatee). It is implied that <strong>a</strong>\
+	 and <strong>b</strong> are connected."; 
 	if(dominatorList.length > 1){
 		//Traverse the dominators list
 		for(var g=0; g< dominatorList.length; g++){
@@ -197,9 +199,9 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 			curDom = network.nodes[netOperator.returnNodeIndexById(dominatorList[g], network)];
 			solution["rule2"].createStep();
 			solution["rule2"].steps[g].text = "Checking node : "+dominatorList[g]+".<br/>";
-			//get his dominator neighbors only
+			//get his dominator neighbors only with higher ids
 			domNeighbors = curDom.neighbors.filter(function(elem) {
-				return network.nodes[netOperator.returnNodeIndexById(elem, network)].dominator;
+				return (network.nodes[netOperator.returnNodeIndexById(elem, network)].dominator)&&(elem>curDom.id);
 			});
 			//for each one of these neighbors in the previous list
 			for(var n=0; n<domNeighbors.length; n++){
@@ -208,7 +210,7 @@ var _implementWLRule2 = function(network, dominatorList, solution){
 				for(var t=n+1; t<domNeighbors.length; t++){
 					unionSet = _.union(network.nodes[netOperator.returnNodeIndexById(domNeighbors[n], network)].neighbors, 
 						network.nodes[netOperator.returnNodeIndexById(domNeighbors[t], network)].neighbors );	
-					if(_isSubsetOf(curDom.neighbors, unionSet) && (curDom.id<domNeighbors[n]) && (curDom.id < domNeighbors[t]) ){
+					if(_isSubsetOf(curDom.neighbors, unionSet)){
 						solution["rule2"].steps[g].text += "Node's "+dominatorList[g]+" neighborhood is covered by\
 						 nodes "+domNeighbors[n]+" and "+domNeighbors[t]+".";
 						success = true;

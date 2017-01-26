@@ -14,11 +14,9 @@ var mprFactory = function(){
 
 var MPR_cds = function(){ 
 	var that = this;
-	that.solutionMPR = solutionFactory.newSolution();
-	that.solutionCDS = solutionFactory.newSolution();
 	that.solution = {
-		"MPR_set" : that.solutionMPR, 
-		"MPR_cds" : that.solutionCDS
+		"MPR_set" : solutionFactory.newSolution(), 
+		"MPR_cds" : solutionFactory.newSolution()
 	};
 	that.calculate_MPR_CDS = function(network){
 		that.solution["MPR_set"].result["All_MPR_sets"] = _constructMPR(network, that.solution);
@@ -31,7 +29,7 @@ var MPR_cds = function(){
 //Return the 2-hop neighborhood of this node
 var _return2HopNeighbors = function(index, network){
 	var twoHopNeighbors = [];
-	var oneHopNeighbors = network.nodes[index].neighbors.slice();
+	var oneHopNeighbors = network.nodes[index].neighbors;
 	var tempNode;
 	//take all the 2-hop neighbors
 	for(var j=0; j<oneHopNeighbors.length; j++){
@@ -95,7 +93,7 @@ var _calculateTheFirstMprNodes = function(solution, index, network, mpr_set, two
 	if(!change){
 		solution["MPR_set"].steps[index].text += "No change made in this step.</br>";
 	}
-	return { "twoHop" : temp2hop.slice(), "mpr" : mpr_set.slice()};
+	return { "twoHop" : temp2hop, "mpr" : mpr_set};
 }
 
 //This is used to add each time in the MPR set the 1-hop neighbors that cover the most 2-hop neighbors  
@@ -131,8 +129,7 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 	}
 	//add this mpr_set to all mprs data
 	allMPRs.push(mpr_set);
-	solution["MPR_set"].steps[step_index].data = {"mpr_set" : mpr_set.slice()};
-	return allMPRs;
+	solution["MPR_set"].steps[step_index].data = {"mpr_set" : mpr_set};
 }
 
 //Integer list to string appropriate for word-break
@@ -185,7 +182,7 @@ var _constructMPR = function(network, solution){
 			solution["MPR_set"].steps[i].text += "All 2-hop neighborhood covered.</br>";
 		}
 		//Now add the rest of the 1-hops to cover the entire 2-hop neighborhood (see _calculate2HopStep2() description)
-		allMPRs = _calculate2HopStep2(i, network, solution, twoHopNeighbors, oneHopNeighbors, mpr_set, allMPRs);
+		_calculate2HopStep2(i, network, solution, twoHopNeighbors, oneHopNeighbors, mpr_set, allMPRs);
 	}
 	return allMPRs;
 }
