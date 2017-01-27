@@ -87,7 +87,7 @@ var _calculateTheFirstMprNodes = function(solution, index, network, mpr_set, two
 				tempNode2 = netOperator.returnNodeById(intersect[0], network);
 				twoHopCovered = _.intersection(tempNode2.neighbors, twoHopNeighbors); //how much 2-hop neighborhood  does that 1-hop cover?
 				temp2hop = _.difference(temp2hop, twoHopCovered); //the remaining uncovered 2-hop neighbors
-				solution["MPR_set"].steps[index].text += "Added node "+intersect[0]+" .</br>";
+				solution["MPR_set"].steps[index].text += "- Added node "+intersect[0]+" which is the only one covering "+tempNode.id+".</br>";
 		} 
 	}
 	if(!change){
@@ -110,7 +110,7 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 		for(var t=0; t<oneHopNeighbors.length; t++){
 			tempNode = netOperator.returnNodeById(oneHopNeighbors[t], network);
 			intersect = _.intersection(tempNode.neighbors, twoHopNeighbors);
-			coverageList.push({ "nodes" : intersect.slice()});
+			coverageList.push({ "nodes" : intersect});
 		}
 		//Add the node with the maximum coverage to the MPR set
 		var max = 0;
@@ -121,7 +121,7 @@ var _calculate2HopStep2 = function(step_index, network, solution, twoHopNeighbor
 		}
 		if(coverageList[max]["nodes"].length > 0){
 			mpr_set.push(oneHopNeighbors[max]);
-			solution["MPR_set"].steps[step_index].text += "Added node "+oneHopNeighbors[max]+" .<br/>";
+			solution["MPR_set"].steps[step_index].text += "- Added node "+oneHopNeighbors[max]+" with coverage "+coverageList[max]["nodes"].length+" .<br/>";
 			//remove from the 2-hop neighborhood all those who were covered by this node
 			twoHopNeighbors = _.difference(twoHopNeighbors, coverageList[max]["nodes"]);
 		}
@@ -174,8 +174,8 @@ var _constructMPR = function(network, solution){
 		twoHopNeighbors = step1Result["twoHop"];
 		mpr_set = step1Result["mpr"];
 		if(twoHopNeighbors.length > 0){
-			solution["MPR_set"].steps[i].text += "2-hop neighbors remaining to cover: "+_strigifyIntList(twoHopNeighbors)+".</br>";
-			solution["MPR_set"].steps[i].text += "Now, each time we will add to the MPR set the node who connects to the most 2-hop neighbors,\
+			solution["MPR_set"].steps[i].text += "</br>2-hop neighbors remaining to cover: "+_strigifyIntList(twoHopNeighbors)+".</br>";
+			solution["MPR_set"].steps[i].text += "Now, each time we will add to the MPR set the 1-hop neighbor who connects with the most 2-hop neighbors,\
 			 until all 2-hop neighborhood is covered.</br>";
 		}
 		else{
