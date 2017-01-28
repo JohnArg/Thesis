@@ -116,10 +116,14 @@ function _toggleNodeSize(){
 		if(biggerNodeSize){	
 			network.nodes[i].graphic.resize(45,45);
 			network.nodes[i].graphic.attr("text/font-size", "16pt");
+			var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
+			weightRect.attr("text/font-size", "16pt");
 		}
 		else{
 			network.nodes[i].graphic.resize(35,35);
 			network.nodes[i].graphic.attr("text/font-size", "12pt");
+			var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
+			weightRect.attr("text/font-size", "12pt");
 		}
 	}
 	if(biggerNodeSize){
@@ -176,12 +180,24 @@ var _repaintGraph = function(newNetwork){
 				text: { text : newNode.id, fill : 'white', "font-size" : "12pt"}},
 			prop:{ node_id : newNode.id}
 		});
+		var weightRect = new joint.shapes.basic.Rect({
+			position: { x: newNode.position.x - 20, y: newNode.position.y - 20},
+	    	size:{ width:40, height:25},
+	    	attrs:{ rect : {opacity : 0.0}, 
+				text: { text : "13", fill : '#bf870f', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "0.0"}},
+	    	prop:{ node_id : newNode.id}
+		});
+		circleShape.embed(weightRect);
 		//stop adding/removing nodes if you moved one
 		circleShape.on("change:position",function(){
 			stopFunctionality("all");
 		});
+		weightRect.on("change:position",function(){
+			stopFunctionality("all");
+		});
 		//add the new shape to the graph
 		graph.addCell(circleShape);
+		graph.addCell(weightRect);
 		//create the node in the network
 		var node = new Node( newNode.id, newNode.neighbors , circleShape);
 		node.position.x = newNode.position.x;

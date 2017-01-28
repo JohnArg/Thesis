@@ -92,12 +92,24 @@ $(document).ready(function(){
 					text: { text : nodeID, fill : 'white', "font-size" : "12pt"}},
 	    		prop:{ node_id : nodeID}
 	    	});
+			var weightRect = new joint.shapes.basic.Rect({
+				position: { x: x - 40, y: y - 40},
+	    		size:{ width:40, height:25},
+	    		attrs:{ rect : {opacity : 0.0}, 
+					text: { text : "13", fill : '#2f7798', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "0.0"}},
+	    		prop:{ node_id : nodeID}
+			});
+			circleShape.embed(weightRect);
 	    	//stop adding/removing nodes if you moved one
 	    	circleShape.on("change:position",function(){
 	   			stopFunctionality("all");
 	    	});
+			weightRect.on("change:position",function(){
+	   			stopFunctionality("all");
+	    	});
 	    	//add the new shape to the graph
 	    	graph.addCell(circleShape);
+			graph.addCell(weightRect);
 	    	//create the node in the network
 	    	var node = new Node( nodeID, [], circleShape);
 	    	network.nodes.push(node);

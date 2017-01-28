@@ -60,6 +60,22 @@ var max_min_table = function(solution){
 }
 
 
+//will show text weights after DCA execution
+var _showNodeWeights = function(weightMap){
+	for(var i=0; i<weightMap.length; i++){
+		var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
+		weightRect.attr({text: { text : weightMap[i], fill : '#bf870f', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "1.0"}});
+	}
+}
+
+//hides all weight text
+var _hideWeights = function(){
+	for(var i=0; i<network.nodes.length; i++){
+		var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
+		weightRect.attr({text: {"fill-opacity" : "0.0"}});
+	}
+}
+
 /*Check response type and use appropriate handler
 The response will be an object that contains the 
 fields:
@@ -100,6 +116,7 @@ function _clearViewAndData(){
 
 //Clear View only
 function _clearView(){
+	_hideWeights();
 	_hideArrowHeads();
 	_paintEverythingDefault();
 }
@@ -375,6 +392,7 @@ function _mprCdsAnalysis(response){
 
 //Show steps of the DCA algorithm
 function _dcaAnalysis(response){
+	_showNodeWeights(weightMap);
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : </p>"

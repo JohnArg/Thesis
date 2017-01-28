@@ -251,7 +251,7 @@ var _procedureInit = function(network, solution){
 	var neighbors = [];
 	var timestep1 = solutionFactory.newSolution();
 	solution["DCA_timesteps"].push(timestep1);
-	timestep1.text ="Timestep 1.<br/>Beginning with \"Procedure Init\" of the DCA Algorithm.\
+	timestep1.text ="Timestep 1.</br>Beginning with \"Procedure Init\" of the DCA Algorithm.\
 	</br>Only the nodes with the highest weight in their neighborhood send CH.";
 	//First send the messages
 	for(var i=0; i<network.nodes.length; i++){
@@ -306,20 +306,25 @@ var _stepSimulator = function(network, solution){
 			node = network.nodes[i];
 			if(!node.EXIT){
 				if(node.toSend["type"] != null){
-					wereMessagesSent = true;
 					neighbors = netOperator.returnNeighborObjects(node, network);
 					if((node.toSend["type"] == "CH") && (node.toSend["timestep"] == timestep)){
+						wereMessagesSent = true;
 						_sendCH(node, network, timestepSol);
 						for(var j=0; j<neighbors.length; j++){
-							receiveQueue.push({"type" : "CH", "nodeToCall" : neighbors[j], "sender" : node});
+							if(!neighbors[j].EXIT){
+								receiveQueue.push({"type" : "CH", "nodeToCall" : neighbors[j], "sender" : node});
+							}
 						}
 						node.toSend = {};
 					}
 					else if((node.toSend["type"] == "JOIN") && (node.toSend["timestep"] == timestep)){
+						wereMessagesSent = true;
 						_sendJOIN(node, netOperator.returnNodeById(node.toSend["receiver"], network), network, timestepSol);
 						for(var j=0; j<neighbors.length; j++){
-							receiveQueue.push({"type" : "JOIN", "nodeToCall" : neighbors[j], "sender" : node, 
+							if(!neighbors[j].EXIT){
+								receiveQueue.push({"type" : "JOIN", "nodeToCall" : neighbors[j], "sender" : node, 
 								"receiver" : netOperator.returnNodeById(node.toSend["receiver"], network)});
+							}
 						}
 						node.toSend = {};
 					}
@@ -328,10 +333,10 @@ var _stepSimulator = function(network, solution){
 		}
 		//Now execute the receiving functions
 		for(var i=0; i<receiveQueue.length; i++){
-			if((receiveQueue[i]["type"] == "CH") && (receiveQueue[i]["nodeToCall"].EXIT == false)){
+			if(receiveQueue[i]["type"] == "CH"){
 				_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, timestep, timestepSol);
 			}
-			else if((receiveQueue[i]["type"] == "JOIN") && (receiveQueue[i]["nodeToCall"].EXIT == false)){
+			else if(receiveQueue[i]["type"] == "JOIN"){
 				_receiveJOIN(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], receiveQueue[i]["receiver"], network, timestep, timestepSol);
 			}
 		}
