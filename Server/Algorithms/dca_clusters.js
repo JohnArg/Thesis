@@ -42,6 +42,8 @@ var _changeToDcaNodes = function(network, weights){
 		network.nodes[i].JOIN_messagesInbox = []; //will contain the JOIN messages received.
 		network.nodes[i].toSend = {};	//message to be sent in the next step of the execution.
 		network.nodes[i].EXIT = false;
+		network.nodes[i].bCastAndExit = false; //when true the node will broadcast first and then exit
+		network.nodes[i].iSentCh = false; //it is needed to decide whether a clusterhead has sent a CH already or now is the time
 	}
 }
 
@@ -73,6 +75,7 @@ var _sendCH = function(node, network, timestepSolution){
 	if(node.clusterhead != node.id){
 		node.clusterhead = node.id;
 		node.cluster.push(node.id);
+		node.iSentCh = true;
 	}
 	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
@@ -158,8 +161,14 @@ var _clusterheadHandlesJOIN = function(receiver, sender, clusterhead, smallerWei
 		}
 	}
 	if(allSent){
-		receiver.EXIT = true;
-		step.text +="Clusterhead "+receiver.id+" Exited. All smaller weighted neighbors have sent JOIN."; 
+		if(receiver.iSentCh){
+			receiver.EXIT = true;
+			step.text +="Clusterhead "+receiver.id+" Exited. All smaller weighted neighbors have sent JOIN."; 
+		}
+		else{
+			receiver.bCastAndExit = true;
+			step.text +="Clusterhead "+receiver.id+" will send CH and Exit. All smaller weighted neighbors have sent JOIN."; 
+		}
 	}
 }
 
@@ -215,8 +224,8 @@ var _receiveJOIN = function(receiver, sender, clusterhead, network, timestep, ti
 					}
 				}
 				if(exit){
-					receiver.EXIT = true;
-					timestepSolution.steps[stepIndex].text += "</br>Node "+receiver.id+" Exited."; 
+					receiver.bCastAndExit = true;
+					timestepSolution.steps[stepIndex].text += "</br>Node "+receiver.id+" will send CH and Exit."; 
 				}
 			}
 			else{ //they all sent CH or JOIN
@@ -328,15 +337,19 @@ var _stepSimulator = function(network, solution){
 						}
 						node.toSend = {};
 					}
+					if(node.bCastAndExit){
+						node.EXIT = true;
+						timestepSol.steps[timestepSol.steps.length-1].text += " Node "+node.id+" Exited.";
+					}
 				}
 			}
 		}
 		//Now execute the receiving functions
 		for(var i=0; i<receiveQueue.length; i++){
-			if(receiveQueue[i]["type"] == "CH"){
+			if((receiveQueue[i]["type"] == "CH")&&(!receiveQueue[i]["nodeToCall"].EXIT)){
 				_receiveCH(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], network, timestep, timestepSol);
 			}
-			else if(receiveQueue[i]["type"] == "JOIN"){
+			else if((receiveQueue[i]["type"] == "JOIN")&&(!receiveQueue[i]["nodeToCall"].EXIT)){
 				_receiveJOIN(receiveQueue[i]["nodeToCall"], receiveQueue[i]["sender"], receiveQueue[i]["receiver"], network, timestep, timestepSol);
 			}
 		}

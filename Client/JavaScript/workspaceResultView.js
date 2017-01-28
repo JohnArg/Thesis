@@ -588,6 +588,7 @@ $(document).ready(function(){
 
 	$(document).on("click",".dca-step",function(){
 		_clearView();
+		_showNodeWeights(weightMap);
 		_paintClusters(stepDataArray[$(this).attr("id")]);
 	});
 
