@@ -52,7 +52,7 @@ var _insertToCluster = function(solution, node){
             break;
         }
     }
-    if(index == -1){ //not found
+    if(index == -1){ //cluster not found - create a record
         if(node.id == node.finalWinner["winner"]){  //if i am a clusterhead
             solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.id]});
         }
@@ -60,8 +60,10 @@ var _insertToCluster = function(solution, node){
             solution["clusters"].push({"clusterhead" : node.finalWinner["winner"], "group" : [node.finalWinner["winner"],node.id]});
         }    
     }
-    else{
-        solution["clusters"][index]["group"].push(node.id);
+    else{ //the cluster exists
+        if(node.id != solution["clusters"][index]["clusterhead"]){  //if i am not the clusterhead
+            solution["clusters"][index]["group"].push(node.id);
+        }
     }
 }
 

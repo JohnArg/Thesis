@@ -90,11 +90,8 @@ var _removeMaxMinHighlight = function(){
 var _highlightMaxMinCandidates = function(cellID){
 	_removeMaxMinHighlight();
 	let cell = _parseMaxMinId(cellID);
-	console.log(cell);
-	console.log(cellID);
 	$("#"+cellID).addClass("cellSelected");
 	let node = returnNodeById(cell.id);
-	console.log(node);
 	for(var i=0; i<node.neighbors.length; i++){
 		let neighID = node.neighbors[i] + "_" + (cell.line-1);
 		$("#"+neighID).addClass("cellCandidate");
@@ -468,7 +465,7 @@ var _maxMinAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var table = new max_min_table(solution);
-	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong> First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below. Use the buttons to show the result of each part of the algorithm. By default the floodmin/floodmax result is shown.</p>" +
+	var text = "<p class=\"solution-result colored-text2\"><strong>Part 1 : </strong> First the algorithm runs the floodmax stage and then the floodmin. The result of the floodmax and floodmin stages are shown in the table below. Use the buttons to show the result of each part of the algorithm. By default the floodmin/floodmax result is shown. Clink on a table cell, to see the candidate values that were compared, to select this cell's final value.</p>" +
 	"<p class=\"solution-result colored-text4\"> [ "+_stringifyDcaResult(solution.clusters) +" ].</p>"
 	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"max_min_btn_orig\">Floodmax/Floodmin Result</button>";
 	text += table.text; 
