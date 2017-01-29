@@ -16,6 +16,14 @@ $unidirectionalLinkColor : #d69c15;
 	padding-top:5px;
 }
 
+.cellSelected{
+	background-color: #55ce40 !important;
+}
+
+.cellCandidate{
+	background-color: #cec040 !important; 
+}
+
 .btn-group-vertical{
 	@include border_radius();
 }

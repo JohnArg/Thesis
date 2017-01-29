@@ -41,16 +41,21 @@ var CLUSTER_COLORS = [
 var max_min_table = function(solution){
 	this.text = "<div id='max_min_table_container'>";
 	for(var i=0; i<network.nodes.length; i++){
+		let line = 0;	//used for parsing, an index to the line of a cell
 		this.text += "<div class=\"max_min_col_container\">";
-		this.text += "<div class=\"max_min_col_heading\"><p>"+network.nodes[i].id+"</p></div>";
-		for(var j=0; j<solution["floodmax"][i].length; j++){
-			this.text += "<div class=\"max_min_col_data\"><p>";	//column data container
+		let id = network.nodes[i].id+"_"+line;
+		line++;
+		this.text += "<div class=\"max_min_col_heading\" id='"+id+"'><p>"+network.nodes[i].id+"</p></div>";
+		for(var j=0; j<solution["floodmax"][i].length; j++, line++){
+			id = network.nodes[i].id+"_"+line;
+			this.text += "<div class=\"max_min_col_data\" id='"+id+"'><p>";	//column data container
 			this.text += solution["floodmax"][i][j]["winner"];
 			this.text += "</p></div>";
 		}
 		this.text += "<div class=\"max_min_col_divider\"></div>";
-		for(var j=0; j<solution["floodmin"][i].length; j++){
-			this.text += "<div class=\"max_min_col_data\"><p>";	//column data container
+		for(var j=0; j<solution["floodmin"][i].length; j++, line++){
+			id = network.nodes[i].id+"_"+line;
+			this.text += "<div class=\"max_min_col_data\" id='"+id+"'><p>";	//column data container
 			this.text += solution["floodmin"][i][j]["winner"];
 			this.text += "</p></div>";
 		}
@@ -59,6 +64,43 @@ var max_min_table = function(solution){
 	this.text += "</div>";
 }
 
+//parse the id string of a cell in the max min table 
+var _parseMaxMinId = function(idStr){
+	let idS = "";	//id of the node to whom the column of this cell belongs
+	let lineS = "";	//in which line of the flood table are we
+	let i; //maintain index
+	for(i=0; idStr[i] != '_'; i++){	//read the id first
+		idS += idStr[i];
+	}
+	for(i=i+1; i<idStr.length; i++){	//read line
+		lineS += idStr[i];
+	}
+	return { id : parseInt(idS), line : parseInt(lineS) };
+}
+
+//remove the highlighting of max min cells
+var _removeMaxMinHighlight = function(){
+	$(".max_min_col_heading").removeClass("cellCandidate");
+	$(".max_min_col_data").removeClass("cellSelected");
+	$(".max_min_col_data").removeClass("cellCandidate");
+}
+
+//Highlights the max min tables cells, the values of which where used 
+//as candidates in the decision of the selected cell's value
+var _highlightMaxMinCandidates = function(cellID){
+	_removeMaxMinHighlight();
+	let cell = _parseMaxMinId(cellID);
+	console.log(cell);
+	console.log(cellID);
+	$("#"+cellID).addClass("cellSelected");
+	let node = returnNodeById(cell.id);
+	console.log(node);
+	for(var i=0; i<node.neighbors.length; i++){
+		let neighID = node.neighbors[i] + "_" + (cell.line-1);
+		$("#"+neighID).addClass("cellCandidate");
+	}
+	$("#"+node.id+"_"+(cell.line-1)).addClass("cellCandidate");
+}
 
 //will show text weights after DCA execution
 var _showNodeWeights = function(weightMap){
@@ -112,6 +154,7 @@ function _clearViewAndData(){
 	max_min_clustersOrig = [];
 	max_min_clustersAfter = [];
 	_clearView();
+	_removeMaxMinHighlight();
 }
 
 //Clear View only
@@ -444,7 +487,6 @@ var _maxMinAnalysis = function(response){
 		text += solution.messages_solution.steps[i].text;
 		text += "</a>";
 		stepDataArray.push(solution.messages_solution.steps[i].data);
-		console.log(solution.messages_solution.steps[i].data);
 		stepId++;
 	}
 	$("#solutionBoxData").html(text);
@@ -562,10 +604,8 @@ var _misAnalysis = function(response){
 	misRootIndex = solution["cdsRootIndex"];
 	misPaintRootStepIndex = stepThreshold + solution["cdsRootColoringStep"];
 	_paintMIS(finalMisColors);
-	console.log(bidirectionalEdgeList);
 	_paintEdgesFromList(bidirectionalEdgeList, false);
 	_paintMisRoot();
-	console.log(unidirectionalEdgeList);
 	_paintEdgesFromList(unidirectionalEdgeList, true);
 }
 
@@ -590,6 +630,10 @@ $(document).ready(function(){
 		_clearView();
 		_showNodeWeights(weightMap);
 		_paintClusters(stepDataArray[$(this).attr("id")]);
+	});
+
+	$(document).on("click", ".max_min_col_data", function(){
+		_highlightMaxMinCandidates($(this).attr("id"));
 	});
 
 	$(document).on("click",".lmst-step",function(){

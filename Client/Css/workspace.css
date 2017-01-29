@@ -85,6 +85,12 @@ a:hover, a:visited, a:active {
 
 /*Globals*/
 /* Bootstrap override ========= */
+.cellSelected {
+  background-color: #55ce40 !important; }
+
+.cellCandidate {
+  background-color: #cec040 !important; }
+
 .btn-group-vertical {
   -webkit-border-radius: 0 !important;
   -moz-border-radius: 0 !important;

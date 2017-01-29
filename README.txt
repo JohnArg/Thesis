@@ -32,7 +32,7 @@ have the ability to save the created network and load it again
 when they wish. 
 
 Technical :
-This is a Node.js/Express.js Web App with Handlebars as the templating engine. 
+This is a Node.js/Express.js Web App with Handlebars as the templating engine. The graphs are made with Joint.js
 The app starts by executing the adHocEd.js file with Node's command: "node adHocEd.js" (or "nodejs adHocEd.js" for some systems)
 The server runs on localhost:3000. For setup, appropriate changes should be made in the /Client/JavaScript/server_url.js file
 Use the "npm install" command to automatically install the dependencies

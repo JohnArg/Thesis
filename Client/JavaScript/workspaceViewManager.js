@@ -282,7 +282,6 @@ var _sendRetrieveNetworks = function(){
 		method : "GET",
 		dataType : "json",
 		success: function(response, status, XMLHttpRequest){
-			console.log(response.data)
 			_fillLoadScrollView(response.data);
 			$("#load_modal").modal("show");
 		},
@@ -480,7 +479,6 @@ var _dcaDialogWeightsHandler = function(){
 		}
 		//then randomly suffle the weights
 		weightMap = _.shuffle(weightMap);
-		console.log(network);
 		ajaxObject["extras"]["weights"] = weightMap;
 		_sendAlgorithmRequest();
 		$("#dca_dialog").modal("hide");
@@ -510,7 +508,6 @@ var _dcaDialogWeightsHandler = function(){
 			}
 		}
 	}
-	console.log(weightMap);
 }
 //After loading doc ==========================================
 $(document).ready(function() {	
