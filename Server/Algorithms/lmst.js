@@ -14,7 +14,8 @@ var lmstFactory = function(){
 var lmstObject = function(){
     var that = this;
     that.solution = {
-        "LMSTs" : [], //list of all LMST trees
+        "Topology" : [], //the final graph after the calculation of all LMSTs and the neighbor relations
+        "LMSTs" : [], //list of all LMST trees, not the same as above (read algorithm)
         "step_data" : solutionFactory.newSolution(),
         "uni-directional" : []
     };
@@ -26,9 +27,9 @@ var lmstObject = function(){
             that.solution["step_data"].steps[i].text = "<p class=\"colored-text2\">Current node : "+network.nodes[i].id+".</p>";
             subnetwork = _returnSubnetwork(network.nodes[i], network);
             edges = _returnEdges(subnetwork, that.solution["step_data"]);
-            that.solution["LMSTs"].push(_executePrim(subnetwork, edges, that.solution["step_data"]));
+            that.solution["LMSTs"].push({ id : network.nodes[i].id , tree: _executePrim(subnetwork, edges, that.solution["step_data"])});
         }
-        that.solution["uni-directional"] = _uniDirectionalEdges(that.solution["LMSTs"]);
+        that.solution["uni-directional"] = _uniDirectionalEdges(that.solution["LMSTs"], that.solution["Topology"]);
         return that.solution;
     };
 }
@@ -303,24 +304,39 @@ var _executePrim = function(subnetwork, edges, step_data){
 //Returns the index in LMSTs array where the node with the given id is located 
 var _returnLMSTNodeIndex = function(node_id, LMSTs){
     for(var i=0; i<LMSTs.length; i++){
-        if(LMSTs[i][0]["source"] == node_id){   //each row of LMST contains edges and the 1st edge's "source" contains the corresponding node id
+        if(LMSTs[i].id == node_id){   //each row of LMST contains edges and the 1st edge's "source" contains the corresponding node id
             return i;
         }
     }
 }
 
+//Checks if this edge contains the input verted
+var _checkIfEdgeContains = function(vertex, edge){
+    if(edge["source"] == vertex){
+        return true;
+    }
+    else if(edge["target"] == vertex){
+        return true;
+    }
+    return false;
+}
+
 //Returns the unidirectional edges from the LMSTs array in the solution
-var _uniDirectionalEdges = function(LMSTs){
+//At the same time it calculates the final Topology
+var _uniDirectionalEdges = function(LMSTs, Topology){
     var result = [];
-    var edge;
     var found;
     var index;
-    for(var i=0; i<LMSTs.length; i++){
-        for(var j=0; j<LMSTs[i].length; j++){
-            index = _returnLMSTNodeIndex(LMSTs[i][j]["target"], LMSTs); //give me the index to the LMST of the target node
-            found = _checkIfEdgeExists(LMSTs[i][j], LMSTs[index]);  //is there an edge in the LMST of the target connecting it with the original node?
-            if(!found){ //it's unidirectional
-                result.push([i,j]); //push the indexes to the edge inside the LMSTs array
+    for(var i=0; i<LMSTs.length; i++){  //we check the LMST of every node
+        for(var j=0; j<LMSTs[i].tree.length; j++){ //we check every edge of that LMST
+            if(_checkIfEdgeContains(LMSTs[i].id, LMSTs[i].tree[j])){ //consider only the edges containing the node we are checking now
+                let target = _returnOtherVertex(LMSTs[i].id, LMSTs[i].tree[j]); //give me the neighbor of the node we check through this edge
+                index = _returnLMSTNodeIndex(target, LMSTs); //give me the index to the LMST of the target node
+                found = _checkIfEdgeExists(LMSTs[i].tree[j], LMSTs[index].tree);  //is there an edge in the LMST of the target connecting it with the node we check?
+                if(!found){ //it's unidirectional
+                    result.push([i,j]); //push the indexes to the edge inside the LMSTs array
+                }
+                Topology.push(LMSTs[i].tree[j]);
             }
         }
     }

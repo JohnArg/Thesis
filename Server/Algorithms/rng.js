@@ -32,7 +32,7 @@ var _calculateLocalRNG = function(node, network, solution){
     neighbors = netOperator.returnNeighborObjects(node, network);
     solution.createStep();
     solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p>";
-    //first calcualte the distances of node from all its neighbors
+    //First calculate the distances of node from all its neighbors
     for(var i=0; i<neighbors.length; i++){
         x_diff = node.position.x - neighbors[i].position.x;
         y_diff = node.position.y - neighbors[i].position.y;
@@ -45,7 +45,7 @@ var _calculateLocalRNG = function(node, network, solution){
     for(var i=0; i<neighbors.length; i++){
         valid = true;
         for(var j=0; j<neighbors.length; j++){  //is there any other neighbor inside the intersection of the 2 nodes' circles?
-            if((neighbors[i].id != neighbors[j].id) && (_.indexOf(neighbors[i].neighbors, neighbors[j].id) != -1)){
+            if((i != j) && (_.indexOf(neighbors[i].neighbors, neighbors[j].id) != -1)){
                 x_diff = neighbors[i].position.x - neighbors[j].position.x;
                 y_diff = neighbors[i].position.y - neighbors[j].position.y;
                 distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2)); //distance between the 2 neighbors

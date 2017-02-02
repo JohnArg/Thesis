@@ -6,6 +6,7 @@ var stepDataArray = [];	//holds each step data in memory after the ajax response
 var unidirectionalEdgesIndexes = []; //holds INDEXES not edge objects (to minimize data), which refer to positions in the step data Array. Used ONLY on LMST
 var bidirectionalEdgeList = [];	//this one and the one below will hold edge objects when necessary
 var unidirectionalEdgeList = [];
+var topologyGraph = []; //will contain topology graph for LMST
 var finalMisColors = []; //it will hold the final result of MIS coloring for repainting
 var misRootIndex = -1;
 var misPaintRootStepIndex = -1;	//from which step to start painting the MIS cds root 
@@ -150,6 +151,7 @@ function _clearViewAndData(){
 	stepThreshold = -1;
 	max_min_clustersOrig = [];
 	max_min_clustersAfter = [];
+	topologyGraph = [];
 	_clearView();
 	_removeMaxMinHighlight();
 }
@@ -513,12 +515,13 @@ var _lmstAnalysis = function(response){
 		text += "<a href=\"#\" class=\"lmst-step step\" id=\""+stepId+"\">";
 		text += solution["step_data"].steps[i].text;
 		text += "</a>";
-		stepDataArray.push(solution["LMSTs"][i]);
+		stepDataArray.push(solution["LMSTs"][i].tree);
 		stepId++;
 	}
 	unidirectionalEdgesIndexes = solution["uni-directional"];
+	topologyGraph = solution["Topology"].slice();
 	$("#solutionBoxData").html(text);
-	_paintTopologyTree();
+	_paintEdgesFromList(topologyGraph);
 	_paintUnidirectionalEdgesLMST("0");
 }
 
@@ -646,19 +649,19 @@ $(document).ready(function(){
 
 	$(document).on("click","#lmst_btn_orig",function(c){
 		_clearView();
-		_paintTopologyTree();
+		_paintEdgesFromList(topologyGraph);
 		_paintUnidirectionalEdgesLMST("0");
 	});
 
 	$(document).on("click","#lmst_btn_g0plus",function(c){
 		_clearView();
-		_paintTopologyTree();
+		_paintEdgesFromList(topologyGraph);
 		_paintUnidirectionalEdgesLMST("+");
 	});
 
 	$(document).on("click","#lmst_btn_g0minus",function(c){
 		_clearView();
-		_paintTopologyTree();
+		_paintEdgesFromList(topologyGraph);
 		_paintUnidirectionalEdgesLMST("-");
 	});
 

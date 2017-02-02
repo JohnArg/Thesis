@@ -46,8 +46,7 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
 						<li><span class='colored-text4'>Moving a node automatically deselects the tools!</span></li>\
 						<li>Press <b class=\"text-info\">Save</b> to save your graph.</li>\
-						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.<span class='colored-text4'> If you resize \
-						the window, remember to refresh the page before loading a graph.</span></li>\
+						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.</li>\
 						</ul>\
 					</article>\
 				</section>",

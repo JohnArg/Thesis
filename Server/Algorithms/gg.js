@@ -32,7 +32,7 @@ var _calculateLocalGG = function(node, network, solution){
     var y_diff;
     solution.createStep();
     solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p>";
-    //first calcualte the distances of node from all its neighbors
+    //First calculate the distances of node from all its neighbors
     for(var i=0; i<neighbors.length; i++){
         x_diff = node.position.x - neighbors[i].position.x;
         y_diff = node.position.y - neighbors[i].position.y;
@@ -46,7 +46,7 @@ var _calculateLocalGG = function(node, network, solution){
     for(var i=0; i<neighbors.length; i++){
         valid = true;
         for(var j=0; j<neighbors.length; j++){
-            if((neighbors[i].id != neighbors[j].id) && (_.indexOf(neighbors[i].neighbors, neighbors[j].id) != -1)){
+            if((i != j) && (_.indexOf(neighbors[i].neighbors, neighbors[j].id) != -1)){
                 x_diff = centers[i].x - neighbors[j].position.x;
                 y_diff = centers[i].y - neighbors[j].position.y;
                 distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
