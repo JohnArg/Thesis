@@ -317,8 +317,8 @@ var _uniDirectionalEdges = function(LMSTs){
     var index;
     for(var i=0; i<LMSTs.length; i++){
         for(var j=0; j<LMSTs[i].length; j++){
-            index = _returnLMSTNodeIndex(LMSTs[i][j]["target"], LMSTs);
-            found = _checkIfEdgeExists(LMSTs[i][j], LMSTs[index]);
+            index = _returnLMSTNodeIndex(LMSTs[i][j]["target"], LMSTs); //give me the index to the LMST of the target node
+            found = _checkIfEdgeExists(LMSTs[i][j], LMSTs[index]);  //is there an edge in the LMST of the target connecting it with the original node?
             if(!found){ //it's unidirectional
                 result.push([i,j]); //push the indexes to the edge inside the LMSTs array
             }

@@ -286,7 +286,7 @@ function _paintUnidirectionalEdgesLMST(option_g0){
 	var source;
 	var target;
 	var style;
-	var linkID;
+	var reverseDirection; //don't reverse direction
 	if(option_g0 == "+"){
 		style = LINK_BI;
 	}
@@ -297,6 +297,7 @@ function _paintUnidirectionalEdgesLMST(option_g0){
 		style = LINK_UNI;
 	}
 	for(var i=0; i<unidirectionalEdgesIndexes.length; i++){
+		reverseDirection =false;
 		edge = stepDataArray[ unidirectionalEdgesIndexes[i][0] ][ unidirectionalEdgesIndexes[i][1] ];
 		node = returnNodeById(edge["source"]); //we need it to get the graphics model
 		links = graph.getConnectedLinks(node.graphic, {});
@@ -309,13 +310,18 @@ function _paintUnidirectionalEdgesLMST(option_g0){
 			}
 			else if((source == edge["target"])&&(target == edge["source"])){
 				link = links[j];
+				reverseDirection = true;
 				break;
 			}
 		}
 		link.attr(style);
 		if(style == LINK_UNI){
-			linkID = link.id;
-			$("[ model-id ="+linkID+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
+			if(!reverseDirection){
+				$("[ model-id ="+link.id+"]").find(".marker-arrowhead-group-target").css({ "opacity" : "1"}); //show the arrowhead
+			}
+			else{
+				$("[ model-id ="+link.id+"]").find(".marker-arrowhead-group-source").css({ "opacity" : "1"}); //show the arrowhead
+			}
 		}
 	}
 }
