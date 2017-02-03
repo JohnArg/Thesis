@@ -58,11 +58,11 @@ var _convertToMisNodes = function(rootIndex, network){
         network.nodes[i].cdsChildren = [];
     }
     //Also add some properties to the network object used later in the solutions 
-    //(since the network object is a parameter in most functions, there is no need to add a new object holding these booleans)
-    network.rootIndex = rootIndex;
-    network.cdsRootIndex = -1;
+    //(since the network object is a parameter in most functions, there is no need to add a new object holding these values)
+    network.rootIndex = rootIndex;  //index to the root of the PIF tree inside the network.nodes array
+    network.cdsRootIndex = -1;      //index to the root of the CDS tree inside the network.nodes array
     network.beginColorMarking = false;
-    network.beginCDS =false;
+    network.beginCDS = false;
     network.finishedAll = false;
     network.messageQueue = []; //it will be used to keep an order of the messages to be sent over the network
 }
@@ -81,9 +81,9 @@ var _constructRootedTree = function(network){
         edges.push({"source" : network.nodes[network.rootIndex].id, "target" : neighbors[i].id});
     }   
     //Then the rest of the nodes broadcast
-    var newBcastList = [];
+    var newBcastList;
     while(toBroadcastList.length > 0){
-        newBcastList = toBroadcastList.slice();
+        newBcastList = [];
         for(var i=0; i<toBroadcastList.length; i++){
             neighbors = netOperator.returnNeighborObjects(toBroadcastList[i], network);
             for(var j=0; j<neighbors.length; j++){
@@ -95,11 +95,8 @@ var _constructRootedTree = function(network){
                     edges.push({"source" : toBroadcastList[i].id, "target" : neighbors[j].id});
                 }
             }  
-            newBcastList = newBcastList.filter(function(el){ //after finishing remove the node from the Broadcast List
-                return el.id != toBroadcastList[i].id;
-            });
         }
-        toBroadcastList = newBcastList.slice();
+        toBroadcastList = newBcastList;
     }
     return edges;
 }

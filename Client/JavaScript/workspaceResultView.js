@@ -328,7 +328,7 @@ function _paintUnidirectionalEdgesLMST(option_g0){
 	}
 }
 
-//Paint the whole Topology tree
+//Paint the whole Topology tree using each node's local topology graph
 function _paintTopologyTree(){
 	_repaintEdgesDefault();
 	for(var i=0; i<stepDataArray.length; i++){
@@ -574,7 +574,9 @@ var _misAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];
 	var text = "<div><p class=\"solution-result colored-text\">Results of the Maximal Independent Set (MIS) algorithm.</p>"+
-	"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>";
+	"<p class=\"solution-result colored-text\">Execution Analysis :</p></div>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"mis_btn_rooted\">Rooted Tree</button>"
+	+"<button class=\"btn btn_custom btn-default btn-margins\" id=\"mis_btn_cds\">CDS Tree</button>";
 	text += solution["levels"].text;
 	//No need to push these steps in the stepDataArray
 	for(var i=0; i<solution["levels"].steps.length; i++){
@@ -700,6 +702,19 @@ $(document).ready(function(){
 			_paintMisRoot();
 		}
 		_paintEdgesFromList(stepDataArray[$(this).attr("id")], true);
+	});
+
+	$(document).on("click", "#mis_btn_rooted", function(){
+		_clearView();
+		_paintEdgesFromList(bidirectionalEdgeList, false);
+	});
+
+	$(document).on("click", "#mis_btn_cds", function(){
+		_clearView();
+		_paintMIS(finalMisColors);
+		_paintEdgesFromList(bidirectionalEdgeList, false);
+		_paintMisRoot();
+		_paintEdgesFromList(unidirectionalEdgeList, true);
 	});
 
 	$(document).on("click","#max_min_btn_orig", function(){

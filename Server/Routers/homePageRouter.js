@@ -71,11 +71,9 @@ router.post("/logIn", function(request, response){
             }
             else{
                 if(!session){ //No user is logged in
-                    let database = queriesModule.newQueryObject();
-                    database.connection.connect();
                     let username = request.body.username;
                     let password = request.body.password;
-                    database.logIn(request, response, sessionStore, username, password);
+                    queriesModule.logIn(request, response, sessionStore, username, password);
                 }
                 else{ //User already logged in
                     response.status(200).send("OK");  //The message will force a redirect on client to /workspace
@@ -99,15 +97,13 @@ router.post("/signUp", function(request, response){
             }
             else{
                 if(!session){ //no user logged in
-                    let database = queriesModule.newQueryObject();
-                    database.connection.connect();
                     let data = {
                         first_name : request.body.first_name,
                         last_name : request.body.last_name,
                         username : request.body.username,
                         password : request.body.password
                     }
-                    database.signUp(request, response, sessionStore, data);
+                    queriesModule.signUp(request, response, sessionStore, data);
                 }
                 else{ //A user is already logged in
                     response.status(200).send("OK");    //The message will force a redirect on client to /workspace

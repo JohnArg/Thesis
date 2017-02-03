@@ -112,9 +112,7 @@ router.get("/deleteAcc", function(request, response){
 			}
 			else{
 				if(session){ //user logged in
-					let database = queriesModule.newQueryObject();
-                    database.connection.connect();
-					database.deleteAccount(request, response, session, sessionStore);
+					queriesModule.deleteAccount(request, response, session, sessionStore);
 				}
 				else{ //no session exists
 					request.session.destroy(()=>{
@@ -143,14 +141,12 @@ router.post("/saveNet", function(request, response){
 					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
 				}
 				else{
-					let database = queriesModule.newQueryObject();
-                    database.connection.connect();
 					let callbackParams = {
 						responseObj : response,
 						netName : request.body.name,
 						network : request.body.data
 					};
-					database.retrieveUserIdAndCallNext(database.saveNetwork, callbackParams, request.session.username);
+					queriesModule.retrieveUserIdAndCallNext(queriesModule.saveNetwork, callbackParams, request.session.username);
 				}
 			}
 		});
@@ -174,9 +170,7 @@ router.post("/deleteNet", function(request, response){
 					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
 				}
 				else{
-					let database = queriesModule.newQueryObject();
-                    database.connection.connect();
-					database.deleteNetwork(response, request.body.netID);
+					queriesModule.deleteNetwork(response, request.body.netID);
 				}
 			}
 		});
@@ -200,9 +194,7 @@ router.post("/loadNet", function(request, response){
 					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
 				}
 				else{
-					let database = queriesModule.newQueryObject();
-                    database.connection.connect();
-					database.loadNetwork(response, request.body.netID);
+					queriesModule.loadNetwork(response, request.body.netID);
 				}
 			}
 		});
@@ -226,12 +218,10 @@ router.get("/getGraphs", function(request, response){
 					response.status(400).send({message : "reloggin"}); //will force a /workspace redirect on client
 				}
 				else{
-					let database = queriesModule.newQueryObject();
-                    database.connection.connect();
 					let callbackParams = {
 						responseObj : response
 					};
-					database.retrieveUserIdAndCallNext(database.retrieveUserNetworks, callbackParams, request.session.username);
+					queriesModule.retrieveUserIdAndCallNext(queriesModule.retrieveUserNetworks, callbackParams, request.session.username);
 				}
 			}
 		});
