@@ -37,8 +37,8 @@ var _convertToMisNodes = function(rootIndex, network){
             network.nodes[i].root = true;
             network.nodes[i].parent = network.nodes[i].id;
             network.nodes[i].level = 0;
-            network.nodes[i].cdsRoot = -1;
-            network.nodes[i].cdsDegree = 0;
+            network.nodes[i].cdsRoot = -1;  //the id of the root in the CDS
+            network.nodes[i].cdsDegree = 0; //the number of black neighbors of the CDS root
         }
         else{
             network.nodes[i].root = false;
@@ -53,7 +53,6 @@ var _convertToMisNodes = function(rootIndex, network){
         network.nodes[i].blackList = []; //list of black neighbor's ids
         network.nodes[i].color = "white";
         network.nodes[i].inCdsTree = false;
-        network.nodes[i].cdsRoot = false;
         network.nodes[i].cdsParent = -1;
         network.nodes[i].cdsChildren = [];
     }
@@ -63,7 +62,6 @@ var _convertToMisNodes = function(rootIndex, network){
     network.cdsRootIndex = -1;      //index to the root of the CDS tree inside the network.nodes array
     network.beginColorMarking = false;
     network.beginCDS = false;
-    network.finishedAll = false;
     network.messageQueue = []; //it will be used to keep an order of the messages to be sent over the network
 }
 
@@ -334,7 +332,6 @@ var _onReceiveROOT = function(node, sender_id, network, solution){
     solution.createStep();
     solution.steps[solution.steps.length-1].text = "<p>Node "+node.id+" received ROOT message from "+sender_id+". It becomes the root of the CDS tree.</p>";  
     solution.steps[solution.steps.length-1].data.edges = [];
-    node.rootCds = true;
     network.cdsRootIndex = netOperator.returnNodeIndexById(node.id, network);
     node.inCdsTree = true;
     network.messageQueue.push({sender : node.id, type : "invite2"});
@@ -396,7 +393,7 @@ var _beginMessaging = function(network, solution){
             case "levelComplete": 
                 _sendMessage("levelComplete", sender, null, network, solution["levels"]); 
                 break;
-                default : break;
+            default : break;
         }
     }
     //Color marking process ===========================================
