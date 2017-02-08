@@ -103,16 +103,30 @@ var _highlightMaxMinCandidates = function(cellID){
 //will show text weights after DCA execution
 var _showNodeWeights = function(weightMap){
 	for(var i=0; i<weightMap.length; i++){
-		var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
-		weightRect.attr({text: { text : weightMap[i], fill : '#bf870f', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "1.0"}});
+		var weightRect = new joint.shapes.basic.Rect({
+			position: { x: network.nodes[i].graphic.position().x - 20, y: network.nodes[i].graphic.position().y - 20},
+			size:{ width:40, height:25},
+			attrs:{ 
+				rect : {opacity : 0.0}, 
+				text: {text : weightMap[i], fill : '#bf870f', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "1.0"}
+			},
+			prop:{weight : true}
+		});
+		weightRect.on("change:position",function(){
+			stopFunctionality("all");
+		});
+		graph.addCell(weightRect);
 	}
+	paper.scaleContentToFit({ "minScaleX" : nodeMinScale , "minScaleY" : nodeMinScale , "maxScaleX" : 1.0, "maxScaleY" : 1.0});
 }
 
 //hides all weight text
 var _hideWeights = function(){
-	for(var i=0; i<network.nodes.length; i++){
-		var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
-		weightRect.attr({text: {"fill-opacity" : "0.0"}});
+	var cells = graph.getElements();
+	for(var i=0; i<cells.length; i++){
+		if(cells[i].attributes.prop["weight"]){
+			cells[i].remove();
+		}
 	}
 }
 

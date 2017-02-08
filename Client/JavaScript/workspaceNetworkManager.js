@@ -32,6 +32,8 @@ var linkSelect1 = false;	//I'm in 'select first node' functionality while drawin
 var linkSelect2 = false;	//I'm in 'select second node' functionality while drawing a link
 var linkStart;				//Start node of the link
 var linkEnd; 				//End node of the link
+var clickedCell; 			//Which cell in the graph was clicked
+var settingCoords = false;	//whether we have selected to set coordinates
 
 //Returns a node object from the network
 var returnNodeById = function(search_id){
@@ -70,11 +72,34 @@ var stopFunctionality = function(options){
 			linkSelect2 = false;
 			removingLink = false;
 			moveCells = false;
+			settingCoords = false;
 			$(".tool-remove").show();
 			$(".workspace_btn").removeClass("workspace_btn_clicked");
 			break;
 		default: break;
 	}
+}
+
+//Use this to set a node's position, after the user entered the coordinates
+//Joint js doesn't update the position of the nodes after resizing so we use
+//offsets in the DOM to calculate the correct position 
+var setNodeCoordinates = function(){
+	console.log("Fucking executed");
+	let x = parseInt($("#coord_x_in").val());
+	let y = parseInt($("#coord_y_in").val());
+	let maxX = $("#graph_panel").width();
+	let maxY = $("#graph_panel").height();
+	if((x>=currentRadius)&&(y>=currentRadius)&&(x<maxX)&&(y<maxY)){
+		let joint_position = clickedCell.position();
+		let diff_x = joint_position.x - clickedCell.domPosition.x;
+		let diff_y = joint_position.y - clickedCell.domPosition.y;
+		clickedCell.position(diff_x + x, diff_y + y);
+	}
+	else{
+		alert("Invalid Input");
+	}
+	stopFunctionality("all");
+	$("#coord_modal").modal("hide");
 }
 
 $(document).ready(function(){
@@ -90,26 +115,14 @@ $(document).ready(function(){
 	    		size:{ width:35, height:35},
 	    		attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, 
 					text: { text : nodeID, fill : 'white', "font-size" : "12pt"}},
-	    		prop:{ node_id : nodeID}
+	    		prop:{ node_id : nodeID, weight : false}
 	    	});
-			var weightRect = new joint.shapes.basic.Rect({
-				position: { x: x - 40, y: y - 40},
-	    		size:{ width:40, height:25},
-	    		attrs:{ rect : {opacity : 0.0}, 
-					text: { text : "13", fill : '#2f7798', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "0.0"}},
-	    		prop:{ node_id : nodeID}
-			});
-			circleShape.embed(weightRect);
-	    	//stop adding/removing nodes if you moved one
+			//stop adding/removing nodes if you moved one
 	    	circleShape.on("change:position",function(){
-	   			stopFunctionality("all");
-	    	});
-			weightRect.on("change:position",function(){
 	   			stopFunctionality("all");
 	    	});
 	    	//add the new shape to the graph
 	    	graph.addCell(circleShape);
-			graph.addCell(weightRect);
 	    	//create the node in the network
 	    	var node = new Node( nodeID, [], circleShape);
 	    	network.nodes.push(node);
@@ -119,6 +132,7 @@ $(document).ready(function(){
 
     //Click on a node callbacks
     paper.on('cell:pointerclick', function(cellView, evt, x, y) { 
+		clickedCell = cellView.model;
     	//if we are removing nodes ======
 		if (removingNode){
 			//get the id of the node
@@ -160,9 +174,9 @@ $(document).ready(function(){
 			else{
 				linkSelect1 = true;
 			}
-		}   
+		}
 	});
- 
+
  	//Callback to react to removing a link(edge) from the interface
  	graph.on('remove',function(cell){
  		if( (cell.attributes.type == "link") && !removingNode){
@@ -243,6 +257,7 @@ $(document).ready(function(){
 		removingNode = false;
 		linkSelect1 = false;
 		linkSelect2 = false;
+		settingCoords = false;
 		//disable link tools
 		$(".tool-remove").hide();
 	});
@@ -252,6 +267,7 @@ $(document).ready(function(){
 		addingNode = false;
 		linkSelect1 = false;
 		linkSelect2 = false;
+		settingCoords = false;
 		//disable link tools
 		$(".tool-remove").hide();
 	});
@@ -260,6 +276,7 @@ $(document).ready(function(){
     	linkSelect1 = true;
     	addingNode = false;
     	removingNode = false;
+		settingCoords = false;
     	//disable link tools
 		$(".tool-remove").hide();
     });
@@ -269,10 +286,37 @@ $(document).ready(function(){
     	$(this).addClass("btn_clicked");
     });
 
+	$("#coord_btn").click(function(){
+		removingNode = false;
+		addingNode = false;
+		linkSelect1 = false;
+		linkSelect2 = false;
+		settingCoords = true;
+	});
+
+	//When a node's coordinates are going to be set, we need to capture that node's position in the Graph View
+	//That's because Joint js doesn't update to the new positions when resizing the graph happens
+	//We use the following function before setting the coordinates of a node
+	$(document).on('click', ".joint-cell", function(){
+		if(settingCoords){
+			if(!clickedCell.attributes.prop["weight"]){
+				$("#coord_max_x").text($("#graph_panel").width());
+				$("#coord_max_y").text($("#graph_panel").height());
+				clickedCell.domPosition = {
+					x : $(this).offset().left - $("#graph_panel").offset().left + currentRadius, 
+					y : $(this).offset().top - $("#graph_panel").offset().top + currentRadius
+				}
+				$("#coord_curr_x").text(clickedCell.domPosition.x);
+				$("#coord_curr_y").text(clickedCell.domPosition.y);
+				$("#coord_modal").modal("show");
+			}
+		}
+	});
  	//keyboard events ===================================================================
    	document.addEventListener("keydown", function(event) {
     	if(event.keyCode == '27'){
     		stopFunctionality("all");
     	}
     });
+
 });

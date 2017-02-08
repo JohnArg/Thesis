@@ -42,6 +42,7 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						<li>Press <b class=\"text-info\">Remove Node</b> and select the nodes to be removed</li>\
 						<li>Press <b class=\"text-info\">Link Nodes</b> and select two nodes to link</li>\
 						<li>To remove a link, press <b class=\"text-info\">ESC</b> to deselect tools, and then hover the mouse over a link</li>\
+						<li>Press <b class=\"text-info\">Set Node Coordinates</b> and choose a node to manually set its coordinates in the Graph View</li>\
 						<li>Press <b class=\"text-info\">ESC</b> to stop the tools</li>\
 						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
 						<li><span class='colored-text4'>Moving a node automatically deselects the tools!</span></li>\
@@ -86,11 +87,27 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 					</ul>\
 				</div>",	
 		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
+		},
+		{
+		id: "coord_modal",
+		title : "Set Node Coordinates",
+		body : "<p>Set the selected node's coordrinates in the X and Y axis of the Graph View</p>\
+				<p class='coord_box_p'>Maximum X = <p id='coord_max_x' class='coord_box_p'></p>,\
+				 Maximum Y = <p id='coord_max_y' class='coord_box_p'></p></p>\
+				<p class='coord_box_p'>Current X = <p id='coord_curr_x' class='coord_box_p'></p>,\
+				 Current Y = <p id='coord_curr_y' class='coord_box_p'></p></p></br>\
+				<form>\
+					new X : <input type='number' id='coord_x_in'></input> new Y : <input type='number' id='coord_y_in'></input>\
+				</form>\
+				",	
+		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
+				+"<button type=\"button\" class=\"btn btn-default btn_custom\" id='set_coord_btn'>Apply</button>"
 		}
     ]
 };
-const nodeMinScale = 0.35;
+const nodeMinScale = 0.0;
 var biggerNodeSize = true;
+var currentRadius = 35;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
@@ -107,22 +124,32 @@ function _reset(){
 	linkEnd = null; 	 
 	ajaxObject["extras"] = {};
 	ajaxObject["net"] = { };	
+	settingCoords = false;
 }
 
 //will be used by a button to set the size of the nodes to the original one
 function _toggleNodeSize(){
-	for(var i=0; i<network.nodes.length; i++){
+	var cells = graph.getElements();
+	for(var i=0; i<cells.length; i++){
 		if(biggerNodeSize){	
-			network.nodes[i].graphic.resize(45,45);
-			network.nodes[i].graphic.attr("text/font-size", "16pt");
-			var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
-			weightRect.attr("text/font-size", "16pt");
+			if(!cells[i].attributes.prop["weight"]){
+				cells[i].resize(45,45);
+				cells[i].attr("text/font-size", "16pt");
+				currentRadius = 45;
+			}
+			else{
+				cells[i].attr("text/font-size", "16pt");
+			}
 		}
 		else{
-			network.nodes[i].graphic.resize(35,35);
-			network.nodes[i].graphic.attr("text/font-size", "12pt");
-			var weightRect = network.nodes[i].graphic.getEmbeddedCells()[0];
-			weightRect.attr("text/font-size", "12pt");
+			if(!cells[i].attributes.prop["weight"]){
+				cells[i].resize(35,35);
+				cells[i].attr("text/font-size", "12pt");
+				currentRadius = 35;
+			}
+			else{
+				cells[i].attr("text/font-size", "12pt");
+			}
 		}
 	}
 	if(biggerNodeSize){
@@ -177,26 +204,14 @@ var _repaintGraph = function(newNetwork){
 			size:{ width:35, height:35},
 			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"},
 				text: { text : newNode.id, fill : 'white', "font-size" : "12pt"}},
-			prop:{ node_id : newNode.id}
+			prop:{ node_id : newNode.id, weight : false}
 		});
-		var weightRect = new joint.shapes.basic.Rect({
-			position: { x: newNode.position.x - 20, y: newNode.position.y - 20},
-	    	size:{ width:40, height:25},
-	    	attrs:{ rect : {opacity : 0.0}, 
-				text: { text : "13", fill : '#bf870f', "font-size" : "12pt", "font-weight" : "bold",  "fill-opacity" : "0.0"}},
-	    	prop:{ node_id : newNode.id}
-		});
-		circleShape.embed(weightRect);
 		//stop adding/removing nodes if you moved one
 		circleShape.on("change:position",function(){
 			stopFunctionality("all");
 		});
-		weightRect.on("change:position",function(){
-			stopFunctionality("all");
-		});
 		//add the new shape to the graph
 		graph.addCell(circleShape);
-		graph.addCell(weightRect);
 		//create the node in the network
 		var node = new Node( newNode.id, newNode.neighbors , circleShape);
 		node.position.x = newNode.position.x;
@@ -663,6 +678,10 @@ $(document).ready(function() {
 
 	$("#toggle_node_size").click(function(){
 		_toggleNodeSize();
+	});
+
+	$("#set_coord_btn").click(function(){
+		setNodeCoordinates();
 	});
 
 });
