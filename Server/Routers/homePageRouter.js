@@ -44,7 +44,7 @@ router.get("/", function(request, response){
         {name : "DCA clusters"},
         {name : "Max Min D-Cluster formation"},
         {name : "MIS (Maximal Independent Set) Connected Dominating Set"},
-        {name : "LMST (Localized MST) topology graph"},
+        {name : "LMST (Local Minimum Spanning Tree) topology graph"},
         {name : "RNG (Relative Neighborhood Graph) topology graph"},
         {name : "GG (Gabriel Graph) topology graph"}
         ],
