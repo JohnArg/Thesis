@@ -119,6 +119,10 @@ img {
   width: 300px;
   height: 240px; }
 
+.img-extra-small {
+  width: 250px;
+  height: 200px; }
+
 p {
   margin-bottom: 20px; }
 
@@ -153,10 +157,6 @@ footer p {
   margin: 0; }
 
 /*bootstrap overrides =============== */
-.colored-text {
-  color: #555555;
-  font-weight: bold; }
-
 .jumbotron h1 {
   font-weight: bold;
   margin-bottom: 40px;
@@ -185,6 +185,14 @@ footer p {
   border-radius: 0 !important; }
 
 /* main css =============================== */
+.error_text {
+  color: #222222;
+  font-size: 12pt; }
+
+.colored-text {
+  color: #555555;
+  font-weight: bold; }
+
 #particles-js {
   background-color: #21556d;
   height: 320px;

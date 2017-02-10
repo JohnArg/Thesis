@@ -183,18 +183,47 @@ input {
 #pageHeader {
   padding: 10px;
   background-color: #21556d;
-  color: white;
-  height: 50px; }
+  color: white; }
 
 #logo {
   margin-left: 10px;
+  padding: 0;
   order: 1; }
 
-#logoSubText {
+#subHeading {
+  color: #e1f5fe;
+  font-size: 12pt;
+  margin-left: 20px;
+  margin-top: 5px;
+  height: 30px;
+  display: inline-block; }
+
+.header_btn {
+  height: 30px;
+  margin-right: 2px;
+  margin-left: 20px;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important;
+  padding: 4px;
+  font-size: 12pt;
+  border-style: solid;
+  border-color: #21556d;
+  color: #9adefd;
+  background-color: #21556d; }
+
+#toggle_tb_btn {
+  height: 30px;
   order: 2; }
 
+#toggle_node_size {
+  height: 30px;
+  order: 3;
+  margin-left: 0px; }
+
 #accDropDown {
-  order: 3; }
+  order: 4; }
 
 .dropDown {
   color: #9adefd !important;
@@ -217,21 +246,30 @@ input {
 #link_log_out {
   color: #9adefd; }
 
-.subHeading {
-  color: #e1f5fe;
-  font-size: 12pt;
-  margin-left: 20px;
-  margin-top: 5px; }
-
 #main_container {
   position: relative; }
 
 /* Tools panel ============================ */
 #tools_panel {
   width: 160px;
-  min-width: 160px;
   background-color: #22343c;
   position: absolute; }
+
+.workspace_btn {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  border-radius: 0 !important;
+  background-color: #518298;
+  color: #ffffff;
+  border-style: none;
+  white-space: normal;
+  padding: 8px;
+  font-size: 11pt; }
+
+.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked {
+  background-color: #9adefd;
+  color: #222222; }
 
 .toolboxHeading {
   margin-top: 5px;
@@ -240,15 +278,14 @@ input {
   padding: 10px;
   font-size: 11pt; }
 
-/* Draw Area =================================== */
 #graph_panel {
   background-color: #e5f5ff;
   padding: 0;
   margin-left: 160px;
   position: relative; }
 
-/*Solution Box styling =========================== */
 #solutionBox {
+  min-width: 150px;
   background-color: #22343c;
   padding: 0px;
   position: absolute;
@@ -323,45 +360,10 @@ input {
   background-color: #d69c15;
   color: white; }
 
-/* Buttons ============================================ */
-.workspace_btn {
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
-  -ms-border-radius: 0 !important;
-  border-radius: 0 !important;
-  background-color: #518298;
-  color: #ffffff;
-  border-style: none;
-  white-space: normal;
-  padding: 8px;
-  font-size: 11pt; }
-
-.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked {
-  background-color: #9adefd;
-  color: #222222; }
-
 .accentColor {
   background-color: #158098;
   color: white;
   border-color: #158098; }
-
-.header_btn {
-  margin-top: -4px;
-  margin-right: 2px;
-  margin-left: 20px;
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
-  -ms-border-radius: 0 !important;
-  border-radius: 0 !important;
-  padding: 4px;
-  font-size: 12pt;
-  border-style: solid;
-  border-color: #21556d;
-  color: #9adefd;
-  background-color: #21556d; }
-
-#toggle_node_size {
-  margin-left: 0px; }
 
 /* Footer =========================== */
 footer {

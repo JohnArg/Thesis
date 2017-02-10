@@ -12,14 +12,10 @@
 	<body>
 		<div id="modals_container">
 		</div>
-		<div id="pageHeader" class= " layer2Bot flexContainer">
-			<div id="logo"><h3>AdHocEd</h3></div>
-			<div id="logoSubText">
-				<p class="subHeading">Workspace 
-					<button id = "toggle_tb_btn" class="header_btn">Toggle Toolbar</button>
-					<button id = "toggle_node_size" class="header_btn">Toggle Node Size</button>
-				</p>
-			</div>
+		<div id="pageHeader" class= "layer2Bot flexContainer">
+			<div id="logo"><h3>AdHocEd</h3><p id="subHeading">Workspace</p></div>
+			<button id = "toggle_tb_btn" class="header_btn">Toggle Toolbar</button>
+			<button id = "toggle_node_size" class="header_btn">Toggle Node Size</button>
 			<div class="dropdown" id="accDropDown">
 				<button class="btn btn-default dropdown-toggle dropDown" type="button" id="accDropDownBtn"
 			 	data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -35,26 +31,26 @@
 		<div id="main_container">
 			<div id="tools_panel" class="layer1Right">
 				<div><p class="toolboxHeading text-center">Graph Tools</p></div>
-				<div class="btn-group-vertical btn-block" role="group">
-					<div class="btn btn-default btn-block workspace_btn" id="instructions_btn">Instructions  <span class="glyphicon glyphicon-info-sign"></span></div>
-					<div class="btn btn-default btn-block workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
-					<div class="btn btn-default btn-block workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
-					<div class="btn btn-default btn-block workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
-					<div class="btn btn-default btn-block workspace_btn" id="coord_btn">Set Node Coordinates</div>
-					<div class="btn btn-default btn-block workspace_btn" id="clear_btn">Clear Graph</div>
-					<div class="btn btn-default btn-block workspace_btn" id="save_btn">Save Graph</div>
-					<div class="btn btn-default btn-block workspace_btn" id="load_btn">Load Graph</div>
+				<div class="btn-group-vertical" role="group">
+					<div class="btn btn-default workspace_btn" id="instructions_btn">Instructions  <span class="glyphicon glyphicon-info-sign"></span></div>
+					<div class="btn btn-default workspace_btn" id="add_btn">Add Node <span class="glyphicon glyphicon-plus"></span></div>
+					<div class="btn btn-default workspace_btn" id="rm_btn">Remove Node <span class="glyphicon glyphicon-remove"></span></div>
+					<div class="btn btn-default workspace_btn" id="link_btn">Link Nodes <span class="glyphicon glyphicon-resize-small"></span></div>
+					<div class="btn btn-default workspace_btn" id="coord_btn">Set Node Coordinates</div>
+					<div class="btn btn-default workspace_btn" id="clear_btn">Clear Graph</div>
+					<div class="btn btn-default workspace_btn" id="save_btn">Save Graph</div>
+					<div class="btn btn-default workspace_btn" id="load_btn">Load Graph</div>
 				</div>
 				<div><p class="toolboxHeading text-center">Select Algorithm</p></div>
-				<div class="btn-group-vertical btn-block" role="group">
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_1">Wu & Li</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_2">Multipoint Relays</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_3">DCA</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_4">Max Min D-Cluster</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_5">Maximal Independent Set</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_6">LMST</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_7">RNG</div>
-					<div class="btn btn-default btn-block workspace_btn algorithm_select" id="alg_8">Gabriel Graph</div>
+				<div class="btn-group-vertical" role="group">
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_1">Wu & Li</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_2">Multipoint Relays</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_3">DCA</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_4">Max Min D-Cluster</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_5">Maximal Independent Set</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_6">LMST</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_7">RNG</div>
+					<div class="btn btn-default workspace_btn algorithm_select" id="alg_8">Gabriel Graph</div>
 				</div>
 				<div><p class="toolboxHeading text-center" id="selection_text">Nothing Selected Yet</p></div>
 				<div class="btn btn-default btn-block workspace_btn accentColor" id="execute_btn">Execute</div>

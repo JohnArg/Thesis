@@ -51,7 +51,7 @@ router.get("/workspace", function(request, response){
 		//check if session exists in the store
 		sessionStore.get(request.session.id, (error, session)=>{
 			if(error){ //error in session store
-				response.status(500).send({message : "Error when looking for session"});
+				response.status(500).render("error505.hbs");
 			}
 			else{
 				if(!session){ //no session exists

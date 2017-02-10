@@ -25,15 +25,15 @@ var paper = new joint.dia.Paper({	//the main view panel
     gridSize: 1,
     restrictTranslate: true
 });
-var usedIds = []; 			//A list of the used node ids so far
-var addingNode = false; 	//If the add node button is active
-var removingNode = false;	//If the remoce node button is active
-var linkSelect1 = false;	//I'm in 'select first node' functionality while drawing a link (edge)
-var linkSelect2 = false;	//I'm in 'select second node' functionality while drawing a link
-var linkStart;				//Start node of the link
-var linkEnd; 				//End node of the link
-var clickedCell; 			//Which cell in the graph was clicked
-var settingCoords = false;	//whether we have selected to set coordinates
+let usedIds = []; 			//A list of the used node ids so far
+let addingNode = false; 	//If the add node button is active
+let removingNode = false;	//If the remoce node button is active
+let linkSelect1 = false;	//I'm in 'select first node' functionality while drawing a link (edge)
+let linkSelect2 = false;	//I'm in 'select second node' functionality while drawing a link
+let linkStart;				//Start node of the link
+let linkEnd; 				//End node of the link
+let clickedCell; 			//Which cell in the graph was clicked
+let settingCoords = false;	//whether we have selected to set coordinates
 
 //Returns a node object from the network
 var returnNodeById = function(search_id){
@@ -63,21 +63,30 @@ var returnNodeIndexById = function(search_id){
 	}
 }
 
-var stopFunctionality = function(options){
-	switch(options){
-		case "all" :
-			addingNode = false;
-			removingNode = false;
-			linkSelect1 = false;
-			linkSelect2 = false;
-			removingLink = false;
-			moveCells = false;
-			settingCoords = false;
-			$(".tool-remove").show();
-			$(".workspace_btn").removeClass("workspace_btn_clicked");
-			break;
-		default: break;
-	}
+//Stop any button functionality
+var stopFunctionality = function(){
+	addingNode = false;
+	removingNode = false;
+	linkSelect1 = false;
+	linkSelect2 = false;
+	moveCells = false;
+	settingCoords = false;
+	$(".tool-remove").show();
+	$(".workspace_btn").removeClass("workspace_btn_clicked");
+}
+
+//Clear graph and reset to initial values
+var resetNetwork = function(){
+	graph.clear();
+	network.nodes = [];
+	usedIds = []; 
+	addingNode = false; 							
+	removingNode = false;							
+	linkSelect1 = false;							
+	linkSelect2 = false;							
+	linkStart = null;										
+	linkEnd = null; 
+	settingCoords = false;
 }
 
 //Use this to set a node's position, after the user entered the coordinates
@@ -98,8 +107,62 @@ var setNodeCoordinates = function(){
 	else{
 		alert("Invalid Input");
 	}
-	stopFunctionality("all");
+	stopFunctionality();
 	$("#coord_modal").modal("hide");
+}
+
+//Update the neighborhood of the removed node and its neighbors
+var updateNeighborhoodOfRemoved = function(removed_shape_id){
+	let neighbor_id;
+	let neighborhood = returnNodeById(removed_shape_id).neighbors;
+	let neighbor;
+	//update neighborhood of removed node and its neighbors'
+	if(neighborhood.length > 0){
+		//for each of his neighbors, get their id
+		for(var j=0; j<neighborhood.length; j++){
+			neighbor_id = neighborhood[j];
+			//find the node with that id in the network
+			neighbor = returnNodeById(neighbor_id);
+			neighbor.neighbors = neighbor.neighbors.filter(function(index) {
+				return index != removed_shape_id ;
+			});
+		}
+	}
+	//remove the node from the network
+	network.nodes = network.nodes.filter(function (el) {
+		return el.id != removed_shape_id;
+	});
+	//update the used ids list
+	usedIds = usedIds.filter(function(el){ 
+		return el != removed_shape_id; 
+	});	
+}
+
+/*
+It will calculate a proper new id for a new node
+If nodes were removed, then the new id will be the minimum of the removed ids
+else it will be the maximum id + 1
+*/
+var calculateNewId = function(){
+	var newID = 0;
+	var maxID = 0;	
+	if(usedIds.length != 0){
+		maxID = Math.max.apply(Math,usedIds);
+	}
+	//We set the new node's id. If an id is missing between min and max
+	//this will be the new id
+	for(var p=1; p<maxID; p++){
+		if( usedIds.indexOf(p) == -1){
+			newID = p;
+			break;
+		}
+	}
+	//If all ids between min and max where found in the list
+	if(newID == 0){
+		newID = maxID + 1;
+	}	   	
+	usedIds.push(newID);
+	return newID;
 }
 
 $(document).ready(function(){
@@ -119,7 +182,7 @@ $(document).ready(function(){
 	    	});
 			//stop adding/removing nodes if you moved one
 	    	circleShape.on("change:position",function(){
-	   			stopFunctionality("all");
+	   			stopFunctionality();
 	    	});
 	    	//add the new shape to the graph
 	    	graph.addCell(circleShape);
@@ -196,60 +259,6 @@ $(document).ready(function(){
  		}
  		console.log(network);
  	});	
- 	//Network stuff ==========================================================================
- 	//Update the neighborhood of the removed node and its neighbors
- 	function updateNeighborhoodOfRemoved(removed_shape_id){
-		var neighbor_id;
-		var neighborhood = returnNodeById(removed_shape_id).neighbors;
-		var neighbor;
-		//update neighborhood of removed node and its neighbors'
-		if(neighborhood.length > 0){
-			//for each of his neighbors, get their id
-			for(var j=0; j<neighborhood.length; j++){
-				neighbor_id = neighborhood[j];
-				//find the node with that id in the network
-				neighbor = returnNodeById(neighbor_id);
-				neighbor.neighbors = neighbor.neighbors.filter(function(index) {
-					return index != removed_shape_id ;
-				});
-			}
-		}
-		//remove the node from the network
-		network.nodes = network.nodes.filter(function (el) {
-			return el.id != removed_shape_id;
-		});
-		//update the used ids list
-		usedIds = usedIds.filter(function(el){ 
-			return el != removed_shape_id; 
-		});	
- 	}
-
- 	/*
- 	It will calculate a proper new id for a new node
- 	If nodes were removed, then the new id will be the minimum of the removed ids
- 	else it will be the maximum id + 1
- 	*/
- 	function calculateNewId(){
- 		var newID = 0;
-    	var maxID = 0;	
-    	if(usedIds.length != 0){
-    		maxID = Math.max.apply(Math,usedIds);
-    	}
-	  	//We set the new node's id. If an id is missing between min and max
-	  	//this will be the new id
-	  	for(var p=1; p<maxID; p++){
-	  		if( usedIds.indexOf(p) == -1){
-	  			newID = p;
-	  			break;
-	  		}
-	  	}
-	  	//If all ids between min and max where found in the list
-	  	if(newID == 0){
-	  		newID = maxID + 1;
-	  	}	   	
-	   	usedIds.push(newID);
-	   	return newID;
- 	}
 
     // Buttons ===========================================================================
 	$("#add_btn").click(function(){
@@ -315,7 +324,7 @@ $(document).ready(function(){
  	//keyboard events ===================================================================
    	document.addEventListener("keydown", function(event) {
     	if(event.keyCode == '27'){
-    		stopFunctionality("all");
+    		stopFunctionality();
     	}
     });
 

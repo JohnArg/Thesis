@@ -3,6 +3,7 @@
 $toolbarWidth : 160px;
 $bidirectionalLinkColor : #51af1a;
 $unidirectionalLinkColor : #d69c15;
+$common_header_height : 30px;
 /* Bootstrap override ========= */
 @mixin table_cell_style(){
 	display: block;
@@ -115,20 +116,49 @@ input{
 	padding:10px;
 	background-color: $header_color;
 	color:white;
-	height:50px;
 }
 
 #logo{
 	margin-left: 10px;
+	padding: 0;
 	order:1;
 }
 
-#logoSubText{
+#subHeading{
+	color:$subtext_light;
+	font-size:12pt;
+	margin-left:20px;
+	margin-top:5px;
+	height: $common_header_height; 
+	display: inline-block;
+}
+
+.header_btn{
+	height: $common_header_height;
+	margin-right:2px;
+	margin-left: 20px;
+	@include border_radius();
+	padding:4px;
+	font-size: 12pt;
+	border-style:solid;
+	border-color:$header_color;
+	color:$btn_active;
+	background-color: $header_color;
+}
+
+#toggle_tb_btn{
+	height: $common_header_height;
 	order:2;
 }
 
-#accDropDown{
+#toggle_node_size{
+	height: $common_header_height;
 	order:3;
+	margin-left: 0px;
+}
+
+#accDropDown{
+	order:4;
 }
 
 .dropDown{
@@ -157,13 +187,6 @@ input{
 	color:$btn_active;
 }
 
-.subHeading{
-	color:$subtext_light;
-	font-size:12pt;
-	margin-left:20px;
-	margin-top:5px;
-}
-
 #main_container{
 	position: relative;
 }
@@ -171,9 +194,23 @@ input{
 /* Tools panel ============================ */
 #tools_panel{
 	width: $toolbarWidth;
-	min-width: 160px;
 	background-color: $toolbar_color;
 	position:absolute;
+}
+
+.workspace_btn{
+	@include border_radius();
+	background-color: $btn_color;
+	color:$btn_text_color;
+	border-style:none;
+	white-space: normal;
+	padding:8px;
+	font-size: 11pt;
+}
+
+.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
+	background-color: $btn_active;
+	color:#222222;
 }
 
 .toolboxHeading{
@@ -184,7 +221,6 @@ input{
 	font-size:11pt;
 }
 
-/* Draw Area =================================== */
 #graph_panel{
 	background-color: $graphView_color;
 	padding: 0;
@@ -192,8 +228,8 @@ input{
 	position:relative;
 }
 
-/*Solution Box styling =========================== */
 #solutionBox{
+	min-width : 150px;
 	background-color: $toolbar_color;
 	padding: 0px;
 	position:absolute;
@@ -280,44 +316,12 @@ input{
 	color:white;
 }
 
-/* Buttons ============================================ */
-.workspace_btn{
-	@include border_radius();
-	background-color: $btn_color;
-	color:$btn_text_color;
-	border-style:none;
-	white-space: normal;
-	padding:8px;
-	font-size: 11pt;
-}
-
-.workspace_btn:hover, .workspace_btn:active, .workspace_btn_clicked{
-	background-color: $btn_active;
-	color:#222222;
-}
-
 .accentColor{
 	background-color: $btn_important;
 	color:white;
 	border-color: $btn_important;
 }
 
-.header_btn{
-	margin-top:-4px;
-	margin-right:2px;
-	margin-left: 20px;
-	@include border_radius();
-	padding:4px;
-	font-size: 12pt;
-	border-style:solid;
-	border-color:$header_color;
-	color:$btn_active;
-	background-color: $header_color;
-}
-
-#toggle_node_size{
-	margin-left: 0px;
-}
 /* Footer =========================== */
 footer{
 	background-color: $footer_color;

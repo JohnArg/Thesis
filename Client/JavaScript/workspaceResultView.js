@@ -2,29 +2,29 @@
 This file has functions used to handle the response from the server
 and visually represent the algorithms' results
 */
-var stepDataArray = [];	//holds each step data in memory after the ajax response object is lost
-var unidirectionalEdgesIndexes = []; //holds INDEXES not edge objects (to minimize data), which refer to positions in the step data Array. Used ONLY on LMST
-var bidirectionalEdgeList = [];	//this one and the one below will hold edge objects when necessary
-var unidirectionalEdgeList = [];
-var topologyGraph = []; //will contain topology graph for LMST
-var finalMisColors = []; //it will hold the final result of MIS coloring for repainting
-var misRootIndex = -1;
-var misPaintRootStepIndex = -1;	//from which step to start painting the MIS cds root 
-var stepThreshold = -1; //it will be used with misPaintRootStepIndex
-var max_min_clustersOrig = [];	//clusters after floodmax/min
-var max_min_clustersAfter = []; //clusters after messaging
+let stepDataArray = [];	//holds each step data in memory after the ajax response object is lost
+let unidirectionalEdgesIndexes = []; //holds INDEXES not edge objects (to minimize data), which refer to positions in the step data Array. Used ONLY on LMST
+let bidirectionalEdgeList = [];	//this one and the one below will hold edge objects when necessary
+let unidirectionalEdgeList = [];
+let topologyGraph = []; //will contain topology graph for LMST
+let finalMisColors = []; //it will hold the final result of MIS coloring for repainting
+let misRootIndex = -1;
+let misPaintRootStepIndex = -1;	//from which step to start painting the MIS cds root 
+let stepThreshold = -1; //it will be used with misPaintRootStepIndex
+let max_min_clustersOrig = [];	//clusters after floodmax/min
+let max_min_clustersAfter = []; //clusters after messaging
 //Some color-styling globals used in our graph
 var NODE_DEF_STYLE =  { circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"}, text: { fill : 'white'}};
-var NODE_DOM_STYLE = {circle : {fill: "#51af1a", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
-var NODE_MIS_STYLE = {
+let NODE_DOM_STYLE = {circle : {fill: "#51af1a", stroke: "#4f9e22", "stroke-width" : "2"}, text: { fill : 'white'}};
+let NODE_MIS_STYLE = {
 	"white" : {circle : {fill: "#efefef", stroke: "#444444", "stroke-width" : "2"}, text: { fill : '#444444'}},
 	"gray" : { circle : {fill: "#777777", stroke: "#444444", "stroke-width" : "2"}, text: { fill : 'white'}},
 	"black" : {circle : {fill: "#1e1e1e", stroke: "#222222", "stroke-width" : "2"}, text: { fill : 'white'}}
 };
 var LINK_DEFAULT = {'.connection': { stroke : "#444444", "stroke-width" : "2" }};
-var LINK_BI = { '.connection': { stroke : "#2fd829", "stroke-width" : "3" } };
-var LINK_UNI = { '.connection': { stroke : "#f4b218", "stroke-width" : "3" } };
-var CLUSTER_COLORS = [
+let LINK_BI = { '.connection': { stroke : "#2fd829", "stroke-width" : "3" } };
+let LINK_UNI = { '.connection': { stroke : "#f4b218", "stroke-width" : "3" } };
+let CLUSTER_COLORS = [
 	{"head_color" : "#d81717", "group_color" : "#a00404", "stroke": "#a00404" },
 	{"head_color" : "#3b4bf7", "group_color" : "#1c29b2", "stroke": "#1c29b2" },
 	{"head_color" : "#d87117", "group_color" : "#b25401", "stroke": "#b25401" },
@@ -65,7 +65,7 @@ var max_min_table = function(solution){
 	this.text += "</div>";
 }
 
-//parse the id string of a cell in the max min table 
+//Parse the id string of a cell in the max min table 
 var _parseMaxMinId = function(idStr){
 	let idS = "";	//id of the node to whom the column of this cell belongs
 	let lineS = "";	//in which line of the flood table are we
@@ -138,7 +138,7 @@ the client knows how to handle the representation
 	1: wu li dominators list, 2: multipoint relays cds 
 	3: dca, 4: max_min, 5: mis, 6: lmst. 7: rng, 8: gg
 solution : the data to be sent to the client */
-function handleResponse(data, status, XMLHttpRequest){
+var handleResponse = function(data, status, XMLHttpRequest){
 	_clearViewAndData();
 	switch(data["code"]){
 		case "1" : _wuLiDominatorsAnalysis(data); break;
@@ -154,7 +154,7 @@ function handleResponse(data, status, XMLHttpRequest){
 }
 
 //Clear painted stuff and data from previous executions
-function _clearViewAndData(){
+var _clearViewAndData = function(){
 	stepDataArray = []; //clear the global steps data from previous executions
 	unidirectionalEdgesIndexes = [];
 	bidirectionalEdgeList = [];
@@ -171,20 +171,20 @@ function _clearViewAndData(){
 }
 
 //Clear View only
-function _clearView(){
+var _clearView = function(){
 	_hideWeights();
 	_hideArrowHeads();
 	_paintEverythingDefault();
 }
 
 //Hides all arroheads
-function _hideArrowHeads(){
+var _hideArrowHeads = function(){
 	$(".marker-arrowhead-group-target").css({ "opacity" : "0"});
 	$(".marker-arrowhead-group-source").css({ "opacity" : "0"});
 }
 
 //Repaints the edges with their original color
-function _repaintEdgesDefault(){
+var _repaintEdgesDefault = function(){
 	var links  = graph.getLinks();
 	for(var i=0; i<links.length; i++){
 		links[i].attr(LINK_DEFAULT);
@@ -192,7 +192,7 @@ function _repaintEdgesDefault(){
 }
 
 //Paint everything with the default color
-function _paintEverythingDefault(){
+var _paintEverythingDefault = function(){
 	for(var j=0; j<network.nodes.length; j++){
 		network.nodes[j].graphic.attr(NODE_DEF_STYLE);
 	}
@@ -200,7 +200,7 @@ function _paintEverythingDefault(){
 }
 
 //Checks if a node is dominator
-function _isDominator(id, dominatorList){
+var _isDominator = function(id, dominatorList){
 	for(var i=0; i<dominatorList.length; i++){
 		if(id == dominatorList[i]){
 			return true;
@@ -210,7 +210,7 @@ function _isDominator(id, dominatorList){
 }
 
 //Paint dominators in the graph with the appropriate colors
-function _paintDominators(dominatorList){	
+var _paintDominators = function(dominatorList){	
 	_repaintEdgesDefault();
 	for(var j=0; j<network.nodes.length; j++){
 		if(_isDominator(network.nodes[j].id, dominatorList)){
@@ -220,7 +220,7 @@ function _paintDominators(dominatorList){
 }
 
 //Paint Clusters with different colors
-function _paintClusters(clusterList){
+var _paintClusters = function(clusterList){
 	var tempNode;
 	var index = 0;
 	//repaint all nodes with default color
@@ -246,7 +246,7 @@ function _paintClusters(clusterList){
 
 //Paint the edges of a list, use the global graph object to get the link graphics
 //areUnidirectional is boolean
-function _paintEdgesFromList(edgeList, areUnidirectional){
+var _paintEdgesFromList = function(edgeList, areUnidirectional){
 	var link;
 	var node;
 	var links;
@@ -294,7 +294,7 @@ function _paintEdgesFromList(edgeList, areUnidirectional){
 	"-" --> paint the uni-directional links with the deafault link color (g0-)
 	options.g0
 */
-function _paintUnidirectionalEdgesLMST(option_g0){
+var _paintUnidirectionalEdgesLMST = function(option_g0){
 	var edge;
 	var node;
 	var links;
@@ -343,7 +343,7 @@ function _paintUnidirectionalEdgesLMST(option_g0){
 }
 
 //Paint the whole Topology tree using each node's local topology graph
-function _paintTopologyTree(){
+var _paintTopologyTree = function(){
 	_repaintEdgesDefault();
 	for(var i=0; i<stepDataArray.length; i++){
 		_paintEdgesFromList(stepDataArray[i], false);
@@ -351,7 +351,7 @@ function _paintTopologyTree(){
 }
 
 //Paint the MIS color marked nodes
-function _paintMIS(nodeList){
+var _paintMIS = function(nodeList){
 	for(var i=0; i<nodeList.length; i++){
 		switch(nodeList[i]){
 			case "white" :	network.nodes[i].graphic.attr(NODE_MIS_STYLE["white"]); break;
@@ -362,12 +362,12 @@ function _paintMIS(nodeList){
 }
 
 //Paint mis Root
-function _paintMisRoot(){
+var _paintMisRoot =function(){
 	network.nodes[misRootIndex].graphic.attr(NODE_DOM_STYLE);
 }
 
 //Integer list to string appropriate for word-break
-function _strigifyIntList(list){
+var _strigifyIntList = function(list){
 	var text = "[ ";
 	if(list){
 		for(var i=0; i<list.length; i++){
@@ -382,7 +382,7 @@ function _strigifyIntList(list){
 }
 
 //Show the steps from th Wu Li CDS algorithm
-function _wuLiDominatorsAnalysis(response){
+var _wuLiDominatorsAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var text = "<p class=\"solution-result colored-text word-break\">The algorithm's result is : "+ _strigifyIntList(response["solution"]["rule2"].result["dominators"])
 				+"<br> Execution Analysis :</p>";
@@ -407,7 +407,7 @@ function _wuLiDominatorsAnalysis(response){
 }
 
 //Converts the result of the DCA algorithm to string 
-function _stringifyDcaResult(clusters){
+var _stringifyDcaResult = function(clusters){
 	var text = "";
 	for(var i=0; i<clusters.length; i++){
 		text += "{ head : "+clusters[i].clusterhead+" | group : ["+clusters[i]["group"]+"]} ";
@@ -416,7 +416,7 @@ function _stringifyDcaResult(clusters){
 }
 
 //Show the steps of the Multipoint Relay CDS algorithm
-function _mprCdsAnalysis(response){
+var _mprCdsAnalysis = function(response){
 	var stepId = 0; //will be used for indexing a global array of step data
 	var text = "<p class=\"solution-result colored-text\">The algorithm's result is : "+ _strigifyIntList(response["solution"]["MPR_cds"].result["MPR_cds"])
 				+" <br> Execution Analysis :</p>";
@@ -453,7 +453,7 @@ function _mprCdsAnalysis(response){
 }
 
 //Show steps of the DCA algorithm
-function _dcaAnalysis(response){
+var _dcaAnalysis = function(response){
 	_showNodeWeights(weightMap);
 	var stepId = 0; //will be used for indexing a global array of step data
 	var solution = response["solution"];

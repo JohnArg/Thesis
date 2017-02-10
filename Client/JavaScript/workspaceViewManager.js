@@ -2,19 +2,6 @@
 This file will be used to alter the view of the page 
 and handle user interaction
 */
-var algorithm_code = "empty";
-var algorithm_name;
-var ajaxObject = {
-	"code" : -1,
-	"net" : {},
-	"extras" : {}	//extra data assosiated with the network that an algorithm needs
-};
-var randomWeights = true;
-var weightMap = [];
-var weightMapTxt = "";
-var dialogError = false;
-var footerHeight = 90;
-var showToolbar = false; //next time you hit toggle, hide the toolbar
 var modalsData = {	//content to fill out modals rendered by handlebars
      modals : [
         {
@@ -106,25 +93,28 @@ var modalsData = {	//content to fill out modals rendered by handlebars
     ]
 };
 const nodeMinScale = 0.0;
-var biggerNodeSize = true;
+let algorithm_code = "empty";
+let algorithm_name;
+let ajaxObject = {
+	"code" : -1,
+	"net" : {},
+	"extras" : {}	//extra data assosiated with the network that an algorithm needs
+};
+let randomWeights = true;
+let weightMap = [];
+let weightMapTxt = "";
+let dialogError = false;
+let footerHeight = 90;
+let showToolbar = false; //next time you hit toggle, hide the toolbar
+let biggerNodeSize = true;
 var currentRadius = 35;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
-	graph.clear();
-	biggerNodeSize = true;
-	network.nodes = [];
-	usedIds = []; 
-	panelOffset = $("#graph_panel").offset();
-	addingNode = false; 							
-	removingNode = false;							
-	linkSelect1 = false;							
-	linkSelect2 = false;							
-	linkStart = null;										
-	linkEnd = null; 	 
+	resetNetwork();
+	biggerNodeSize = true;	 
 	ajaxObject["extras"] = {};
 	ajaxObject["net"] = { };	
-	settingCoords = false;
 }
 
 //will be used by a button to set the size of the nodes to the original one
@@ -208,7 +198,7 @@ var _repaintGraph = function(newNetwork){
 		});
 		//stop adding/removing nodes if you moved one
 		circleShape.on("change:position",function(){
-			stopFunctionality("all");
+			stopFunctionality();
 		});
 		//add the new shape to the graph
 		graph.addCell(circleShape);
@@ -417,6 +407,14 @@ var _sendDeleteAccountRequest = function(){
 
 //=======================================================
 var _responsiveSizes = function(){
+	if($(window).width() <= 587){
+		$("#pageHeader").height(90);
+		$("#tools_panel").width(140);
+	}
+	else{
+		$("#pageHeader").height(30);
+		$("#tools_panel").width(160);
+	}
 	if($(window).height() <= 1000){
         $("#main_container").height(1000);    
     }
