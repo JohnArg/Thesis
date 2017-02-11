@@ -52,14 +52,17 @@ var _calculateLocalRNG = function(node, network, solution){
                 if((distances[j] < distances[i]) && (distance < distances[i])){
                     valid = false;
                     solution.steps[solution.steps.length - 1].text += "<p>Edge between "+node.id+" and "+neighbors[i].id+
-                    " omitted because of neighbor node "+neighbors[j].id+" between them.</p>";
+                    " with distance "+distances[i]+" omitted because of neighbor node "+neighbors[j].id+" between them.\
+                    Edge ["+node.id+","+neighbors[j].id+"] has a distance of "+distances[j]+", \
+                    while Edge ["+neighbors[i].id+","+neighbors[j].id+"] has a distance of "+distance+".</p>";
                     break;
                 }
             }
         }
         if(valid){
             edges.push( {"source" : node.id, "target" : neighbors[i].id });
-            solution.steps[solution.steps.length - 1].text += "<p>Selected edge ["+node.id+" , "+neighbors[i].id+"].</p>";
+            solution.steps[solution.steps.length - 1].text += "<p>Selected edge ["+node.id+" , "+neighbors[i].id+"] with distance "
+            +distances[i]+".</p>";
         }
     }
     return edges;

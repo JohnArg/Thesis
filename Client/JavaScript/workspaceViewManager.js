@@ -515,10 +515,10 @@ var _dcaDialogWeightsHandler = function(){
 		$("#dca_dialog_list").children().each(function(){
 			var weightTxt = $(this).find("input").val();
 			var number = parseInt(weightTxt);
-			if(isNaN(number)){
+			if(isNaN(number) || (number < 0)){
 				dialogError = true;
 				weightMap = [];
-				alert("Weights must be integer inputs");
+				alert("Weights must be positive integer inputs");
 				return false;
 			}
 			else{
@@ -623,18 +623,17 @@ $(document).ready(function() {
 
 	$("#mis_continue").click(function(){
 		var root = parseInt($("#mis_input").val());
-		var max = _.max(usedIds);
 		if(isNaN(root)){
 			alert("root must be a positive integer <= "+max);
 		}
 		else{
-			if(root>0 && root<=max){
+			if(_.indexOf(usedIds, root)!= -1){
 				ajaxObject["extras"]["root"] = root;
 				_sendAlgorithmRequest();
 				$("#mis_dialog").modal("hide");
 			}
 			else{
-				alert("Please insert a positive integer <= "+max);
+				alert("Please insert a valid value");
 			} 
 		}
 	});

@@ -25,7 +25,7 @@ var paper = new joint.dia.Paper({	//the main view panel
     gridSize: 1,
     restrictTranslate: true
 });
-let usedIds = []; 			//A list of the used node ids so far
+var usedIds = []; 			//A list of the used node ids so far
 let addingNode = false; 	//If the add node button is active
 let removingNode = false;	//If the remoce node button is active
 let linkSelect1 = false;	//I'm in 'select first node' functionality while drawing a link (edge)
@@ -93,7 +93,6 @@ var resetNetwork = function(){
 //Joint js doesn't update the position of the nodes after resizing so we use
 //offsets in the DOM to calculate the correct position 
 var setNodeCoordinates = function(){
-	console.log("Fucking executed");
 	let x = parseInt($("#coord_x_in").val());
 	let y = parseInt($("#coord_y_in").val());
 	let maxX = $("#graph_panel").width();
@@ -189,7 +188,6 @@ $(document).ready(function(){
 	    	//create the node in the network
 	    	var node = new Node( nodeID, [], circleShape);
 	    	network.nodes.push(node);
-	    	console.log(network);
 	    }
     });
 
@@ -203,7 +201,6 @@ $(document).ready(function(){
 			updateNeighborhoodOfRemoved(shape_id);
 			//remove the shape from the graph
 			cellView.model.remove();
-			console.log(network);
 		}
 		//else if we are connecting nodes ======
 		else if(linkSelect1){
@@ -232,7 +229,6 @@ $(document).ready(function(){
 				graph.addCell(link);
 				//return funcitonality to selecting the source of a link
 				linkSelect1 = true;
-				console.log(network);
 			}
 			else{
 				linkSelect1 = true;
@@ -257,7 +253,6 @@ $(document).ready(function(){
  				return el != id1;
  			}); 			
  		}
- 		console.log(network);
  	});	
 
     // Buttons ===========================================================================

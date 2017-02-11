@@ -53,7 +53,9 @@ var _calculateLocalGG = function(node, network, solution){
                 if(distance < radii[i]){
                     valid = false;
                     solution.steps[solution.steps.length - 1].text += "<p>Edge between "+node.id+" and "+neighbors[i].id+
-                    " omitted because of neighbor node "+neighbors[j].id+" between them.</p>";
+                    " omitted because of neighbor node "+neighbors[j].id+" between them. The cirlce area used for\
+                    checking has a radius of "+radii[i]+", while the distance of "+neighbors[j].id+" from the circle's\
+                    center is "+distance+".</p>";
                     break;
                 }
             }
