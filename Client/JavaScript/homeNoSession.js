@@ -1,10 +1,4 @@
 let footerHeight = 90;
-let textSmall = "Welcome to AdHocEd, an educational \
-application for students and teachers with graphical representation\
- of basic algorithms for Ad Hoc Wireless networks.";
-let textLarge = "Welcome to AdHocEd, an educational application for students\
- and teachers with graphical representation of basic algorithms for Ad Hoc Wireless\
-  networks. Create a free account to be able to save the graphs you design in the editor.";
 
 //Changes the size of some stuff when the window is resized
 var _responsiveSizes = function(){
@@ -18,7 +12,6 @@ var _responsiveSizes = function(){
 
     //width reactions
     if($(window).width() <= 500){
-        $(".jumbotron > p").text(textSmall);
         $(".home-btn").addClass("home-btn-small");
         $("#main_panel").width($(window).width()-40);
         $("img").addClass("img-extra-small");
@@ -28,7 +21,6 @@ var _responsiveSizes = function(){
         $(".jumbotron > p").css("font-size", "12pt");
     }
     else if($(window).width() <= 720){
-        $(".jumbotron > p").text(textLarge);
         $(".home-btn").addClass("home-btn-small");
         $("#main_panel").width($(window).width()-40);
         $("img").addClass("img-small");
@@ -66,6 +58,10 @@ $(document).ready(function(){
     //Initialize on ready
     $(window).on("load resize", function(){
         _responsiveSizes();
+    });
+
+    $("#enter_btn").click(function(){
+        window.location.href = "/workspace";
     });
 	_responsiveSizes();
 });

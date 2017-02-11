@@ -249,22 +249,26 @@ var loadNetwork = function(response, netID){
                         };
                     };
                     var node;
+                    var success = true;
                     for(var i=0; i< rows.length; i++){
                         node = new Node();
                         node.id = rows[i].node_id;
                         let result = _parseNeighborsString(rows[i].neighbors);
                         if(result.state =="error"){
                             console.log("Load Network : Error in parsing neighbor data");
+                            success = false;
                             response.status(500).send({message : "Internal Server Error"});
                         }
                         else{
                             node.neighbors = result.list;
                             node.position.x = rows[i].position_x;
                             node.position.y = rows[i].position_y;
+                            network.nodes.push(node);
                         }
-                        network.nodes.push(node);
                     }
-                    response.status(200).send({data : network});
+                    if(success){
+                        response.status(200).send({data : network});
+                    }
                 }
             });
         }
@@ -302,7 +306,7 @@ var _parseNeighborsString = function(textList){
         switch(textList[i]){
             case "[" : 
                 if(result.state == "begin"){
-                    result.state = "started";
+                    result.state = "reading";
                     numberTxt = "";
                 }
                 else{ 
@@ -319,24 +323,26 @@ var _parseNeighborsString = function(textList){
                 }
                 return result;
             default :
-                if(result.state == "started"){
-                    result.state = "reading";
-                }
-                if(textList[i] != ","){
-                    numberTxt += textList[i];
-                }
-                else{
-                    let number = parseInt(numberTxt, 10);
-                    if(isNaN(number)){
-                        result.state = "error";
-                        return result;
+                if(result.state == "reading"){
+                    if(textList[i] != ","){
+                        numberTxt += textList[i];
                     }
                     else{
-                        numberTxt = ""; //reset
-                        result.list.push(number);
+                        let number = parseInt(numberTxt, 10);
+                        if(isNaN(number)){
+                            result.state = "error";
+                            return result;
+                        }
+                        else{
+                            numberTxt = ""; //reset
+                            result.list.push(number);
+                        }
                     }
                 }
-                break;
+                else{
+                    result.state = "error";
+                    return result;
+                }
         }
     }
     return result;

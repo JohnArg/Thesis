@@ -285,7 +285,7 @@ input {
   position: relative; }
 
 #solutionBox {
-  min-width: 150px;
+  min-width: 130px;
   background-color: #22343c;
   padding: 0px;
   position: absolute;

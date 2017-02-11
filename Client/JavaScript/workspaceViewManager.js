@@ -409,10 +409,20 @@ var _sendDeleteAccountRequest = function(){
 var _responsiveSizes = function(){
 	if($(window).width() <= 587){
 		$("#pageHeader").height(90);
-		$("#tools_panel").width(140);
 	}
 	else{
 		$("#pageHeader").height(30);
+	}
+	if(($(window).width() <= 630) && ($(window).width() > 587)){
+		$(".dropdown-menu").css("margin-left", "-50px");
+	}
+	else{
+		$(".dropdown-menu").css("margin-left", "0px");
+	}
+	if($(window).width() <= 900){
+		$("#tools_panel").width(140);
+	}
+	else{
 		$("#tools_panel").width(160);
 	}
 	if($(window).height() <= 1000){
@@ -423,7 +433,13 @@ var _responsiveSizes = function(){
     }
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
-	$("#graph_panel").width(Math.floor($("#main_container").width()*3/5));
+	if(showToolbar){ //it means now it's hidden
+		$("#graph_panel").css("margin-left", "0px");
+	}
+	else{
+		$("#graph_panel").css("margin-left", $("#tools_panel").width()+"px");
+	}
+	$("#graph_panel").width(Math.floor($("#main_container").width()/2));
 	$("#graph_panel").height( $("#main_container").height() );
 	$("#solutionBox").height($("#main_container").height());
 	if(showToolbar){ //it actually means that now it's hidden

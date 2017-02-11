@@ -2,19 +2,6 @@
 This file will be used to alter the view of the page 
 and handle user interaction
 */
-var algorithm_code = "empty";
-var algorithm_name;
-var ajaxObject = {
-	"code" : -1,
-	"net" : {},
-	"extras" : {}	//extra data assosiated with the network that an algorithm needs
-};
-var randomWeights = true;
-var weightMap = [];
-var weightMapTxt = "";
-var dialogError = false;
-var footerHeight = 90;
-var showToolbar = false; //next time you hit toggle, hide the toolbar
 var modalsData = {	//content to fill out modals rendered by handlebars
      modals : [
         {
@@ -42,12 +29,10 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 						<li>Press <b class=\"text-info\">Remove Node</b> and select the nodes to be removed</li>\
 						<li>Press <b class=\"text-info\">Link Nodes</b> and select two nodes to link</li>\
 						<li>To remove a link, press <b class=\"text-info\">ESC</b> to deselect tools, and then hover the mouse over a link</li>\
+						<li>Press <b class=\"text-info\">Set Node Coordinates</b> and choose a node to manually set its coordinates in the Graph View</li>\
 						<li>Press <b class=\"text-info\">ESC</b> to stop the tools</li>\
 						<li>Press <b class=\"text-info\">Clear Graph</b> to delete current network and clear the graph</li>\
 						<li><span class='colored-text4'>Moving a node automatically deselects the tools!</span></li>\
-						<li>Press <b class=\"text-info\">Save</b> to save your graph.</li>\
-						<li>Press <b class=\"text-info\">Load</b> to load one of your saved graphs.<span class='colored-text4'> If you resize \
-						the window, remember to refresh the page before loading a graph.</span></li>\
 						</ul>\
 					</article>\
 				</section>",
@@ -67,39 +52,72 @@ var modalsData = {	//content to fill out modals rendered by handlebars
 					</div>",
 		footer: "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"+
 				"<button type=\"button\" class=\"btn btn-default btn_custom\" id=\"dca_dialog_continue\">Continue</button>"
+		},
+		{
+		id: "coord_modal",
+		title : "Set Node Coordinates",
+		body : "<p>Set the selected node's coordrinates in the X and Y axis of the Graph View</p>\
+				<p class='coord_box_p'>Maximum X = <p id='coord_max_x' class='coord_box_p'></p>,\
+				 Maximum Y = <p id='coord_max_y' class='coord_box_p'></p></p>\
+				<p class='coord_box_p'>Current X = <p id='coord_curr_x' class='coord_box_p'></p>,\
+				 Current Y = <p id='coord_curr_y' class='coord_box_p'></p></p></br>\
+				<form>\
+					new X : <input type='number' id='coord_x_in'></input> new Y : <input type='number' id='coord_y_in'></input>\
+				</form>\
+				",	
+		footer : "<button type=\"button\" class=\"btn btn-default btn_custom\" data-dismiss=\"modal\">Close</button>"
+				+"<button type=\"button\" class=\"btn btn-default btn_custom\" id='set_coord_btn'>Apply</button>"
 		}
     ]
 };
-const nodeMinScale = 0.35;
-var biggerNodeSize = true;
+const nodeMinScale = 0.0;
+let algorithm_code = "empty";
+let algorithm_name;
+let ajaxObject = {
+	"code" : -1,
+	"net" : {},
+	"extras" : {}	//extra data assosiated with the network that an algorithm needs
+};
+let randomWeights = true;
+let weightMap = [];
+let weightMapTxt = "";
+let dialogError = false;
+let footerHeight = 90;
+let showToolbar = false; //next time you hit toggle, hide the toolbar
+let biggerNodeSize = true;
+var currentRadius = 35;
 
 //Reset everything (Clear graph view and data so far)
 function _reset(){
-	graph.clear();
-	biggerNodeSize = true;
-	network.nodes = [];
-	usedIds = []; 
-	panelOffset = $("#graph_panel").offset();
-	addingNode = false; 							
-	removingNode = false;							
-	linkSelect1 = false;							
-	linkSelect2 = false;							
-	linkStart = null;										
-	linkEnd = null; 	 
+	resetNetwork();
+	biggerNodeSize = true;	 
 	ajaxObject["extras"] = {};
 	ajaxObject["net"] = { };	
 }
 
 //will be used by a button to set the size of the nodes to the original one
 function _toggleNodeSize(){
-	for(var i=0; i<network.nodes.length; i++){
+	var cells = graph.getElements();
+	for(var i=0; i<cells.length; i++){
 		if(biggerNodeSize){	
-			network.nodes[i].graphic.resize(45,45);
-			network.nodes[i].graphic.attr("text/font-size", "16pt");
+			if(!cells[i].attributes.prop["weight"]){
+				cells[i].resize(45,45);
+				cells[i].attr("text/font-size", "16pt");
+				currentRadius = 45;
+			}
+			else{
+				cells[i].attr("text/font-size", "16pt");
+			}
 		}
 		else{
-			network.nodes[i].graphic.resize(35,35);
-			network.nodes[i].graphic.attr("text/font-size", "12pt");
+			if(!cells[i].attributes.prop["weight"]){
+				cells[i].resize(35,35);
+				cells[i].attr("text/font-size", "12pt");
+				currentRadius = 35;
+			}
+			else{
+				cells[i].attr("text/font-size", "12pt");
+			}
 		}
 	}
 	if(biggerNodeSize){
@@ -120,29 +138,6 @@ var _updateAjaxNet = function(){
 	}
 }
 
-//Fill the scroll view of the load modal with the data retrieved from _sendRetrieveNetworks
-var _fillLoadScrollView = function(data){
-	if(data.length == 0){
-		$("#load_modal_txt").text("No graphs saved.");
-		$("#load_scroll").hide();
-	}
-	else{
-		var text="";
-		for(var i=0; i<data.length; i++){
-			text += "<div id='"+data[i].id+"' class='well small_well'>\
-						<p>"+data[i].name+"</p>\
-						<div class='btn-group' role='group' aria-label='...'>\
-						<button type='button' class='btn btn-default btn_danger small_btn delete_net'>Delete</button>\
-						<button type='button' class='btn btn-default btn_custom small_btn confirm_load'>Load</button>\
-						</div>\
-					</div>";
-		}
-		$("#load_modal_txt").text("Choose a previously saved graph to load.");
-		$("#load_scroll").html(text);
-		$("#load_scroll").show();
-	}
-}
-
 var _repaintGraph = function(newNetwork){
 	_reset(); //reset everything
 	$("#solutionBoxData").html("");
@@ -154,11 +149,11 @@ var _repaintGraph = function(newNetwork){
 			size:{ width:35, height:35},
 			attrs:{ circle : {fill: "#27a7ce", stroke: "#1986a8", "stroke-width" : "2"},
 				text: { text : newNode.id, fill : 'white', "font-size" : "12pt"}},
-			prop:{ node_id : newNode.id}
+			prop:{ node_id : newNode.id, weight : false}
 		});
 		//stop adding/removing nodes if you moved one
 		circleShape.on("change:position",function(){
-			stopFunctionality("all");
+			stopFunctionality();
 		});
 		//add the new shape to the graph
 		graph.addCell(circleShape);
@@ -191,130 +186,6 @@ var _repaintGraph = function(newNetwork){
 }
 
 //Send an Ajax Request to the server ============================
-var _sendLoadNetwork = function(id){
-	$.ajax({
-		url : server_url + "/loadNet",
-		contentType: "application/json",
-		method : "POST",
-		dataType : "json",
-		data: JSON.stringify({netID : id}),
-		error: function(jqXHR, status, error){
-			console.log(error);
-			if(jqXHR.responseJSON){
-				if(jqXHR.responseJSON.message){
-					console.log(jqXHR.responseJSON.message);
-					if(jqXHR.responseJSON.message == "reloggin"){
-						window.location.href = "/workspace";
-					}
-				}
-			}
-		},
-		success : function(response, status, XMLHttpRequest){
-			_repaintGraph(response.data);
-		}
-	});
-}
-
-var _sendDeleteNetwork = function(id){
-	$.ajax({
-		url : server_url + "/deleteNet",
-		contentType: "application/json",
-		method : "POST",
-		dataType : "json",
-		data: JSON.stringify({netID : id}),
-		error: function(jqXHR, status, error){
-			console.log(error);
-			if(jqXHR.responseJSON){
-				if(jqXHR.responseJSON.message){
-					console.log(jqXHR.responseJSON.message);
-					if(jqXHR.responseJSON.message == "reloggin"){
-						window.location.href = "/workspace";
-					}
-				}
-			}
-		},
-		success : function(response, status, XMLHttpRequest){
-			$("#load_modal").modal('hide');
-		}
-	});
-}
-
-var _sendRetrieveNetworks = function(){
-	$.ajax({
-		url : server_url + "/getGraphs",
-		contentType: "application/json",
-		method : "GET",
-		dataType : "json",
-		success: function(response, status, XMLHttpRequest){
-			console.log(response.data)
-			_fillLoadScrollView(response.data);
-			$("#load_modal").modal("show");
-		},
-		error: function(jqXHR, status, error){
-			console.log(error);
-			if(jqXHR.responseJSON){
-				if(jqXHR.responseJSON.message){
-					console.log(jqXHR.responseJSON.message);
-					if(jqXHR.responseJSON.message == "reloggin"){
-						window.location.href = "/workspace";
-					}
-				}
-			}
-		}	
-	});
-}
-
-var _sendSaveNetwork =function(netName){
-	if(network.nodes.length == 0){
-		alert("No graph to save.");
-	}
-	else{
-		_updateAjaxNet();
-		$.ajax({
-			url: server_url + "/saveNet",
-			contentType: "application/json",
-			dataType: "json",
-			type: "POST",
-			data: JSON.stringify({name : netName, data : network}),
-			success : function(){
-				alert("Data Saved");
-			},
-			error: function(jqXHR, status, error){
-				console.log(error);
-				if(jqXHR.responseJSON){
-					if(jqXHR.responseJSON.message){
-						console.log(jqXHR.responseJSON.message);
-						if(jqXHR.responseJSON.message == "reloggin"){
-							window.location.href = "/workspace";
-						}
-					}
-				}
-			}
-		});
-	}
-}
-
-var _deleteNetwork = function(networkID){
-	$.ajax({
-		url: server_url + "/deleteNet",
-		contentType: "application/json",
-		dataType: "json",
-		type: "POST",
-		data: JSON.stringify({netID : networkID}),
-		error: function(jqXHR, status, error){
-			console.log(error);
-			if(jqXHR.responseJSON){
-				if(jqXHR.responseJSON.message){
-					console.log(jqXHR.responseJSON.message);
-					if(jqXHR.responseJSON.message == "reloggin"){
-						window.location.href = "/workspace";
-					}
-				}
-			}
-		}
-	});
-}
-
 var _sendAlgorithmRequest = function(){
 	$.ajax({
 		url: server_url + "/algorithms",
@@ -337,37 +208,20 @@ var _sendAlgorithmRequest = function(){
 	});
 }
 
-var _sendLogOutRequest = function(){
-	$.ajax({
-		url: server_url + "/logOut",
-		type: "GET",
-		error: function(jqXHR, status, error){
-            console.log("Log out failed ", error);
-			alert("Log out failed :-(");
-		},
-		success: function(){
-			window.location.href = "/";
-		}
-	});
-}
-
-var _sendDeleteAccountRequest = function(){
-	$.ajax({
-		url: server_url + "/deleteAcc",
-		type: "GET",
-		error: function(jqXHR, status, error){
-            console.log("Delete Account failed ", error);
-			alert("Delete Account failed :-(");
-		},
-		success: function(){
-			alert("Account sucessfully deleted.");
-			window.location.href = "/";
-		}
-	});
-}
-
 //=======================================================
 var _responsiveSizes = function(){
+	if($(window).width() <= 587){
+		$("#pageHeader").height(90);
+	}
+	else{
+		$("#pageHeader").height(30);
+	}
+	if($(window).width() <= 900){
+		$("#tools_panel").width(140);
+	}
+	else{
+		$("#tools_panel").width(160);
+	}
 	if($(window).height() <= 1000){
         $("#main_container").height(1000);    
     }
@@ -376,7 +230,13 @@ var _responsiveSizes = function(){
     }
 	$("#dca_dialog_scroll").hide();
 	$("#tools_panel").height($("#main_container").height());
-	$("#graph_panel").width(Math.floor($("#main_container").width()*3/5));
+	if(showToolbar){ //it means now it's hidden
+		$("#graph_panel").css("margin-left", "0px");
+	}
+	else{
+		$("#graph_panel").css("margin-left", $("#tools_panel").width()+"px");
+	}
+	$("#graph_panel").width(Math.floor($("#main_container").width()/2));
 	$("#graph_panel").height( $("#main_container").height() );
 	$("#solutionBox").height($("#main_container").height());
 	if(showToolbar){ //it actually means that now it's hidden
@@ -459,8 +319,6 @@ var _dcaDialogWeightsHandler = function(){
 				return false;
 			}
 			else{
-				var textID = $(this).attr('id');
-				textID = textID.slice(2);
 				weightMap.push(number);
 			}
 		});
@@ -594,6 +452,10 @@ $(document).ready(function() {
 
 	$("#toggle_node_size").click(function(){
 		_toggleNodeSize();
+	});
+
+	$("#set_coord_btn").click(function(){
+		setNodeCoordinates();
 	});
 
 });
