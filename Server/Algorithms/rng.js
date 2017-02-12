@@ -31,7 +31,7 @@ var _calculateLocalRNG = function(node, network, solution){
     var y_diff;
     neighbors = netOperator.returnNeighborObjects(node, network);
     solution.createStep();
-    solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p>";
+    solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p><ul>";
     //First calculate the distances of node from all its neighbors
     for(var i=0; i<neighbors.length; i++){
         x_diff = node.position.x - neighbors[i].position.x;
@@ -51,20 +51,21 @@ var _calculateLocalRNG = function(node, network, solution){
                 distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2)); //distance between the 2 neighbors
                 if((distances[j] < distances[i]) && (distance < distances[i])){
                     valid = false;
-                    solution.steps[solution.steps.length - 1].text += "<p>Edge between "+node.id+" and "+neighbors[i].id+
+                    solution.steps[solution.steps.length - 1].text += "<li>Edge between "+node.id+" and "+neighbors[i].id+
                     " with distance "+distances[i]+" omitted because of neighbor node "+neighbors[j].id+" between them.\
                     Edge ["+node.id+","+neighbors[j].id+"] has a distance of "+distances[j]+", \
-                    while Edge ["+neighbors[i].id+","+neighbors[j].id+"] has a distance of "+distance+".</p>";
+                    while Edge ["+neighbors[i].id+","+neighbors[j].id+"] has a distance of "+distance+".</li>";
                     break;
                 }
             }
         }
         if(valid){
             edges.push( {"source" : node.id, "target" : neighbors[i].id });
-            solution.steps[solution.steps.length - 1].text += "<p>Selected edge ["+node.id+" , "+neighbors[i].id+"] with distance "
-            +distances[i]+".</p>";
+            solution.steps[solution.steps.length - 1].text += "<li>Selected edge ["+node.id+" , "+neighbors[i].id+"] with distance "
+            +distances[i]+".</li>";
         }
     }
+    solution.steps[solution.steps.length - 1].text += "</ul>";
     return edges;
 }
 

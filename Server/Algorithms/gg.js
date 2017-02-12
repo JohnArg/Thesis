@@ -31,7 +31,7 @@ var _calculateLocalGG = function(node, network, solution){
     var x_diff;
     var y_diff;
     solution.createStep();
-    solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p>";
+    solution.steps[solution.steps.length - 1].text = "<p class=\"colored-text2\">Current node "+node.id+".</p><ul>";
     //First calculate the distances of node from all its neighbors
     for(var i=0; i<neighbors.length; i++){
         x_diff = node.position.x - neighbors[i].position.x;
@@ -52,19 +52,20 @@ var _calculateLocalGG = function(node, network, solution){
                 distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
                 if(distance < radii[i]){
                     valid = false;
-                    solution.steps[solution.steps.length - 1].text += "<p>Edge between "+node.id+" and "+neighbors[i].id+
+                    solution.steps[solution.steps.length - 1].text += "<li>Edge between "+node.id+" and "+neighbors[i].id+
                     " omitted because of neighbor node "+neighbors[j].id+" between them. The cirlce area used for\
                     checking has a radius of "+radii[i]+", while the distance of "+neighbors[j].id+" from the circle's\
-                    center is "+distance+".</p>";
+                    center is "+distance+".</li>";
                     break;
                 }
             }
         }
         if(valid){
             edges.push( {"source" : node.id, "target" : neighbors[i].id });
-            solution.steps[solution.steps.length - 1].text += "<p>Selected edge ["+node.id+" , "+neighbors[i].id+"].</p>";
+            solution.steps[solution.steps.length - 1].text += "<li>Selected edge ["+node.id+" , "+neighbors[i].id+"].</li>";
         }
     }
+    solution.steps[solution.steps.length - 1].text += "</ul>";
     return edges;
 }    
 
