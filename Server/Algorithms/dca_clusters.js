@@ -72,10 +72,10 @@ var _sendCH = function(node, network, timestepSolution){
 	timestepSolution.createStep();
 	stepIndex = timestepSolution.steps.length - 1;
 	timestepSolution.steps[stepIndex].text = "Node "+node.id+" broadcasted CH.";
+	node.iSentCh = true;
 	if(node.clusterhead != node.id){
 		node.clusterhead = node.id;
 		node.cluster.push(node.id);
-		node.iSentCh = true;
 	}
 	timestepSolution.steps[stepIndex].data["clusters"] = _returnClusters(network);
 }
