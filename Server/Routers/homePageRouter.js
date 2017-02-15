@@ -85,7 +85,7 @@ router.post("/logIn", function(request, response){
 
 //Handles ajax Sign Up request
 router.post("/signUp", function(request, response){
-    console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
+    //console.log(`AdHocEd request sent to worker ${cluster.worker.process.pid}`);
     if(!appGlobalData.sessionsEnabled){
         response.status(200).send("OK");  //The message will force a redirect on client to /workspace
     }
